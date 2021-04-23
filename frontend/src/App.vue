@@ -1,16 +1,16 @@
 <template>
-  <div id="app" class="bg-gray-200">
-    <Login/>
+  <div id="app">
+    <Feed/>
   </div>
 </template>
 
 <script>
-import Login from "./pages/Login.vue";
+import Feed from "./pages/Feed.vue";
 
 export default {
   name: "App",
   components: {
-    Login
+    Feed
   }
 };
 </script>
