@@ -1,11 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
+from starlette.responses import Response, RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from models import Login
+from routers import login, register, feed
 
 app = FastAPI()
 
+app.include_router(login.router)
+app.include_router(register.router)
+app.include_router(feed.router)
+
+login.manager.useRequest(app)
+
 origins = [
-    "http://localhost:8080",
+    "http://localhost:8080", # frontend
 ]
 
 app.add_middleware(
@@ -15,9 +22,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.post("/api/v1/login")
-def auth_teste(user: Login):
-    print(user)
-    return {"user": user}
 

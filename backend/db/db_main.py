@@ -1,4 +1,3 @@
-from datetime import date, datetime
 from sqlalchemy import (
     create_engine,
     Column,
@@ -11,23 +10,22 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship, backref
-from dateutil.relativedelta import relativedelta
+from sqlalchemy.orm import sessionmaker
 from passlib.context import CryptContext
-from pydantic import BaseModel
-from typing import Union
 
 db_string = "postgresql://postgres:1234@localhost:5432/tcc" # Conexão com um banco de dados Postgresql
+db_engine = create_engine(db_string)
 
-db = create_engine(db_string)
-Session = sessionmaker(db)
-
-Base = declarative_base()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto") # bcrypt para fazer a cryptografia da senha
+
+Session = sessionmaker(db_engine)
+Base = declarative_base()
 
 class USERS(Base):
     __tablename__ = "users"
     user_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    username = Column(String, unique=True)
     email = Column(String, unique=True)
     password_hash = Column(String)
     
@@ -44,28 +42,17 @@ class USERS(Base):
         Verifica se o password e valido
         """
         return pwd_context.verify(password, self.password_hash)
-    
-class V_USERS(BaseModel):
-    email: str
-    password: str
-    
-    
+
 class POSTS(Base):
     __tablename__ = "posts"
     post_id = Column(Integer, primary_key=True, autoincrement=True)
     post_body = Column(String)
     created_at = Column(DateTime)
 
-class V_POSTS(BaseModel):
-    post_body: str
-    
-    
-class TAGS(base):
+class TAGS(Base):
     __tablename__ = "tags"
     tag_id = Column(Integer, primary_key=True, autoincrement=True)
     tag_name = Column(String, unique=True)
 
-class V_TAGS(BaseModel):
-    tag_name: str
 
-base.metadata.create_all(db)
+Base.metadata.create_all(db_engine)

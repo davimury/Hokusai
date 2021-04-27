@@ -116,6 +116,16 @@ import {
 const touchMap = new WeakMap()
 export default {
     name: 'Login',
+    beforeCreate() {
+        fetch('http://localhost:8000/v1/is_loged',
+        {
+            method: 'get',
+            credentials: 'include',
+        }).then(response => {
+          if(response.ok)
+            this.$router.push('/')
+        })
+    },
     data() {
         return {
             emailLogIn: null,
@@ -135,26 +145,48 @@ export default {
     },
     methods: {
         login: async function() {
-            if (this.email === null) 
-                return  
-            if (this.password === null) 
-                return  
-
-            fetch('http://localhost:8000/api/v1/login',
+            /* if (this.emailLogIn || this.passwordLogIn === null)
+                return  */ 
+            
+            fetch('http://localhost:8000/v1/login',
             {
                  method: 'post',
+                 credentials: 'include',
                  body: JSON.stringify({
-                   email: this.email,
-                   password: this.password
+                   email: this.emailLogIn,
+                   password: this.passwordLogIn
                  }),
                  headers: {"Content-type": "application/json"}
             }).then(response => {
-                response.json().then(json => {
-                    console.log(json)
-                })
+                if (response.status == 200)
+                    this.$router.push('/')
+
+                else if (response.status == 401)
+                    alert('Error username ou email duplicado')
             })
-       },
-       swapLoginRegister: function(content) {
+        },
+        register: async function() {
+            /* if (this.nameSignUp || this.emailSignUp || this.usernameSignUp || this.passwordSignUp === null)
+                return   */
+            fetch('http://localhost:8000/v1/register',
+            {
+                method: 'post',
+                body: JSON.stringify({
+                    name: this.nameSignUp,
+                    email: this.emailSignUp,
+                    username: this.usernameSignUp,
+                    password: this.passwordSignUp
+                }),
+                headers: {"Content-type": "application/json"}
+            }).then(response => {
+                if (response.status == 200)
+                    this.swapLoginRegister('login');
+
+                else if (response.status == 409)
+                    alert('Error username ou email duplicado')
+            })
+        },
+        swapLoginRegister: function(content) {
            if (content == 'login'){
                this.registerDiv = false
                this.forgotPasswordDiv = false
@@ -170,13 +202,13 @@ export default {
                this.loginDiv = false
                setTimeout(()=>{  this.forgotPasswordDiv = true}, 501);   
            }
-       },
-       swapVisibility: function(){
+        },
+        swapVisibility: function(){
            this.hidePassword = this.hidePassword ? false : true
            this.passwordIcon = this.hidePassword ? "visibility" : "visibility_off"
            this.passwordType = this.hidePassword ? "password" : "text"
-       },
-       delayTouch($v) {
+        },
+        delayTouch($v) {
             $v.$reset()
             if (touchMap.has($v)) {
                 clearTimeout(touchMap.get($v))

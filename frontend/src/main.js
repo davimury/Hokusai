@@ -1,11 +1,17 @@
 import Vue from 'vue'
-import App from './App.vue'
-import 'animate.css';
-import "./assets/css/main.css";
+import App from './App'
+import router from './router'
 import Vuelidate from 'vuelidate'
+
+import 'animate.css'
+import './assets/css/main.css'
+
 Vue.use(Vuelidate)
 Vue.config.productionTip = false
 
 new Vue({
-  render: h => h(App),
-}).$mount('#app')
+  el: '#app',
+  router,
+  components: { App },
+  template: '<App/>'
+})

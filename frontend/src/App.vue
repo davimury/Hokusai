@@ -1,16 +1,11 @@
 <template>
   <div id="app">
-    <Feed/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import Feed from "./pages/Feed.vue";
-
 export default {
-  name: "App",
-  components: {
-    Feed
-  }
-};
+  name: 'App'
+}
 </script>

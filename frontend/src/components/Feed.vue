@@ -1,7 +1,9 @@
 <template>
   <div class="grid grid-cols-12 items-center text-white">
     <div class="col-span-3">
-      1
+      <div v-on:click="logout()" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
+          <a href="#"><span class="text-indigo-500 hover:text-indigo-400">Logout</span></a>
+      </div>
     </div>
     <div class="col-span-6">
       
@@ -40,7 +42,33 @@
 </template>
 
 <script>
-export default {};
+export default {
+    name: 'Feed',
+    beforeCreate() {
+        fetch('http://localhost:8000/v1/feed/teste',
+        {
+            method: 'get',
+            credentials: 'include',
+        }).then(response => {
+          if(response.ok)
+            console.log(response)
+          else
+            this.$router.push('/login')
+        })
+    },
+    methods: {
+        logout: async function() {
+          fetch('http://localhost:8000/v1/logout',
+          {
+              method: 'delete',
+              credentials: 'include',
+          }).then(response => {
+            if(response.ok)
+              this.$router.push('/login')
+          })
+        }
+    }
+};
 </script>
 
 <style></style>

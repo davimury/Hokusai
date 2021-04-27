@@ -1,5 +1,6 @@
 @tailwind base;
 @tailwind components;
+@tailwind utilities;
 
 body{
   background-color: #121212;
@@ -17,5 +18,3 @@ select {
 input {
   outline: none;
 }
-
-@tailwind utilities;
