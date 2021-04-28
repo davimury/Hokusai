@@ -1,20 +1,48 @@
 <template>
     <section class="min-h-screen flex items-stretch text-white ">
-        <div class="lg:flex w-1/2 hidden bg-gray-500 bg-no-repeat bg-cover relative items-center" style="background-image: url(https://images.unsplash.com/photo-1577495508048-b635879837f1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80);">
-            <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
-            <div class="w-full px-24 z-10">
-                <h1 class="text-5xl font-bold text-left tracking-wide">RSA</h1>
-                <p class="text-3xl my-4">Caros amigos, a consulta aos diversos militantes desafia a capacidade de equalização.</p>
-            </div>
-            <div class="bottom-0 absolute p-4 text-center right-0 left-0 flex justify-center space-x-4"></div>
+        <div class="w-1/2"> 
+        <carousel :per-page="1" :loop="true" :autoplay="true" :autoplay-timeout="9000" :mouse-drag="true" :pagination-position="bottom-overlay"> 
+            <slide>
+           <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center" style="height: 50.6vw;" v-bind:style="{ backgroundImage: 'url(' + image1 + ')' }">
+                    <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
+                    <div class="w-full px-24 z-10">
+                        <!-- <h1 class="text-5xl font-bold text-left tracking-wide">Hokusai</h1> -->
+                        <img src="@/assets/img/logo-nobg.svg">
+                        <p class="text-xl my-4">Ejiri na Província de Suruga.</p>
+                    </div>
+                    <div class="bottom-0 absolute p-4 text-center right-0 left-0 flex justify-center space-x-4"></div>
+                </div>
+            </slide>
+            <slide>
+                 <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center" style="height: 50.6vw;" v-bind:style="{ backgroundImage: 'url(' + image2 + ')' }">
+                    <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
+                    <div class="w-full px-24 z-10">
+                        <img src="@/assets/img/logo-nobg.svg">
+                        <p class="text-xl my-4">A Grande Onda de Kanagawa. </p>
+                    </div>
+                    <div class="bottom-0 absolute p-4 text-center right-0 left-0 flex justify-center space-x-4"></div>
+                </div>
+            </slide>
+            <slide>
+                 <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center" style="height: 50.6vw;" v-bind:style="{ backgroundImage: 'url(' + image3 + ')' }">
+                    <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
+                    <div class="w-full px-24 z-10">
+                        <img src="@/assets/img/logo-nobg.svg">
+                        <p class="text-xl my-4">Fuji Vermelho de Katsushika.</p>
+                    </div>
+                    <div class="bottom-0 absolute p-4 text-center right-0 left-0 flex justify-center space-x-4"></div>
+                </div>
+            </slide>
+        </carousel>
         </div>
 
         <div class="lg:w-1/2 w-full flex items-center justify-center text-center md:px-16 px-0 z-0 bg-darkgray overflow-hidden">
-            <div class="absolute lg:hidden z-10 inset-0 bg-gray-900 bg-no-repeat bg-cover items-center" style="background-image: url(https://images.unsplash.com/photo-1577495508048-b635879837f1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80);">
+            <div class="absolute lg:hidden z-10 inset-0 bg-gray-900 bg-no-repeat bg-cover items-center" style="background-image: url(http://localhost:8080/assets/img/bg.png);">
                 <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
             </div>
-            <div class="w-full py-6 z-20">
-                <h1 class="my-6 text-6xl">{ logo }</h1>
+            <div class="w-full py-6 z-20 content-center">
+                <img class="m-auto my-16 w-96" src="@/assets/img/logo-symb-nobg.svg">
+                <!-- <h1 class="my-6 text-6xl">{ logo }</h1> -->
                 <transition 
                     mode="out-in"
                     enter-active-class="animate__animated animate__fadeInLeft"
@@ -108,26 +136,27 @@
 </template>
 
 <script>
-import {
-  required,
-  maxLength,
-  email,
-} from "vuelidate/lib/validators";
+import bg3 from "../assets/img/bg3.png"
+import bg2 from "../assets/img/bg5.png"
+import bg1 from "../assets/img/bg4.png"
+import logo from "../assets/img/logo.svg"
+import { Carousel, Slide } from 'vue-carousel';
+import {  required,  maxLength,  email,} from "vuelidate/lib/validators";
+
 const touchMap = new WeakMap()
 export default {
     name: 'Login',
-    beforeCreate() {
-        fetch('http://localhost:8000/v1/is_loged',
-        {
-            method: 'get',
-            credentials: 'include',
-        }).then(response => {
-          if(response.ok)
-            this.$router.push('/')
-        })
+    components: {
+        Carousel,
+        Slide
     },
+
     data() {
         return {
+            image1: bg1,
+            image2: bg3,
+            image3: bg2,
+            logo: logo,
             emailLogIn: null,
             emailSignUp: null,
             emailLink: null,
