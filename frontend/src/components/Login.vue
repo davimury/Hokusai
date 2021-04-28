@@ -1,7 +1,7 @@
 <template>
     <section class="min-h-screen flex items-stretch text-white ">
         <div class="w-1/2"> 
-        <carousel :per-page="1" :loop="true" :autoplay="true" :autoplay-timeout="9000" :mouse-drag="true" :pagination-position="bottom-overlay"> 
+        <carousel :per-page="1" :loop="true" :autoplay="true" :autoplay-timeout="9000" :mouse-drag="true" > 
             <slide>
            <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center" style="height: 50.6vw;" v-bind:style="{ backgroundImage: 'url(' + image1 + ')' }">
                     <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
@@ -59,15 +59,15 @@
                             <input v-model.trim="passwordLogIn" @input="delayTouch($v.passwordLogIn)" :class="validateStyle($v.passwordLogIn.$invalid, $v.passwordLogIn.$dirty)" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-indigo-500" :type="passwordType" placeholder="Senha">
                         </div>
                         <div v-if="$v.passwordLogIn.$invalid && $v.passwordLogIn.$dirty" class="text-red-700 text-left -mt-1.5"><small>Senha é obrigatoria</small></div>
-                        <div @click="swapLoginRegister('sendLink')" class="text-right text-gray-400 hover:text-gray-100 font-medium">
+                        <div @click="swapLoginRegister('sendLink')" class="text-right text-amber-400 hover:text-amber-100 font-medium">
                             <a href="#">Esqueceu a senha?</a>
                         </div>
                         <div class=" pb-2 pt-4">
-                            <button class="block w-full p-2 text-lg rounded-lg bg-indigo-500 hover:bg-indigo-600 focus:outline-none">Log In</button>
+                            <button class="block w-full p-2 text-lg rounded-lg bg-indigo-800 hover:bg-indigo-700 focus:outline-none">Log In</button>
                         </div>
                         <div class="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden"></div>
                         <div v-on:click="swapLoginRegister('register')" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
-                            <a href="#">Ainda não tem uma conta? <span class="text-indigo-500 hover:text-indigo-400">Cadastre-se</span></a>
+                            <a href="#">Ainda não tem uma conta? <span class="text-indigo-800 hover:text-indigo-700">Cadastre-se</span></a>
                         </div>
                     </form>
                 </transition>
@@ -95,11 +95,11 @@
                         </div>
                         <div v-if="$v.passwordSignUp.$invalid && $v.passwordSignUp.$dirty" class="text-red-700 text-left -mt-1.5"><small>Senha é obrigatoria</small></div>
                         <div class=" pb-2 pt-4">
-                            <button class="block w-full p-2 text-lg rounded-lg bg-indigo-500 hover:bg-indigo-600 focus:outline-none">Cadastrar</button>
+                            <button class="block w-full p-2 text-lg rounded-lg bg-indigo-800 hover:bg-indigo-700 focus:outline-none">Cadastrar</button>
                         </div>
                         <div class="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden"></div>
                         <div v-on:click="swapLoginRegister('login')" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
-                            <a href="#">Já tem uma conta? <span class="text-indigo-500 hover:text-indigo-400">Log In</span></a>
+                            <a href="#">Já tem uma conta? <span class="text-indigo-800 hover:text-indigo-700">Log In</span></a>
                         </div>
                     </form>
                 </transition>
@@ -141,6 +141,7 @@ import bg2 from "../assets/img/bg5.png"
 import bg1 from "../assets/img/bg4.png"
 import logo from "../assets/img/logo.svg"
 import { Carousel, Slide } from 'vue-carousel';
+import { mapActions } from "vuex";
 import {  required,  maxLength,  email,} from "vuelidate/lib/validators";
 
 const touchMap = new WeakMap()
@@ -150,7 +151,6 @@ export default {
         Carousel,
         Slide
     },
-
     data() {
         return {
             image1: bg1,
@@ -173,10 +173,37 @@ export default {
         }
     },
     methods: {
-        login: async function() {
-            /* if (this.emailLogIn || this.passwordLogIn === null)
-                return  */ 
-            
+        ...mapActions(["Register", "LogIn"]),
+        register: async function () {
+            try {
+                await this.Register(JSON.stringify(
+                    {
+                        name: this.nameSignUp,
+                        email: this.emailSignUp,
+                        username: this.usernameSignUp,
+                        password: this.passwordSignUp
+                    }
+                ));
+                this.$router.push('/');
+                this.showError = false
+            } catch (error) {
+                this.showError = true
+            }
+        },
+        login: async function () {
+            try {
+                await this.LogIn(JSON.stringify({email: this.emailLogIn, password: this.passwordLogIn}));
+                this.$router.push('/');
+                this.showError = false
+            } catch (error) {
+                this.showError = true
+            }
+        },
+        logout: async function (){
+            await this.$store.dispatch('LogOut')
+            this.$router.push('/login')
+        },
+        /* login: async function() {
             fetch('http://localhost:8000/v1/login',
             {
                  method: 'post',
@@ -193,10 +220,8 @@ export default {
                 else if (response.status == 401)
                     alert('Error username ou email duplicado')
             })
-        },
-        register: async function() {
-            /* if (this.nameSignUp || this.emailSignUp || this.usernameSignUp || this.passwordSignUp === null)
-                return   */
+        }, */
+        /* register: async function() {
             fetch('http://localhost:8000/v1/register',
             {
                 method: 'post',
@@ -214,7 +239,7 @@ export default {
                 else if (response.status == 409)
                     alert('Error username ou email duplicado')
             })
-        },
+        }, */
         swapLoginRegister: function(content) {
            if (content == 'login'){
                this.registerDiv = false
