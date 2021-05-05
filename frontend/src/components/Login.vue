@@ -1,7 +1,7 @@
 <template>
     <section class="min-h-screen flex items-stretch text-white ">
         <div class="w-1/2"> 
-        <carousel :per-page="1" :loop="true" :autoplay="true" :autoplay-timeout="9000" :mouse-drag="true" > 
+        <carousel :per-page="1" :loop="true" :autoplay="true" :autoplay-timeout="9000" :mouse-drag="true" :paginationEnabled="false" > 
             <slide>
            <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center" style="height: 50.6vw;" v-bind:style="{ backgroundImage: 'url(' + image1 + ')' }">
                     <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
