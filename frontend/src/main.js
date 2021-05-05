@@ -11,6 +11,7 @@ axios.defaults.baseURL = 'http://localhost:8000/';
 
 import 'animate.css'
 import './assets/css/main.css'
+import './assets/tailwind.css'
 
 Vue.use(Vuelidate)
 Vue.use(VueCarousel)
@@ -23,3 +24,4 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+

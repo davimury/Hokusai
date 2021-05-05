@@ -1,12 +1,12 @@
 <template>
   <div class="grid grid-cols-12 items-center text-white">
     
-    <div class="col-span-3">
+    <div class="col-span-4">
       <div v-on:click="logout()" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
           <a href="#"><span class="text-indigo-500 hover:text-indigo-400">Logout</span></a>
       </div>
     </div>
-    <div class="col-span-6">
+    <div class="col-span-4">
       
         <div class="bg-lightgray border border-lightgray rounded-lg block w-5/6">
           <div class="flex items-center px-4 py-3">
@@ -36,7 +36,7 @@
         </div>
       
     </div>
-    <div class="col-span-3">
+    <div class="col-span-4">
       3
     </div>
   </div>
