@@ -5,23 +5,18 @@ import Vuelidate from 'vuelidate'
 import VueCarousel from 'vue-carousel'
 import store from './store';
 import axios from 'axios';
+import 'animate.css'
+import './assets/css/main.css'
 
 axios.defaults.withCredentials = true
 axios.defaults.baseURL = 'http://localhost:8000/';
-
-import 'animate.css'
-import './assets/css/main.css'
-import './assets/tailwind.css'
 
 Vue.use(Vuelidate)
 Vue.use(VueCarousel)
 Vue.config.productionTip = false
 
 new Vue({
-  el: '#app',
   router,
   store,
-  components: { App },
-  template: '<App/>'
-})
-
+  render: h => h(App)
+}).$mount('#app')
