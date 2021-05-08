@@ -1,9 +1,9 @@
 <template>
     <section class="min-h-screen flex items-stretch text-white ">
-        <div class="w-1/2"> 
-        <carousel :per-page="1" :loop="true" :autoplay="true" :autoplay-timeout="9000" :mouse-drag="true" :paginationEnabled="false" > 
+        <div class="lg:w-1/2 lg:block hidden h-screen"> 
+        <carousel :per-page="1" :loop="true" :autoplay="true" :autoplay-timeout="9000" :mouse-drag="true" :paginationEnabled="false" class="h-full"> 
             <slide>
-           <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center" style="height: 50.6vw;" v-bind:style="{ backgroundImage: 'url(' + image1 + ')' }">
+           <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center h-screen" v-bind:style="{ backgroundImage: 'url(' + image1 + ')' }">
                     <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
                     <div class="w-full px-24 z-10">
                         <!-- <h1 class="text-5xl font-bold text-left tracking-wide">Hokusai</h1> -->
@@ -14,7 +14,7 @@
                 </div>
             </slide>
             <slide>
-                 <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center" style="height: 50.6vw;" v-bind:style="{ backgroundImage: 'url(' + image2 + ')' }">
+                 <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center h-screen" v-bind:style="{ backgroundImage: 'url(' + image2 + ')' }">
                     <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
                     <div class="w-full px-24 z-10">
                         <img src="@/assets/img/logo-nobg.svg">
@@ -24,7 +24,7 @@
                 </div>
             </slide>
             <slide>
-                 <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center" style="height: 50.6vw;" v-bind:style="{ backgroundImage: 'url(' + image3 + ')' }">
+                 <div class="lg:flex w-full bg-no-repeat bg-cover relative items-center h-screen" v-bind:style="{ backgroundImage: 'url(' + image3 + ')' }">
                     <div class="absolute bg-black opacity-60 inset-0 z-0"></div>
                     <div class="w-full px-24 z-10">
                         <img src="@/assets/img/logo-nobg.svg">
@@ -42,7 +42,6 @@
             </div>
             <div class="w-full py-6 z-20 content-center">
                 <img class="m-auto my-16 w-96" src="@/assets/img/logo-symb-nobg.svg">
-                <!-- <h1 class="my-6 text-6xl">{ logo }</h1> -->
                 <transition 
                     mode="out-in"
                     enter-active-class="animate__animated animate__fadeInLeft"
