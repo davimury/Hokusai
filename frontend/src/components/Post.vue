@@ -5,41 +5,27 @@
     <div class="flex items-center px-4 py-3">
       <img
         class="h-8 w-8 rounded-full"
-        src="https://picsum.photos/id/1027/150/150"
+        :src="postData.profile_picture"
       />
       <div class="ml-3 ">
         <span class="text-sm font-semibold antialiased block leading-tight"
-          >8fact</span
+          >{{postData.username}}</span
         >
       </div>
     </div>
     <div>
       <carousel
+        v-if="postData.postType == 1"
         :per-page="1"
         :mouse-drag="true"
         :centerMode="true"
         :paginationPosition="'bottom'"
         :paginationActiveColor="'#8B5CF6'"
       >
-        <slide class="m-auto">
-          <img src="https://picsum.photos/id/244/900/900" />
+        <slide v-for="(slide, index) in postData.slides" :key="slide[index]" class="m-auto">
+          <img :src="slide" />
         </slide>
-        <slide class="m-auto">
-          <img
-            src="https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-          />
-        </slide>
-        <slide class="m-auto">
-          <img
-            src="https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80"
-          />
-        </slide>
-        <slide class="m-auto">
-          Slide 4 Content
-        </slide>
-        <slide class="m-auto">
-          Slide 5 Content
-        </slide>
+        
       </carousel>
     </div>
     <div class="flex items-center justify-between mx-3 -mt-7 text-purple-500">
@@ -74,11 +60,11 @@
 
     <div class="mx-4 mt-2 mb-4">
       <span class="text-sm font-semibold antialiased leading-tight"
-        >8fact
+        >{{postData.username}}
       </span>
       <span
         ><span class="text-sm antialiased leading-tight"
-          >Testando essa legenda carai 2</span
+          >{{postData.description}}</span
         ></span
       >
     </div>
@@ -90,6 +76,7 @@ import { VueFeedbackReaction, VueReactionEmoji } from "vue-feedback-reaction";
 import { directive as onClickaway } from "vue-clickaway";
 export default {
   name: "Post",
+  props: ['postData'],
   components: {
     VueFeedbackReaction,
     VueReactionEmoji,
