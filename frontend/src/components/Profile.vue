@@ -1,57 +1,107 @@
 <template>
-  <div class="grid grid-cols-12 items-center text-white">
-    <div class="col-span-3">
-      1
-    </div>
-    <div class="col-span-6">
-      
-        <div class="bg-lightgray border border-lightgray rounded-lg block w-5/6">
-          <div class="flex items-center px-4 py-3">
-            <img class="h-8 w-8 rounded-full" src="https://picsum.photos/id/1027/150/150"/>
-            <div class="ml-3 ">
-              <span class="text-sm font-semibold antialiased block leading-tight">8fact</span>
-              
-            </div>
-          </div>
-          <div>
-            <img src="https://picsum.photos/id/244/900/900"/>
-          </div>
-          <div class="flex items-center justify-between mx-4 mt-3 mb-2">
-            <div class="flex gap-5">
-              <svg fill="#8B5CF6" height="24" viewBox="0 0 48 48" width="24"><path d="M34.6 6.1c5.7 0 10.4 5.2 10.4 11.5 0 6.8-5.9 11-11.5 16S25 41.3 24 41.9c-1.1-.7-4.7-4-9.5-8.3-5.7-5-11.5-9.2-11.5-16C3 11.3 7.7 6.1 13.4 6.1c4.2 0 6.5 2 8.1 4.3 1.9 2.6 2.2 3.9 2.5 3.9.3 0 .6-1.3 2.5-3.9 1.6-2.3 3.9-4.3 8.1-4.3m0-3c-4.5 0-7.9 1.8-10.6 5.6-2.7-3.7-6.1-5.5-10.6-5.5C6 3.1 0 9.6 0 17.6c0 7.3 5.4 12 10.6 16.5.6.5 1.3 1.1 1.9 1.7l2.3 2c4.4 3.9 6.6 5.9 7.6 6.5.5.3 1.1.5 1.6.5.6 0 1.1-.2 1.6-.5 1-.6 2.8-2.2 7.8-6.8l2-1.8c.7-.6 1.3-1.2 2-1.7C42.7 29.6 48 25 48 17.6c0-8-6-14.5-13.4-14.5z"></path></svg>
-              <svg fill="#8B5CF6" height="24" viewBox="0 0 48 48" width="24"><path d="M47.8 3.8c-.3-.5-.8-.8-1.3-.8h-45C.9 3.1.3 3.5.1 4S0 5.2.4 5.7l15.9 15.6 5.5 22.6c.1.6.6 1 1.2 1.1h.2c.5 0 1-.3 1.3-.7l23.2-39c.4-.4.4-1 .1-1.5zM5.2 6.1h35.5L18 18.7 5.2 6.1zm18.7 33.6l-4.4-18.4L42.4 8.6 23.9 39.7z"></path></svg>
-            </div>
-            <div class="flex">
-              <svg fill="#8B5CF6" height="24" viewBox="0 0 48 48" width="24"><path d="M43.5 48c-.4 0-.8-.2-1.1-.4L24 29 5.6 47.6c-.4.4-1.1.6-1.6.3-.6-.2-1-.8-1-1.4v-45C3 .7 3.7 0 4.5 0h39c.8 0 1.5.7 1.5 1.5v45c0 .6-.4 1.2-.9 1.4-.2.1-.4.1-.6.1zM24 26c.8 0 1.6.3 2.2.9l15.8 16V3H6v39.9l15.8-16c.6-.6 1.4-.9 2.2-.9z"></path></svg>
-            </div>
-          </div>
-          <div class="font-semibold text-sm mx-4 mt-2 mb-4">92,372 likes</div>
-          <div class="mx-4 mt-2 mb-4">
-            <span class="text-sm font-semibold antialiased leading-tight">8fact </span>
-            <span><span class="text-sm antialiased leading-tight">Testando essa legenda carai</span></span>
-          </div>
+  <main class="h-screen overflow-x-hidden">
+    <Header></Header>
+    <div
+      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto"
+    >
+      <div class="relative h-40">
+        <img
+          class="absolute h-full w-full object-cover"
+          src="https://images.unsplash.com/photo-1448932133140-b4045783ed9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+        />
+      </div>
+      <div
+        class="relative shadow mx-auto h-24 w-24 -my-12 border-purple-500 rounded-full overflow-hidden border-4"
+      >
+        <img
+          class="object-cover w-full h-full"
+          src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=80"
+        />
+      </div>
+      <div class="mt-16">
+        <h1 class="text-lg text-center font-semibold">Cassie</h1>
+        <div class="flex justify-center text-gray-500">
+          <p class="mx-1"><span class="font-medium">35</span> Posts</p>
+          <p class="mx-1"><span class="font-medium">150</span> Conexões</p>
         </div>
-      
+        <div class="flex justify-center text-gray-500">
+          <button class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2">Conectar</button>
+          <button class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2">Mensagem</button>
+        </div>
+      </div>
+      <div class="mt-6 pt-3 flex flex-wrap mx-6 border-t border-lightergray">
+        <div
+          class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default"
+        >
+          User experience
+        </div>
+        <div
+          class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default"
+        >
+          VueJS
+        </div>
+        <div
+          class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default"
+        >
+          TailwindCSS
+        </div>
+        <div
+          class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default"
+        >
+          React
+        </div>
+        <div
+          class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default"
+        >
+          Painting
+        </div>
+      </div>
     </div>
-    <div class="col-span-3">
-      3
+    <div
+      class="pb-6 mt-6 w-full justify-center items-center overflow-hidden md:max-w-4xl mx-auto grid grid-cols-3 gap-1"
+    >
+      <div class="bg-lightgray post-card cursor-pointer">
+        <img
+          src="https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+          alt=""
+          class="media"
+        />
+      </div>
+      <div class="bg-lightgray post-card cursor-pointer">
+        <img
+          src="https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80"
+          alt=""
+          class="media"
+        />
+      </div>
+      <div class="bg-lightgray post-card"></div>
+      <div class="bg-lightgray post-card"></div>
+      <div class="bg-lightgray post-card"></div>
+      <div class="bg-lightgray post-card"></div>
+      <div class="bg-lightgray post-card"></div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
+import Header from "./Header.vue";
 export default {
-    name: 'Feed',
-    created() {
-        fetch('http://localhost:8000/v1/feed/',
-        {
-            method: 'get',
-            credentials: 'include',
-        }).then(response => {
-            console.log(response)
-        })
-    }
+  name: "Feed",
+  components: {
+    Header,
+  },
 };
 </script>
 
-<style></style>
+<style>
+.post-card {
+  aspect-ratio: 1/1;
+  position: relative;
+  width: 100%;
+}
+.media {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+</style>

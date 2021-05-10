@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Feed from '@/components/Feed'
 import Login from '@/components/Login'
+import Profile from '@/components/Profile'
 import store from '../store';
 
 Vue.use(Router)
@@ -17,9 +18,9 @@ const router = new Router({
       meta: {requiresAuth: true},
     },
     {
-      path: '/p/:username',
+      path: '/profile',
       name: 'Profile',
-      component: Feed,
+      component: Profile,
       meta: { guest: true },
     },
     {
