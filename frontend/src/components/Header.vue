@@ -1,11 +1,13 @@
 <template>
-  <header class="sticky w-screen z-20 bg-darkgray">
-    <nav class="w-full p-2 px-24 flex justify-between">
+  <header class="sticky w-screen z-20 bg-darkgray top-0">
+    <nav class="w-full p-2 px-2 md:px-8 flex justify-between">
       <div>
-        <img class="w-60 inline-block" src="@/assets/img/logo-symb-nobg.svg" />
+        <a href="/">
+          <img class="w-48 md:w-60 inline-block" src="@/assets/img/logo-symb-nobg.svg" />
+        </a>
       </div>
 
-      <div class="relative inline-block w-1/4">
+      <div class="hidden md:block relative inline-block w-1/3">
         <span
           class="material-icons md-18 text-gray-400 cursor-pointer select-none absolute inset-y-0 right-3 mt-2 flex items-center"
           >search</span
@@ -16,7 +18,7 @@
         />
       </div>
 
-      <div class="text-center text-purple-500 flex">
+      <div class="hidden sm:flex text-center text-purple-500">
         <div class="mr-5 hover:text-purple-600 text-3xl relative">
           <button>
             <span class="material-icons">
@@ -32,10 +34,10 @@
           <a href="#"><span class="material-icons"> queue </span></a>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
-          <a href="#"><span class="material-icons"> question_answer </span></a>
+          <a href="/chat"><span class="material-icons"> question_answer </span></a>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
-          <a href="#"><span class="material-icons"> bookmark </span></a>
+          <a href="/saved"><span class="material-icons"> bookmark </span></a>
         </div>
 
         <div class="relative">
@@ -63,7 +65,7 @@
             >
               <ul class="text-left">
                 <li class="my-2 hover:text-gray-300">
-                  <a href="#" class="px-4 py-2"> Perfil </a>
+                  <a href="/profile" class="px-4 py-2"> Perfil </a>
                 </li>
                 <li class="my-2 hover:text-gray-300">
                   <a href="#" class="px-4 py-2">Configurações</a>

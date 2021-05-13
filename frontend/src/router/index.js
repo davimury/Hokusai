@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Feed from '@/components/Feed'
 import Login from '@/components/Login'
 import Profile from '@/components/Profile'
+import SavedPosts from '@/components/SavedPosts'
 import store from '../store';
 
 Vue.use(Router)
@@ -28,7 +29,13 @@ const router = new Router({
       name: 'Login',
       component: Login,
       meta: { guest: true },
-    }
+    },
+    {
+      path: '/saved',
+      name: 'SavedPosts',
+      component: SavedPosts,
+      meta: { guest: true },
+    },
   ],
 })
 

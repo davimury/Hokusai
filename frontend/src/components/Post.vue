@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div class="mx-4 mt-2 mb-4">
+    <div class="mx-4 mt-2 mb-4 text-left">
       <span class="text-sm font-semibold antialiased leading-tight"
         >{{postData.username}}
       </span>
