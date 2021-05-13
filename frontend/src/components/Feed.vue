@@ -1,8 +1,7 @@
 <template>
-  <div class="overflow-hidden">
+  <div>
     <Header></Header>
-
-    <div class="flex justify-between container h-screen w-full mx-auto">
+    <main class="flex justify-between container h-screen w-full mx-auto">
       <div class="w-1/3 h-screen hidden lg:block"></div>
 
       <div
@@ -21,7 +20,7 @@
       <div id="right-bar" class="w-1/3 md:2/4 hidden lg:block h-screen p-3">
         <SuggestedConection></SuggestedConection>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 

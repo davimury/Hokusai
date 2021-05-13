@@ -1,5 +1,5 @@
 <template>
-  <main class="h-screen overflow-x-hidden">
+  <main class="h-screen">
     <Header></Header>
     <div
       class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto"

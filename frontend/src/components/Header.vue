@@ -1,6 +1,6 @@
 <template>
-  <header class="sticky w-screen z-20 bg-darkgray top-0">
-    <nav class="w-full p-2 px-2 md:px-8 flex justify-between">
+  <header class="sticky z-20 bg-darkgray top-0 p-2 px-2 md:px-8">
+    <nav class=" flex justify-between">
       <div>
         <a href="/">
           <img class="w-48 md:w-60 inline-block" src="@/assets/img/logo-symb-nobg.svg" />

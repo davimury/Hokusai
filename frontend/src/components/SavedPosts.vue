@@ -1,12 +1,12 @@
 <template>
-  <div class="overflow-x-hidden">
+  <div>
     <Header></Header>
-    <main class="container h-screen w-full mx-auto">
-      <div class="pb-1 mt-6 w-full overflow-hidden md:max-w-4xl mx-auto">
+    <main>
+      <div class=" pb-1 mt-6 w-full md:max-w-4xl mx-auto">
         <h1 class="text-white text-3xl font-bold">Posts Salvos</h1>
       </div>
       <div
-        class="pb-6 mt-6 w-full justify-center items-center overflow-hidden md:max-w-4xl mx-auto grid grid-cols-3 gap-3"
+        class="pb-6 mt-6 w-full justify-center items-center md:max-w-4xl mx-auto grid grid-cols-3 gap-3"
       >
         <div
           v-for="post in posts"
@@ -53,6 +53,7 @@
         </div>
       </transition>
     </main>
+    
     <Footer></Footer>
   </div>
 </template>

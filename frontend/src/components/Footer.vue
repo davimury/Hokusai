@@ -46,7 +46,7 @@
           <div
             v-if="show"
             id="dropBodyMenu"
-            class=" block absolute right-0 w-40 mt-2 py-2 bg-lightgray border border-lightgray rounded-lg text-white"
+            class=" block absolute right-0 bottom-10 w-40 mt-2 py-2 bg-lightgray border border-lightgray rounded-lg text-white"
           >
             <ul class="text-left">
               <li class="my-2 hover:text-gray-300">
