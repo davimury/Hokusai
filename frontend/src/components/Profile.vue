@@ -93,18 +93,21 @@
         </div>
       </div>
     </transition>
+    <Footer></Footer>
   </main>
 </template>
 
 <script>
 import Header from "./Header.vue";
 import Post from "./Post.vue";
+import Footer from "./Footer.vue";
 import { directive as onClickaway } from "vue-clickaway";
 export default {
   name: "Profile",
   components: {
     Header,
     Post,
+    Footer
   },
   directives: {
     onClickaway: onClickaway,

@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky z-20 bg-darkgray top-0 p-2 px-2 md:px-8">
+  <header class="sticky z-20 bg-darkgray top-0 p-2 px-2 ">
     <nav class=" flex justify-between">
       <div>
         <a href="/">
@@ -7,7 +7,7 @@
         </a>
       </div>
 
-      <div class="hidden md:block relative inline-block w-1/3">
+      <div class="hidden sm:block relative inline-block w-1/3">
         <span
           class="material-icons md-18 text-gray-400 cursor-pointer select-none absolute inset-y-0 right-3 mt-2 flex items-center"
           >search</span

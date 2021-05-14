@@ -21,6 +21,7 @@
         <SuggestedConection></SuggestedConection>
       </div>
     </main>
+    <Footer></Footer>
   </div>
 </template>
 
@@ -28,13 +29,16 @@
 import { directive as onClickaway } from "vue-clickaway";
 import Post from "./Post.vue";
 import SuggestedConection from "./SuggestedConection.vue";
+
 import Header from "./Header.vue";
+import Footer from "./Footer.vue";
 export default {
   name: "Feed",
   components: {
     Post,
     SuggestedConection,
     Header,
+    Footer
   },
   directives: {
     onClickaway: onClickaway,
