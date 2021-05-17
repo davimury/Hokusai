@@ -29,6 +29,7 @@
 import { directive as onClickaway } from "vue-clickaway";
 import Post from "./Post.vue";
 import SuggestedConection from "./SuggestedConection.vue";
+import axios from 'axios';
 
 import Header from "./Header.vue";
 import Footer from "./Footer.vue";
@@ -45,29 +46,13 @@ export default {
   },
   data() {
     return {
-      postsData: [
-        {
-          username: "Chris",
-          description: "Isso é uma descrição",
-          postType: 1,
-          profile_picture: "https://picsum.photos/id/1027/150/150",
-          slides: [
-            "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          ],
-        },
-        {
-          username: "Be",
-          description: "Isso é uma descrição",
-          postType: 1,
-          profile_picture: "https://picsum.photos/id/1027/150/150",
-          slides: [
-            "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          ],
-        },
-      ],
+      postsData: []
     };
+  },
+  mounted () {
+    axios.get('/v1/posts/').then( response => {
+      this.postsData = response['data']
+    })
   },
   methods: {
     logout: async function () {

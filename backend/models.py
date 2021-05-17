@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 class Login(BaseModel):
     email: str
@@ -9,3 +10,9 @@ class Registro(BaseModel):
     username: str
     email: str
     password: str
+
+
+class Posts(BaseModel):
+    body: str
+    images: List[str]
+    reactions: List[int]

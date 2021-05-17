@@ -52,7 +52,7 @@
         />
       </div>
       <div class="flex ">
-        <span class="material-icons text-3xl">
+        <span v-on:click="createPost()" class="material-icons text-3xl">
           bookmark_border
         </span>
       </div>
@@ -74,6 +74,7 @@
 <script>
 import { VueFeedbackReaction, VueReactionEmoji } from "vue-feedback-reaction";
 import { directive as onClickaway } from "vue-clickaway";
+import axios from 'axios';
 export default {
   name: "Post",
   props: ['postData'],
@@ -95,6 +96,15 @@ export default {
     awayEmojis: function() {
       this.isEmojis = false;
     },
+    createPost: function(){
+      axios.post('/v1/new_post/', JSON.stringify({
+        "body": "NOVO",
+        "images": [
+          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80"],
+        "reactions": [0,0,0,0,0]
+      }))
+    }
   },
 };
 </script>
