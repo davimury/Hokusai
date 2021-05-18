@@ -4,6 +4,7 @@ import Feed from '@/components/Feed'
 import Login from '@/components/Login'
 import Profile from '@/components/Profile'
 import SavedPosts from '@/components/SavedPosts'
+import CreatePost from '@/components/CreatePost'
 import Chat from '@/components/Chat'
 import store from '../store';
 
@@ -41,6 +42,12 @@ const router = new Router({
       path: '/chat',
       name: 'Chat',
       component: Chat,
+      meta: { guest: true },
+    },
+    {
+      path: '/create-post',
+      name: 'CreatePost',
+      component: CreatePost,
       meta: { guest: true },
     },
   ],
