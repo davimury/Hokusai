@@ -11,6 +11,18 @@ import './assets/css/main.css'
 axios.defaults.withCredentials = true
 axios.defaults.baseURL = 'http://localhost:8000/';
 
+axios.interceptors.response.use(undefined, function (error) {
+  if (error) {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+  
+        originalRequest._retry = true;
+        store.dispatch('LogOut')
+        return router.push('/login')
+    }
+  }
+})
+
 Vue.use(Vuelidate)
 Vue.use(VueCarousel)
 Vue.config.productionTip = false

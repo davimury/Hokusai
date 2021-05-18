@@ -2,11 +2,13 @@ import axios from 'axios';
 
 const state = {
     user: null,
+    firstlogin: true,
 };
 
 const getters = {
     isAuthenticated: state => !!state.user,    
     StateUser: state => state.user,
+    isFirstLogin: state => state.firstlogin,
 };
 
 const actions = {
