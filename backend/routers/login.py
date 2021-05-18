@@ -1,4 +1,5 @@
-from fastapi import APIRouter, FastAPI, Request, HTTPException, Depends
+import shutil
+from fastapi import APIRouter, FastAPI, Request, HTTPException, Depends, UploadFile, File
 from fastapi_login import LoginManager
 from starlette.responses import Response, RedirectResponse, JSONResponse, HTMLResponse
 from db.db_main import Session, USERS
@@ -56,12 +57,15 @@ async def auth_login(formData: Login):
     if flag:
         return response
 
-@router.get("/v1/is_loged", response_class=HTMLResponse)
-async def auth_is_loged(user=Depends(manager)):
-    return JSONResponse(content=True)
+@router.get("/v1/upload_image", response_class=HTMLResponse)
+async def upload_image(image: UploadFile = File(...)):
+    with open("destination.png", "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+    
+    return {"filename": image.filename}
 
 @router.delete("/v1/logout", response_class=HTMLResponse)
-async def auth_logout(res: Response, user=Depends(manager)):
+async def auth_logout(res: Response):
     try:
         res.delete_cookie("rsa_cookie")
 
