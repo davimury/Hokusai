@@ -15,7 +15,7 @@
       </div>
     </main>
     
-    <my-upload field="img"
+    <!-- <my-upload field="img"
       @crop-success="cropSuccess"
       @crop-upload-success="cropUploadSuccess"
       @crop-upload-fail="cropUploadFail"
@@ -26,7 +26,7 @@
       url="/upload"
       :params="params"
       :headers="headers"
-      img-format="png"></my-upload>
+      img-format="png"></my-upload> -->
     <img :src="imgDataUrl">
     <div
         class="fixed z-10 inset-0 overflow-y-auto"
@@ -74,7 +74,7 @@
 
 <script>
 import { directive as onClickaway } from "vue-clickaway";
-import myUpload from 'vue-image-crop-upload/upload-2.vue';
+//import myUpload from 'vue-image-crop-upload/upload-2.vue';
 import Post from "./Post.vue";
 import SuggestedConection from "./SuggestedConection.vue";
 import axios from 'axios';
@@ -88,7 +88,6 @@ export default {
     SuggestedConection,
     Header,
     Footer,
-    'my-upload': myUpload
   },
   directives: {
     onClickaway: onClickaway,

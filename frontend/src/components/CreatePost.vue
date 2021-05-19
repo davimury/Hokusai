@@ -27,8 +27,26 @@
           </div>
         </div>
 
-        <div v-if="postType == 0" class="mx-auto w-full">
-          <form action="" class="w-3/6">
+        <div
+          v-if="postType == 0"
+          class="mx-auto w-full flex flex-col items-center w-full md:w-4/6"
+        >
+          <button
+            class="focus:outline-none self-start mb-6"
+            @click="choosePostType(2)"
+          >
+            <span
+              class="material-icons text-purple-500 hover:text-purple-600 text-3xl"
+            >
+              arrow_back
+            </span>
+          </button>
+
+          <h1 class="text-white font-bold text-xl mb-5 self-start">
+            Nova Postagem
+          </h1>
+
+          <form action="" class="w-full">
             <vue-dropzone
               ref="myVueDropzone"
               id="dropzone"
@@ -40,7 +58,7 @@
             >
             <textarea
               class="bg-lightergray rounded-lg w-full focus:outline-none p-2 text-white"
-              name="description"
+              name="description" maxlength="1000"
             ></textarea>
 
             <button
@@ -51,7 +69,25 @@
           </form>
         </div>
 
-        <div v-if="postType == 1" class="mx-auto w-full"></div>
+        <div
+          v-if="postType == 1"
+          class="mx-auto w-full flex flex-col items-center w-full md:w-4/6"
+        >
+          <button
+            class="focus:outline-none self-start mb-6"
+            @click="choosePostType(2)"
+          >
+            <span
+              class="material-icons text-purple-500 hover:text-purple-600 text-3xl"
+            >
+              arrow_back
+            </span>
+          </button>
+
+          <h1 class="text-white font-bold text-xl mb-5 self-start">
+            Nova Postagem
+          </h1>
+        </div>
       </div>
     </main>
     <Footer></Footer>
@@ -62,7 +98,7 @@
 import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import vue2Dropzone from "vue2-dropzone";
-import "vue2-dropzone/dist/vue2Dropzone.min.css";
+import "../assets/css/dropzone.css";
 export default {
   name: "CreatePost",
   components: {
@@ -74,9 +110,19 @@ export default {
     return {
       dropzoneOptions: {
         url: "https://httpbin.org/post",
-        thumbnailWidth: 150,
+        thumbnailWidth: 140,
         maxFilesize: 0.5,
         headers: { "My-Awesome-Header": "header value" },
+        dictDefaultMessage:
+          "<span class='material-icons text-purple-500 text-4xl'>cloud_upload</span>",
+        addRemoveLinks: true,
+        dictFileTooBig:
+          "Arquivo muito grande. Tamanho máximo {{maxFilesize}}MB",
+        dictInvalidFileType: "Arquivo inválido",
+        dictRemoveFile: "<span class='material-icons'>close</span>",
+        dictMaxFilesExceeded:
+          "Número máximo de arquivos permitidos: {{maxFiles}}",
+        maxFiles: 10,
       },
       postType: 2,
     };
@@ -92,5 +138,26 @@ export default {
 <style scoped>
 main {
   height: 90vh;
+}
+.vue-dropzone {
+  color: white;
+  background: none;
+  border-radius: 0.5rem;
+  max-height: 24rem;
+  border-style: dashed;
+  border-color: #656565;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.vue-dropzone::-webkit-scrollbar {
+  width: 10px; /* width of the entire scrollbar */
+}
+.vue-dropzone::-webkit-scrollbar-track {
+  background: none; /* color of the tracking area */
+}
+.vue-dropzone::-webkit-scrollbar-thumb {
+  background-color: #3b3b3b;
+  border-radius: 0.5rem;
 }
 </style>
