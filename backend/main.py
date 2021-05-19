@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 from starlette.responses import Response, RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from routers import login, register, feed, posts
+from routers import login, register, feed, posts, tags
 
 app = FastAPI()
 
@@ -9,6 +9,7 @@ app.include_router(login.router)
 app.include_router(register.router)
 app.include_router(feed.router)
 app.include_router(posts.router)
+app.include_router(tags.router)
 
 login.manager.useRequest(app)
 

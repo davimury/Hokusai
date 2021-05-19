@@ -11,8 +11,11 @@ class Registro(BaseModel):
     email: str
     password: str
 
-
 class Posts(BaseModel):
     body: str
     images: List[str]
     reactions: List[int]
+
+
+class Tags(BaseModel):
+    tag_name: str
