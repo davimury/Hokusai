@@ -18,7 +18,7 @@ async def get_all_tags():
         session.commit()
         
         for tag in tags:
-            tags_arr.append(tag.tag_name)
+            tags_arr.append({'id': tag.tag_id, 'name': tag.tag_name})
         
     except:
         flag = False

@@ -48,10 +48,10 @@
                   <input type="file" @change="croppie"/>
                   <!-- <button @click="crop">Crop</button> -->
                 </tab-content>
-                <tab-content title="Escolha categorias que você tem interesse">
+                <tab-content title="Escolha categorias que você tem interesse" :before-change="send_data">
                     <div class="flex flex-wrap content-center justify-center">
-                      <div class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default" v-for="tag in recomendedTags" :key="tag" @click="select(tag, $event)">
-                        {{tag}}
+                      <div class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default" v-for="tag in recomendedTags" :key="tag.id" :id="tag.id" @click="select(tag, $event)">
+                        {{tag.name}}
                       </div>
                     </div>
                 </tab-content>
@@ -105,6 +105,7 @@ export default {
 			imgDataUrl: '', // the datebase64 url of created image
       postsData: [],
       recomendedTags: [],
+      selectedTags: [],
     };
   },
   computed : {
@@ -124,7 +125,8 @@ export default {
       this.$router.push("/login");
     },
     select: async function (tag, e) {
-      console.log(tag)
+      this.selectedTags.push(tag.id)
+      console.log(this.selectedTags)
       console.log(e.target)
     },
     awayModalPost: function () {
@@ -170,9 +172,16 @@ export default {
             })
           }
         });
-     })
-      
-      }
+     })  
+    },
+    send_data() {
+      return new Promise((resolve, reject) => {
+        axios.post('/v1/tags/').then( response => {
+          this.recomendedTags = response['data']
+          resolve(true)
+        })
+      });
+    }
   },
   'pt-pt': {
 		hint: 'Clique ou arraste o arquivo para a janela para carregar',
