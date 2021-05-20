@@ -3,6 +3,8 @@ import App from './App'
 import router from './router'
 import Vuelidate from 'vuelidate'
 import VueCarousel from 'vue-carousel'
+import VueCroppie from 'vue-croppie';
+import 'croppie/croppie.css' // import the croppie css manually
 import store from './store';
 import axios from 'axios';
 import CKEditor from '@ckeditor/ckeditor5-vue2';
@@ -26,6 +28,7 @@ axios.interceptors.response.use(undefined, function (error) {
 Vue.use( CKEditor );
 Vue.use(Vuelidate)
 Vue.use(VueCarousel)
+Vue.use(VueCroppie);
 Vue.config.productionTip = false
 
 new Vue({

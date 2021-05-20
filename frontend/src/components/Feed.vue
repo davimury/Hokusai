@@ -35,35 +35,30 @@
         aria-modal="true"
         v-if="isFirstLogin"
       >
-      <div
-          class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
-        >
-          <div
-            class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
-            aria-hidden="true"
-          ></div>
-
-          <span
-            class="hidden sm:inline-block sm:align-middle sm:h-screen"
-            aria-hidden="true"
-            >&#8203;</span
-          >
-          <div
-            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-            v-on-clickaway="awayModalPost"
-          >
-          <div
-            class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white"
-          >
-          <div
-            class="relative shadow mx-auto h-24 w-24 border-purple-500 rounded-full overflow-hidden border-4"
-          >
-            <img
-              class="object-cover w-full h-full"
-              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=80"
-            />
-          </div>
-          <a class="btn" @click="toggleShow">set avatar</a>
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+          <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+          <div class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" v-on-clickaway="awayModalPost">
+              <div class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white">
+  
+              
+              <form-wizard>
+                <tab-content title="Escolha sua foto de perfil" :before-change="crop">
+                  <vue-croppie ref="croppieRef" :enableExif="true" :enableOrientation="true" :boundary="{ width: 300, height: 300}" :viewport="{ width:250, height:250, 'type':'circle' }"></vue-croppie>
+                  <input type="file" @change="croppie"/>
+                  <!-- <button @click="crop">Crop</button> -->
+                </tab-content>
+                <tab-content title="Escolha categorias que você tem interesse">
+                    <div class="flex flex-wrap content-center justify-center">
+                      <div class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default" v-for="tag in recomendedTags" :key="tag" @click="select(tag, $event)">
+                        {{tag}}
+                      </div>
+                    </div>
+                </tab-content>
+                <tab-content title="Last step">
+                  Yuhuuu! This seems pretty damn simple
+                </tab-content>
+              </form-wizard>
           </div>
         </div>
     </div>
@@ -74,8 +69,9 @@
 
 <script>
 import { directive as onClickaway } from "vue-clickaway";
-//import myUpload from 'vue-image-crop-upload/upload-2.vue';
 import Post from "./Post.vue";
+import {FormWizard, TabContent} from 'vue-form-wizard'
+import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import SuggestedConection from "./SuggestedConection.vue";
 import axios from 'axios';
 
@@ -88,12 +84,16 @@ export default {
     SuggestedConection,
     Header,
     Footer,
+    FormWizard,
+    TabContent
   },
   directives: {
     onClickaway: onClickaway,
   },
   data() {
     return {
+      croppieImage: '',
+      cropped: null,
       show: false,
 			params: {
 				token: '123456798',
@@ -103,7 +103,8 @@ export default {
 				smail: '*_~'
 			},
 			imgDataUrl: '', // the datebase64 url of created image
-      postsData: []
+      postsData: [],
+      recomendedTags: [],
     };
   },
   computed : {
@@ -122,6 +123,10 @@ export default {
       await this.$store.dispatch("LogOut");
       this.$router.push("/login");
     },
+    select: async function (tag, e) {
+      console.log(tag)
+      console.log(e.target)
+    },
     awayModalPost: function () {
       this.showModalPost = false;
     },
@@ -130,35 +135,44 @@ export default {
       console.log(id);
       //usar id para receber do backend o post relacionado
     },
-    toggleShow() {
-				this.show = !this.show;
-			},
-    cropSuccess(imgDataUrl, field){
-				console.log('-------- crop success --------');
-				this.imgDataUrl = imgDataUrl;
-			},
-			/**
-			 * upload success
-			 *
-			 * [param] jsonData  server api return data, already json encode
-			 * [param] field
-			 */
-			cropUploadSuccess(jsonData, field){
-				console.log('-------- upload success --------');
-				console.log(jsonData);
-				console.log('field: ' + field);
-			},
-			/**
-			 * upload fail
-			 *
-			 * [param] status    server api return error status, like 500
-			 * [param] field
-			 */
-			cropUploadFail(status, field){
-				console.log('-------- upload fail --------');
-				console.log(status);
-				console.log('field: ' + field);
-			}
+    croppie (e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+
+      var reader = new FileReader();
+      reader.onload = e => {
+        this.$refs.croppieRef.bind({
+          url: e.target.result
+        });
+      };
+
+    reader.readAsDataURL(files[0]);
+    },
+    crop() {
+      // Options can be updated.
+      // Current option will return a base64 version of the uploaded image with a size of 600px X 450px.
+      
+      return new Promise((resolve, reject) => {
+       let options = {
+        type: 'base64',
+        size: { width: 250, height: 250 },
+        format: 'jpeg'
+      };
+      this.$refs.croppieRef.result(options, output => {
+        this.cropped = this.croppieImage = output;
+          if (this.croppieImage == 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAD6APoDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJ/4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/9k=')
+            resolve(false)
+          else{
+            console.log(this.croppieImage);
+            axios.get('/v1/tags/').then( response => {
+              this.recomendedTags = response['data']
+              resolve(true)
+            })
+          }
+        });
+     })
+      
+      }
   },
   'pt-pt': {
 		hint: 'Clique ou arraste o arquivo para a janela para carregar',
