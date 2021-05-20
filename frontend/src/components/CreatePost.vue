@@ -5,6 +5,7 @@
       <div
         class="h-full md:max-w-4xl mx-auto bg-lightgray rounded-lg flex content-center p-5"
       >
+      
         <div v-if="postType == 2" class="mx-auto my-auto text-center">
           <h1 class="text-white font-bold text-xl mb-5">
             Comece a criar uma nova postagem:
@@ -58,7 +59,8 @@
             >
             <textarea
               class="bg-lightergray rounded-lg w-full focus:outline-none p-2 text-white"
-              name="description" maxlength="1000"
+              name="description"
+              maxlength="1000"
             ></textarea>
 
             <button
@@ -87,6 +89,16 @@
           <h1 class="text-white font-bold text-xl mb-5 self-start">
             Nova Postagem
           </h1>
+          <ckeditor
+            :editor="editor"
+            v-model="editorData"
+            :config="editorConfig"
+          ></ckeditor>
+          <button
+            class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
+          >
+            Publicar
+          </button>
         </div>
       </div>
     </main>
@@ -99,6 +111,16 @@ import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import vue2Dropzone from "vue2-dropzone";
 import "../assets/css/dropzone.css";
+
+import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
+
+import EssentialsPlugin from "@ckeditor/ckeditor5-essentials/src/essentials";
+import BoldPlugin from "@ckeditor/ckeditor5-basic-styles/src/bold";
+import ItalicPlugin from "@ckeditor/ckeditor5-basic-styles/src/italic";
+import AlignmentPlugin from "@ckeditor/ckeditor5-alignment/src/alignment";
+import ParagraphPlugin from "@ckeditor/ckeditor5-paragraph/src/paragraph";
+import HeadingPlugin from "@ckeditor/ckeditor5-heading/src/heading";
+import BlockQuotePlugin from "@ckeditor/ckeditor5-block-quote/src/blockquote";
 export default {
   name: "CreatePost",
   components: {
@@ -125,6 +147,35 @@ export default {
         maxFiles: 10,
       },
       postType: 2,
+
+      editor: ClassicEditor,
+      editorData: "<p>Digite seu texto aqui.</p>",
+      editorConfig: {
+        plugins: [
+          EssentialsPlugin,
+          BoldPlugin,
+          ItalicPlugin,
+          ParagraphPlugin,
+          AlignmentPlugin,
+          HeadingPlugin,
+          BlockQuotePlugin,
+        ],
+
+        toolbar: {
+          items: [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "|",
+            "alignment",
+            "blockQuote",
+            "|",
+            "undo",
+            "redo",
+          ],
+        },
+      },
     };
   },
   methods: {
@@ -159,5 +210,16 @@ main {
 .vue-dropzone::-webkit-scrollbar-thumb {
   background-color: #3b3b3b;
   border-radius: 0.5rem;
+}
+</style>
+<style>
+.ck.ck-editor {
+  width: 100%;
+  max-width: 100%;
+  max-height: 85%;
+  overflow: auto;
+}
+h1{
+  font-size: 3rem;
 }
 </style>

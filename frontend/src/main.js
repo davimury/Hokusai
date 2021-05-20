@@ -5,6 +5,7 @@ import Vuelidate from 'vuelidate'
 import VueCarousel from 'vue-carousel'
 import store from './store';
 import axios from 'axios';
+import CKEditor from '@ckeditor/ckeditor5-vue2';
 import 'animate.css'
 import './assets/css/main.css'
 
@@ -22,7 +23,7 @@ axios.interceptors.response.use(undefined, function (error) {
     }
   }
 })
-
+Vue.use( CKEditor );
 Vue.use(Vuelidate)
 Vue.use(VueCarousel)
 Vue.config.productionTip = false
