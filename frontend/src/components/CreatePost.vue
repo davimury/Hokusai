@@ -5,101 +5,117 @@
       <div
         class="h-full md:max-w-4xl mx-auto bg-lightgray rounded-lg flex content-center p-5"
       >
-      
-        <div v-if="postType == 2" class="mx-auto my-auto text-center">
-          <h1 class="text-white font-bold text-xl mb-5">
-            Comece a criar uma nova postagem:
-          </h1>
-          <div class="text-purple-500">
-            <button class="focus:outline-none" @click="choosePostType(0)">
-              <span
-                class="material-icons p-6 bg-purple-500 bg-opacity-10 hover:bg-opacity-100 hover:text-white rounded-full m-3 mb-1 transition duration-200 ease-in-out"
-                >collections</span
-              >
-              <h2 class="text-white font-medium cursor-default">Imagens</h2>
-            </button>
-            <button class="focus:outline-none" @click="choosePostType(1)">
-              <span
-                class="material-icons p-6 bg-purple-500 bg-opacity-10 hover:bg-opacity-100 hover:text-white rounded-full m-3 mb-1 transition duration-200 ease-in-out"
-                >format_size</span
-              >
-              <h2 class="text-white font-medium cursor-default">Texto</h2>
-            </button>
-          </div>
-        </div>
-
-        <div
-          v-if="postType == 0"
-          class="mx-auto w-full flex flex-col items-center w-full md:w-4/6"
+        <transition
+          mode="out-in"
+          enter-active-class="animate__animated animate__fadeIn"
+          leave-active-class="animate__animated animate__fadeOut"
         >
-          <button
-            class="focus:outline-none self-start mb-6"
-            @click="choosePostType(2)"
+          <div v-if="postType == 2" class="mx-auto my-auto text-center">
+            <h1 class="text-white font-bold text-xl mb-5">
+              Comece a criar uma nova postagem:
+            </h1>
+            <div class="text-purple-500">
+              <button class="focus:outline-none" @click="choosePostType(0)">
+                <span
+                  class="material-icons p-6 bg-purple-500 bg-opacity-10 hover:bg-opacity-100 hover:text-white rounded-full m-3 mb-1 transition duration-200 ease-in-out"
+                  >collections</span
+                >
+                <h2 class="text-white font-medium cursor-default">Imagens</h2>
+              </button>
+              <button class="focus:outline-none" @click="choosePostType(1)">
+                <span
+                  class="material-icons p-6 bg-purple-500 bg-opacity-10 hover:bg-opacity-100 hover:text-white rounded-full m-3 mb-1 transition duration-200 ease-in-out"
+                  >format_size</span
+                >
+                <h2 class="text-white font-medium cursor-default">Texto</h2>
+              </button>
+            </div>
+          </div>
+        </transition>
+
+        <transition
+          mode="out-in"
+          enter-active-class="animate__animated animate__fadeIn"
+          leave-active-class="animate__animated animate__fadeOut"
+        >
+          <div
+            v-if="postType == 0"
+            class="mx-auto w-full flex flex-col items-center w-full md:w-4/6"
           >
-            <span
-              class="material-icons text-purple-500 hover:text-purple-600 text-3xl"
-            >
-              arrow_back
-            </span>
-          </button>
-
-          <h1 class="text-white font-bold text-xl mb-5 self-start">
-            Nova Postagem
-          </h1>
-
-          <form action="" class="w-full">
-            <vue-dropzone
-              ref="myVueDropzone"
-              id="dropzone"
-              :options="dropzoneOptions"
-              class="mb-5"
-            ></vue-dropzone>
-            <label class="text-white font-medium" for="description"
-              >Descrição</label
-            >
-            <textarea
-              class="bg-lightergray rounded-lg w-full focus:outline-none p-2 text-white"
-              name="description"
-              maxlength="1000"
-            ></textarea>
-
             <button
-              class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2"
+              class="focus:outline-none self-start mb-6"
+              @click="choosePostType(2)"
+            >
+              <span
+                class="material-icons text-purple-500 hover:text-purple-600 text-3xl"
+              >
+                arrow_back
+              </span>
+            </button>
+
+            <h1 class="text-white font-bold text-xl mb-5 self-start">
+              Nova Postagem
+            </h1>
+
+            <form action="" class="w-full">
+              <vue-dropzone
+                ref="myVueDropzone"
+                id="dropzone"
+                :options="dropzoneOptions"
+                class="mb-5"
+              ></vue-dropzone>
+              <label class="text-white font-medium" for="description"
+                >Descrição</label
+              >
+              <textarea
+                class="bg-lightergray rounded-lg w-full focus:outline-none p-2 text-white"
+                name="description"
+                maxlength="1000"
+              ></textarea>
+
+              <button
+                class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2"
+              >
+                Publicar
+              </button>
+            </form>
+          </div>
+        </transition>
+        <transition
+          mode="out-in"
+          enter-active-class="animate__animated animate__fadeIn"
+          leave-active-class="animate__animated animate__fadeOut"
+        >
+          <div
+            v-if="postType == 1"
+            class="mx-auto w-full flex flex-col items-center w-full md:w-4/6"
+          >
+            <button
+              class="focus:outline-none self-start mb-6"
+              @click="choosePostType(2)"
+            >
+              <span
+                class="material-icons text-purple-500 hover:text-purple-600 text-3xl"
+              >
+                arrow_back
+              </span>
+            </button>
+
+            <h1 class="text-white font-bold text-xl mb-5 self-start">
+              Nova Postagem
+            </h1>
+            <ckeditor
+              :editor="editor"
+              v-model="editorData"
+              :config="editorConfig"
+            ></ckeditor>
+            <button
+              class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
             >
               Publicar
             </button>
-          </form>
-        </div>
-
-        <div
-          v-if="postType == 1"
-          class="mx-auto w-full flex flex-col items-center w-full md:w-4/6"
-        >
-          <button
-            class="focus:outline-none self-start mb-6"
-            @click="choosePostType(2)"
-          >
-            <span
-              class="material-icons text-purple-500 hover:text-purple-600 text-3xl"
-            >
-              arrow_back
-            </span>
-          </button>
-
-          <h1 class="text-white font-bold text-xl mb-5 self-start">
-            Nova Postagem
-          </h1>
-          <ckeditor
-            :editor="editor"
-            v-model="editorData"
-            :config="editorConfig"
-          ></ckeditor>
-          <button
-            class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
-          >
-            Publicar
-          </button>
-        </div>
+          </div>
+        </transition>
       </div>
     </main>
     <Footer></Footer>
@@ -180,7 +196,10 @@ export default {
   },
   methods: {
     choosePostType: function (type) {
-      this.postType = type;
+      this.postType = null;
+      setTimeout(() => {
+        this.postType = type;
+      }, 200);
     },
   },
 };
@@ -211,6 +230,10 @@ main {
   background-color: #3b3b3b;
   border-radius: 0.5rem;
 }
+
+.animate__animated {
+  --animate-duration: .1s;
+}
 </style>
 <style>
 .ck.ck-editor {
@@ -219,7 +242,9 @@ main {
   max-height: 85%;
   overflow: auto;
 }
-h1{
+h1 {
   font-size: 3rem;
 }
+
+
 </style>

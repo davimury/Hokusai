@@ -31,7 +31,7 @@
           </button>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
-          <a href="#"><span class="material-icons"> queue </span></a>
+          <a href="/create-post"><span class="material-icons"> queue </span></a>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
           <a href="/chat"><span class="material-icons"> question_answer </span></a>
