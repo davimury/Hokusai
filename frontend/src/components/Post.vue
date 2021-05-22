@@ -109,4 +109,8 @@ export default {
 button.VueCarousel-dot:focus {
     outline: none;
 }
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
 </style>

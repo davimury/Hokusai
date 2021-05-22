@@ -14,7 +14,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from passlib.context import CryptContext
 
-db_string = "postgresql://postgres:root@localhost:5432/hokusai" # Conexão com um banco de dados Postgresql
+db_string = "postgresql://postgres:1234@localhost:5432/hokusai" # Conexão com um banco de dados Postgresql
 db_engine = create_engine(db_string)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto") # bcrypt para fazer a cryptografia da senha

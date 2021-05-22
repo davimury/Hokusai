@@ -9,21 +9,33 @@
           class="absolute h-full w-full object-cover"
           src="https://images.unsplash.com/photo-1448932133140-b4045783ed9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
         />
-        <button class="focus:outline-none ">
-          <span class="material-icons z-50 absolute bottom-2 right-3 text-purple-500 hover:purple-600 "> photo_camera </span>
+        <button class="focus:outline-none">
+          <span
+            class="material-icons z-50 absolute bottom-2 right-3 text-purple-500 hover:purple-600"
+          >
+            photo_camera
+          </span>
         </button>
       </div>
       <div
-        class="relative shadow mx-auto h-24 w-24 -my-12 border-purple-500 rounded-full overflow-hidden border-4"
+        class="relative shadow mx-auto h-24 w-24 -my-12 border-lightgray rounded-full overflow-hidden border-4"
       >
         <img
           class="object-cover w-full h-full"
           src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=80"
         />
-
+        
       </div>
-
-      <div class="mt-16">
+      <div class="flex justify-center ml-11 mt-6 relative">
+      <button class="focus:outline-none text-center bg-lightgray rounded-full p-1">
+          <span
+            class="material-icons text-purple-500 hover:purple-600"
+          >
+            photo_camera
+          </span>
+        </button>
+      </div>
+      <div class="mt-4">
         <h1 class="text-lg text-center font-semibold">Cassie</h1>
         <div class="flex justify-center text-gray-500">
           <p class="mx-1"><span class="font-medium">35</span> Posts</p>

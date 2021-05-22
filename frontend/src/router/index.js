@@ -6,6 +6,7 @@ import Profile from '@/components/Profile'
 import SavedPosts from '@/components/SavedPosts'
 import CreatePost from '@/components/CreatePost'
 import Chat from '@/components/Chat'
+import SearchConnection from '@/components/SearchConnection'
 import store from '../store';
 
 Vue.use(Router)
@@ -48,6 +49,12 @@ const router = new Router({
       path: '/create-post',
       name: 'CreatePost',
       component: CreatePost,
+      meta: { guest: true },
+    },
+    {
+      path: '/search',
+      name: 'SearchConnection',
+      component: SearchConnection,
       meta: { guest: true },
     },
   ],
