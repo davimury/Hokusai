@@ -10,12 +10,12 @@ router = APIRouter()
 async def fisrt_login(profile: Profile, user=Depends(manager)):
 
     """ Update profile image """
-    """ imgdata = base64.b64decode(profile.image.replace("data:image/jpeg;base64,", ""))
+    imgdata = base64.b64decode(profile.image.replace("data:image/jpeg;base64,", ""))
     filename = str(user.user_id) + ".jpg"
 
     with open('../frontend/src/assets/img/profile/' + filename, "wb") as f:
         f.write(imgdata)
-    """
+   
     """ Update user favorite tags """
 
     try:

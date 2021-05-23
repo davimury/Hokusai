@@ -47,7 +47,7 @@ async def auth_login(formData: Login):
         elif not user.verify_password(formData.password):
             raise HTTPException(status_code=401, detail="senha incorreta")
         
-        response = JSONResponse(content={'id': user.user_id, 'user': user.username, 'email': user.email})
+        response = JSONResponse(content={'id': user.user_id, 'user': user.username, 'email': user.email, 'name': user.name})
         access_token = manager.create_access_token(data={"sub": formData.email}, expires=timedelta(hours=6))
         manager.set_cookie(response, access_token)
         

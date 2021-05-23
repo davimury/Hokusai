@@ -1,10 +1,10 @@
 <template>
   <div class="bg-lightgray border border-lightgray rounded-lg block w-full text-white lg:float-left max-w-xs">
         <div class="flex items-center px-4 py-3">
-            <img class="h-12 w-12 rounded-full" src="https://picsum.photos/id/1027/150/150"/>
+            <img class="h-12 w-12 rounded-full" :src="getProfilePic"/>
             <div class="ml-3">
-              <span class="text-sm font-semibold antialiased block leading-tight">8fact</span>
-              <h2>Christiano Mafra</h2>
+              <span class="text-sm font-semibold antialiased block leading-tight">{{this.username}}</span>
+              <h2>{{this.name}}</h2>
             </div>
           </div>
           <div class="flex flex-col px-4 py-3 ">
@@ -49,7 +49,27 @@
 
 <script>
 export default {
-  name: 'SuggestedConection'
+  name: 'SuggestedConection',
+  data() {
+    return {
+      name: this.$store.getters.Username,
+      username: this.$store.getters.Name,
+    }
+  },
+  computed : {
+    getProfilePic() { 
+      return require('@/assets/img/profile/' + this.$store.getters.UserId + '.jpg')
+    },
+    /* getUsername(){
+      this.name = this.$store.getters.Username
+    },
+    getName(){
+      this.username = this.$store.getters.Name
+    } */
+  },
+  methods: {
+    
+  }
 }
 </script>
 

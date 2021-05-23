@@ -19,3 +19,7 @@ class Posts(BaseModel):
 
 class Tags(BaseModel):
     tag_name: str
+    
+class Profile(BaseModel):
+    image: str
+    tags: List[int] = []

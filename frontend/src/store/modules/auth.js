@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const state = {
     id: null,
+    name: null,
     user: null,
     email: null,
     isFirstLogin: false,
@@ -11,7 +12,11 @@ const getters = {
     isAuthenticated: state => !!state.user,    
     StateUser: state => state.user,
     isFirstLogin: state => state.isFirstLogin,
+    Name: state => state.name,
+    Email: state => state.email,
     UserId: state => state.id,
+    Username: state => state.user,
+    
 };
 
 const actions = {
@@ -39,6 +44,7 @@ const actions = {
 const mutations = {
     setUser(state, user){
         state.id = user['id'];
+        state.name = user['name'];
         state.user = user['user'];
         state.email = user['email'];
     },
@@ -46,6 +52,7 @@ const mutations = {
     LogOut(state){
         state.id = null
         state.user = null
+        state.name = null
         state.email = null
         state.isFirstLogin = null
     },

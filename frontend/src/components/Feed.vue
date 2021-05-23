@@ -14,19 +14,6 @@
         <SuggestedConection></SuggestedConection>
       </div>
     </main>
-    
-    <!-- <my-upload field="img"
-      @crop-success="cropSuccess"
-      @crop-upload-success="cropUploadSuccess"
-      @crop-upload-fail="cropUploadFail"
-      v-model="show"
-      :width="100"
-      :height="100"
-      langType="pt-br"
-      url="/upload"
-      :params="params"
-      :headers="headers"
-      img-format="png"></my-upload> -->
     <img :src="imgDataUrl">
     <div
         class="fixed z-10 inset-0 overflow-y-auto"
