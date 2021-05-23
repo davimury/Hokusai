@@ -172,7 +172,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(["Register", "LogIn"]),
+        ...mapActions(["Register", "LogIn", "setFirstLogin"]),
         register: async function () {
             try {
                 await this.Register(JSON.stringify(
@@ -183,6 +183,8 @@ export default {
                         password: this.passwordSignUp
                     }
                 ));
+                await this.setFirstLogin(true);
+
                 this.$router.push('/');
                 this.showError = false
             } catch (error) {

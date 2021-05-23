@@ -49,7 +49,7 @@
           >
             <img
               class="h-8 w-8 rounded-full"
-              src="https://picsum.photos/id/1027/150/150"
+              :src="getProfilePic"
             />
           </button>
           <!-- Dropdown Body -->
@@ -89,6 +89,11 @@ export default {
   name: "Header",
   directives: {
     onClickaway: onClickaway,
+  },
+  computed : {
+    getProfilePic() { 
+      return require('@/assets/img/profile/' + this.$store.getters.UserId + '.jpg')
+    }
   },
   data() {
     return {

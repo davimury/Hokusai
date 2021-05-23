@@ -27,11 +27,6 @@ posts_tags = Table('posts_tags', Base.metadata,
     Column('tag_id', Integer, ForeignKey('tags.tag_id'))
 )
 
-user_tags = Table('user_tags', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.user_id')),
-    Column('tag_id', Integer, ForeignKey('tags.tag_id'))
-)
-
 class USERS(Base):
     __tablename__ = "users"
     user_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -39,9 +34,8 @@ class USERS(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password_hash = Column(String)
-    img_path = Column(String)
+    tags = Column(ARRAY(Integer)) # tags que o user tem interesse
 
-    tags = relationship("TAGS", secondary=user_tags, lazy='subquery') # tags que o user tem interesse
     posts = relationship("POSTS", back_populates="author", lazy='subquery')
 
     @property

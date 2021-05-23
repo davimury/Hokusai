@@ -39,24 +39,18 @@
           <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
           <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
           <div class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" v-on-clickaway="awayModalPost">
-              <div class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white">
-  
-              
-              <form-wizard>
+            <div class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white">
+              <form-wizard @on-complete="onComplete">
                 <tab-content title="Escolha sua foto de perfil" :before-change="crop">
                   <vue-croppie ref="croppieRef" :enableExif="true" :enableOrientation="true" :boundary="{ width: 300, height: 300}" :viewport="{ width:250, height:250, 'type':'circle' }"></vue-croppie>
                   <input type="file" @change="croppie"/>
-                  <!-- <button @click="crop">Crop</button> -->
                 </tab-content>
-                <tab-content title="Escolha categorias que você tem interesse" :before-change="send_data">
+                <tab-content title="Escolha categorias que você tem interesse">
                     <div class="flex flex-wrap content-center justify-center">
                       <div class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default" v-for="tag in recomendedTags" :key="tag.id" :id="tag.id" @click="select(tag, $event)">
                         {{tag.name}}
                       </div>
                     </div>
-                </tab-content>
-                <tab-content title="Last step">
-                  Yuhuuu! This seems pretty damn simple
                 </tab-content>
               </form-wizard>
           </div>
@@ -77,6 +71,8 @@ import axios from 'axios';
 
 import Header from "./Header.vue";
 import Footer from "./Footer.vue";
+import { mapActions } from "vuex";
+
 export default {
   name: "Feed",
   components: {
@@ -120,6 +116,7 @@ export default {
     })
   },
   methods: {
+    ...mapActions(["setFirstLogin"]),
     logout: async function () {
       await this.$store.dispatch("LogOut");
       this.$router.push("/login");
@@ -127,7 +124,7 @@ export default {
     select: async function (tag, e) {
       this.selectedTags.push(tag.id)
       console.log(this.selectedTags)
-      console.log(e.target)
+      e.target.classList.add("bg-purple-500");
     },
     awayModalPost: function () {
       this.showModalPost = false;
@@ -174,13 +171,17 @@ export default {
         });
      })  
     },
-    send_data() {
-      return new Promise((resolve, reject) => {
-        axios.post('/v1/tags/').then( response => {
-          this.recomendedTags = response['data']
-          resolve(true)
-        })
+    onComplete: async function() {
+      axios({
+        method: 'post',
+        url: '/v1/first_login',
+        data: {
+          'image': this.croppieImage,
+          'tags': this.selectedTags
+        }
       });
+
+      await this.setFirstLogin(false);
     }
   },
   'pt-pt': {

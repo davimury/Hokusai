@@ -1,33 +1,37 @@
-from fastapi import APIRouter, Request, HTTPException, Depends
-from starlette.responses import Response
+import base64
+from fastapi import APIRouter, Depends
 from db.db_main import Session, USERS
-from datetime import datetime
-from sqlalchemy import exc
-from models import Posts
 from routers.login import manager
+from models import Profile
 
 router = APIRouter()
 
+@router.post("/v1/first_login")
+async def fisrt_login(profile: Profile, user=Depends(manager)):
 
-@router.post("/v1/update/profile")
-async def update_profile(image: str, user=Depends(manager)):
+    """ Update profile image """
+    """ imgdata = base64.b64decode(profile.image.replace("data:image/jpeg;base64,", ""))
+    filename = str(user.user_id) + ".jpg"
+
+    with open('../frontend/src/assets/img/profile/' + filename, "wb") as f:
+        f.write(imgdata)
+    """
+    """ Update user favorite tags """
+
     try:
-        flag = True
         session = Session()
 
-        imgdata = base64.b64decode(usuario_dict["user_photo"].replace("data:image/png;base64,", ""))
-
-        filename = user.user_id + ".png"
-        with open("static/img/users/" + filename, "wb") as f:
-            f.write(imgdata)
-
+        user.tags = profile.tags
+        
+        session.merge(user)
         session.commit()
-        
-        for tag in tags:
-            tags_arr.append({'id': tag.tag_id, 'name': tag.tag_name})
-        
-    except:
-        flag = False
+    except Exception as e:
+        print(e)
+        #raise HTTPException(status_code=409, detail="email ou username já cadastrados!")
     
     finally:
         session.close()
+        
+    """ if flag: 
+        return Response(status_code=200) """
+    
