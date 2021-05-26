@@ -16,6 +16,9 @@ login.manager.useRequest(app)
 
 origins = [
     "http://localhost:8080", # frontend
+    "http://localhost:8081", # frontend
+    "https://localhost:8080", # frontend
+    "https://localhost:8081", # frontend
 ]
 
 app.add_middleware(

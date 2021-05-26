@@ -31,7 +31,7 @@
           </button>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
-          <a href="/create-post"><span class="material-icons"> queue </span></a>
+          <button v-on:click="showModal = !showModal"><span class="material-icons"> queue </span></button>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
           <a href="/chat"><span class="material-icons"> question_answer </span></a>
@@ -39,7 +39,25 @@
         <div class="mr-5 hover:text-purple-600 text-3xl">
           <a href="/saved"><span class="material-icons"> bookmark </span></a>
         </div>
-
+        
+        <div
+            class="fixed z-10 inset-0 overflow-y-auto"
+            aria-labelledby="modal-title"
+            role="dialog"
+            aria-modal="true"
+            v-if="showModal"
+          >
+          <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+              <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+              <div class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" v-on-clickaway="modalAway">
+                <div class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white">
+                  <CreatePost></CreatePost>
+              </div>
+            </div>
+        </div>
+        </div>
+        
         <div class="relative">
           <button
             v-on-clickaway="away"
@@ -85,24 +103,36 @@
 
 <script>
 import { directive as onClickaway } from "vue-clickaway";
+import CreatePost from "./CreatePost.vue";
 export default {
   name: "Header",
+  components: {
+    CreatePost
+  },
   directives: {
     onClickaway: onClickaway,
   },
   computed : {
     getProfilePic() { 
       return require('@/assets/img/profile/' + this.$store.getters.UserId + '.jpg')
+    },
+    openModal(){
+      console.log('teste')
+      this.modalState = true
     }
   },
   data() {
     return {
       show: false,
+      showModal: false,
     };
   },
   methods: {
     away: function () {
       this.show = false;
+    },
+    modalAway: function () {
+      this.showModal = false;
     },
   },
 };

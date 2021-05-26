@@ -8,6 +8,11 @@
         id="posts"
         class="w-full md:w-4/5 lg:w-3/5 h-screen overflow-y-scroll p-3"
       >
+      <Post
+        v-for="postData in postsData"
+        :key="postData.username"
+        :postData="postData"
+      ></Post>
       </div>
 
       <div id="right-bar" class="w-1/3 md:2/4 hidden lg:block h-screen p-3">

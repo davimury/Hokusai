@@ -22,7 +22,7 @@
       >
         <img
           class="object-cover w-full h-full"
-          src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=80"
+          :src="getProfilePic"
         />
         
       </div>
@@ -36,9 +36,9 @@
         </button>
       </div>
       <div class="mt-4">
-        <h1 class="text-lg text-center font-semibold">Cassie</h1>
+        <h1 class="text-lg text-center font-semibold">{{this.name}}</h1>
         <div class="flex justify-center text-gray-500">
-          <p class="mx-1"><span class="font-medium">35</span> Posts</p>
+          <p class="mx-1"><span class="font-medium">{{this.postsCounter}}</span> Posts</p>
           <p class="mx-1"><span class="font-medium">150</span> Conexões</p>
         </div>
         <div class="flex justify-center text-gray-500">
@@ -69,11 +69,11 @@
     >
       <div
         v-for="post in posts"
-        :key="post.postId"
+        :key="post.post_id"
         class="bg-lightgray post-card cursor-pointer"
-        @click="showPost(post.postId)"
+        @click="showPost(post)"
       >
-        <img :src="post.firstSlide" alt="" class="media" />
+        <img :src="require(`@/assets/img/posts/${post.slides[0]}`)" alt="" class="media" />
       </div>
     </div>
 
@@ -106,7 +106,7 @@
             class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
             v-on-clickaway="awayModalPost"
           >
-            <Post :postData="postData"></Post>
+            <Post :postData="this.postData"></Post>
           </div>
         </div>
       </div>
@@ -120,6 +120,8 @@ import Header from "./Header.vue";
 import Post from "./Post.vue";
 import Footer from "./Footer.vue";
 import { directive as onClickaway } from "vue-clickaway";
+import axios from 'axios';
+
 export default {
   name: "Profile",
   components: {
@@ -132,44 +134,44 @@ export default {
   },
   data() {
     return {
-      postData: {
-        username: "Chris",
-        description: "Isso é uma descrição",
-        postType: 1,
-        profile_picture: "https://picsum.photos/id/1027/150/150",
-        slides: [
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-        ],
-      },
+      posts: [],
+      name: this.$store.getters.Username,
+      username: this.$store.getters.Name,
+      userTags: [],
+      postData: {},
+      postsCounter: 0,
+      profilePic: '',
       showModalPost: false,
-      posts: [
-        {
-          postId: 1,
-          firstSlide:
-            "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        },
-      ],
-      userTags: ["Manga", "Anime", "Alguma coisa"],
     };
+  },
+  mounted() {
+    axios.get(`/v1/user/${this.$store.getters.UserId}/posts/`).then( response => {
+      this.posts = response['data']
+    })
+    axios.get(`/v1/user/tags`).then( response => {
+      this.userTags = response['data']
+    })
+    axios.get(`/v1/user/posts/count`).then( response => {
+      this.postsCounter = response['data']
+    })
+  },
+  computed : {
+    getProfilePic() { 
+      return require('@/assets/img/profile/' + this.$store.getters.UserId + '.jpg')
+    }
   },
   methods: {
     awayModalPost: function () {
       this.showModalPost = false;
     },
-    showPost: function (id) {
+    showPost: function (post) {
+      console.log(post)
+      this.postData = post;
       this.showModalPost = true;
-      console.log(id);
-      //usar id para receber do backend o post relacionado
     },
+    getPostData: function(){
+      return this.postData;
+    }
   },
 };
 </script>

@@ -1,7 +1,4 @@
 <template>
-  <div>
-    <Header></Header>
-    <main class="w-full mt-4">
       <div
         class="h-full md:max-w-4xl mx-auto bg-lightgray rounded-lg flex content-center p-5"
       >
@@ -56,29 +53,40 @@
             <h1 class="text-white font-bold text-xl mb-5 self-start">
               Nova Postagem
             </h1>
+              <form @submit.prevent="publish" class="w-full">
+                <vue-dropzone
+                  ref="myVueDropzone"
+                  id="dropzone"
+                  :options="dropzoneOptions"
+                  class="mb-5"
+                  @vdropzone-complete="afterComplete"
+                ></vue-dropzone>
+                <label class="text-white font-medium" for="description"
+                  >Descrição</label
+                >
+                <textarea
+                  class="bg-lightergray rounded-lg w-full focus:outline-none p-2 text-white"
+                  name="description"
+                  maxlength="1000"
+                ></textarea>
 
-            <form action="" class="w-full">
-              <vue-dropzone
-                ref="myVueDropzone"
-                id="dropzone"
-                :options="dropzoneOptions"
-                class="mb-5"
-              ></vue-dropzone>
-              <label class="text-white font-medium" for="description"
-                >Descrição</label
-              >
-              <textarea
-                class="bg-lightergray rounded-lg w-full focus:outline-none p-2 text-white"
-                name="description"
-                maxlength="1000"
-              ></textarea>
-
-              <button
-                class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2"
-              >
-                Publicar
-              </button>
-            </form>
+                <label class="text-white font-medium" for="tags">Tags</label>
+                <v-select 
+                  taggable 
+                  multiple 
+                  push-tags 
+                  name="tags" 
+                  label="name"
+                  @option:created="addTag"
+                  @input="appendTag"
+                  :options="recomendedTags"
+                ></v-select>
+                <button
+                  class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2"
+                >
+                  Publicar
+                </button>
+              </form>
           </div>
         </transition>
         <transition
@@ -111,15 +119,13 @@
             ></ckeditor>
             <button
               class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
+              @click="publish()"
             >
               Publicar
             </button>
           </div>
         </transition>
       </div>
-    </main>
-    <Footer></Footer>
-  </div>
 </template>
 
 <script>
@@ -127,7 +133,9 @@ import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import vue2Dropzone from "vue2-dropzone";
 import "../assets/css/dropzone.css";
-
+import vSelect from 'vue-select'
+import axios from 'axios';
+import 'vue-select/dist/vue-select.css';
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
 
 import EssentialsPlugin from "@ckeditor/ckeditor5-essentials/src/essentials";
@@ -142,6 +150,7 @@ export default {
   components: {
     Header,
     Footer,
+    vSelect,
     vueDropzone: vue2Dropzone,
   },
   data: function () {
@@ -163,7 +172,9 @@ export default {
         maxFiles: 10,
       },
       postType: 2,
-
+      recomendedTags: [],
+      selectedTags: [],
+      imageArray: [],
       editor: ClassicEditor,
       editorData: "<p>Digite seu texto aqui.</p>",
       editorConfig: {
@@ -194,6 +205,12 @@ export default {
       },
     };
   },
+  mounted (){
+    axios.get('/v1/tags/').then( response => {
+      console.log(response)
+      this.recomendedTags = response['data']
+    })
+  },
   methods: {
     choosePostType: function (type) {
       this.postType = null;
@@ -201,6 +218,41 @@ export default {
         this.postType = type;
       }, 200);
     },
+    afterComplete(file) {
+      if( file.status === 'success')
+        this.imageArray.push(file.dataURL)
+    },
+    publish(e){
+      if (this.imageArray.length > 0){
+        console.log(this.imageArray)
+        axios.post(
+          "/v1/new_post",
+          JSON.stringify({
+            body: e.target.elements.description.value,
+            type: this.postType,
+            images: this.imageArray,
+            tags: this.selectedTags,
+          })
+        );
+      }
+    },
+    addTag(e){
+      console.log(e)
+      axios({
+        method: 'post',
+        url: '/v1/add_tag',
+        data: {
+          "name": e['name'],
+        }
+      }).then(res => {
+        e['id'] = res['data']['id']
+      });
+    },
+    appendTag(e){
+      this.selectedTags = e;
+      //this.selectedTags.forEach(function(v){ delete v.name });
+      console.log(this.selectedTags)
+    }
   },
 };
 </script>

@@ -1,9 +1,10 @@
 <template>
+
   <div
     class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white"
   >
     <div class="flex items-center px-4 py-3">
-      <img class="h-8 w-8 rounded-full" :src="postData.profile_picture" />
+      <img class="h-8 w-8 rounded-full" :src="require('@/assets/img/profile/' + postData.author_id + '.jpg')" />
       <div class="ml-3">
         <span class="text-sm font-semibold antialiased block leading-tight">{{
           postData.username
@@ -12,7 +13,7 @@
     </div>
     <div>
       <carousel
-        v-if="postData.postType == 1"
+        v-if="postData.postType == 0"
         :per-page="1"
         :mouse-drag="true"
         :centerMode="true"
@@ -24,11 +25,11 @@
           :key="slide[index]"
           class="m-auto"
         >
-          <img :src="slide" />
+          <img :src="require(`@/assets/img/posts/${slide}`)" />
         </slide>
       </carousel>
     </div>
-    <div class="flex items-center justify-between mx-3 -mt-7 text-purple-500">
+    <div class="flex items-center justify-between mx-3 text-purple-500">
       <div class="relative flex -ml-2">
         <button class="focus:outline-none">
           <span class="material-icons text-gray-500 hover:text-purple-500" :class="vote == 0 ? 'text-purple-500':''" @click="chooseVote(0)">
@@ -45,7 +46,7 @@
       <div class="relative flex">
         <button class="focus:outline-none" @click="isSaved()">
           <span  class="material-icons text-3xl" >
-            {{bookmarkType}}
+            <!-- {{bookmarkType}} -->
           </span>
         </button>
       </div>
@@ -74,6 +75,9 @@ export default {
   directives: {
     onClickaway: onClickaway,
   },
+  mounted(){
+    console.log(this.postData)
+  },
   data: () => ({
     isActive: true,
     isDisabled: false,
@@ -87,20 +91,7 @@ export default {
     },
     chooseVote: function(voteType){
       this.vote = voteType
-    },
-    createPost: function () {
-      axios.post(
-        "/v1/new_post/",
-        JSON.stringify({
-          body: "NOVO",
-          images: [
-            "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          ],
-          reactions: [0, 0, 0, 0, 0],
-        })
-      );
-    },
+    }
   },
 };
 </script>
