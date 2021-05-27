@@ -26,11 +26,6 @@
           class="m-auto"
         >
           <img :src="slide" />
-          <span
-          v-if="currentPage == index"
-            class="fixed z-50 block right-2 top-2 bg-black p-1 px-2 rounded-lg text-sm font-semibold bg-opacity-50"
-            >{{index + 1}}/{{ postData.slides.length }}</span
-          >
         </slide>
       </carousel>
     </div>
@@ -38,7 +33,7 @@
       <div class="relative flex -ml-2">
         <button class="focus:outline-none">
           <span
-            class="material-icons  text-gray-500 hover:text-purple-500"
+            class="material-icons text-gray-500 hover:text-purple-500"
             :class="vote == 0 ? 'text-purple-500' : ''"
             @click="chooseVote(0)"
           >
@@ -55,6 +50,13 @@
             arrow_downward
           </span>
         </button>
+      </div>
+      <div class="relative flex ">
+
+      <span
+        class=" bg-black p-1 px-2 rounded-lg text-sm font-semibold bg-opacity-50 text-white"
+        >{{ currentPage + 1 }}/{{ postData.slides.length }}</span
+      >
       </div>
       <div class="relative flex">
         <button class="focus:outline-none" @click="isSaved()">
@@ -93,10 +95,12 @@ export default {
     isDisabled: false,
     vote: null,
     bookmarkType: "bookmark_border",
-    currentPage: 0
+    currentPage: 0,
   }),
   methods: {
-    pageChange(i){ this.currentPage = i },
+    pageChange(i) {
+      this.currentPage = i;
+    },
     isSaved: function () {
       this.bookmarkType == "bookmark_border"
         ? (this.bookmarkType = "bookmark")
