@@ -1,4 +1,5 @@
 import base64
+import random
 from fastapi import APIRouter, Depends
 from db.db_main import Session, USERS, POSTS, TAGS
 from routers.login import manager
@@ -90,4 +91,41 @@ async def get_user_info(username: str):
         'posts_count': len(posts_arr),
         'posts': posts_arr,
     }
+    
+@router.get("/v1/user/suggestedUsers")
+async def get_user_info():
+    try:
+        session = Session()
+        count = 0
+        users = session.query(USERS).all()
+        users_arr = []
+
+        while(count < 3):
+            random_user = random.choice(users)
+
+            if len(users_arr) > 0:
+                if any(random_user.user_id in d.values() for d in users_arr):
+                    print(random_user.user_id)
+                else:
+                    users_arr.append({
+                        'user_id': random_user.user_id,
+                        'username': random_user.username,
+                        'name': random_user.name,
+                    })
+                    count = count + 1 
+            else:
+                users_arr.append({
+                    'user_id': random_user.user_id,
+                    'username': random_user.username,
+                    'name': random_user.name,
+                })
+                count = count + 1
+    except Exception as e:
+        print(e)
+        #raise HTTPException(status_code=409, detail="email ou username já cadastrados!")
+    
+    finally:
+        session.close()
+
+    return users_arr
     

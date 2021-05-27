@@ -9,39 +9,20 @@
           </div>
           <div class="flex flex-col px-4 py-3 ">
             <h1 class="mb-5">Sugestões de conexão</h1>
-            
-            <div class="flex items-center mb-3 w-100">
-            <img class="h-10 w-10 rounded-full " src="https://picsum.photos/id/1027/150/150"/>
-            <div class="ml-3 w-full">
-              <span class="text-sm font-semibold antialiased block leading-tight">8fact</span>
-              <h2>Christiano Mafra</h2>
-              
+            <div v-for="user in suggestedConection" :key="user.user_id">
+              <a :href="user.username">
+                <div class="flex items-center mb-3 w-100">
+                  <img class="h-10 w-10 rounded-full " :src="require(`@/assets/img/profile/${user.user_id}.jpg`)"/>
+                  <div class="ml-3 w-full">
+                    <span class="text-sm font-semibold antialiased block leading-tight">{{user.username}}</span>
+                    <h2>{{user.name}}</h2>
+                  </div>
+                  <div class="text-center w-full">
+                    <a class="ml-5 text-purple-500 hover:text-purple-600" href="#">Conectar</a>
+                  </div>
+                </div>
+              </a>
             </div>
-            <div class="text-center w-full">
-              <a class="ml-5 text-purple-500 hover:text-purple-600" href="#">Conectar</a>
-            </div>
-          </div>
-            <div class="flex items-center mb-3 w-100">
-            <img class="h-10 w-10 rounded-full " src="https://picsum.photos/id/1027/150/150"/>
-            <div class="ml-3 w-full">
-              <span class="text-sm font-semibold antialiased block leading-tight">8fact</span>
-              <h2>Christiano Mafra</h2>
-            </div>
-            <div class="text-center w-full">
-              <a class="ml-5 text-purple-500 hover:text-purple-600" href="#">Conectar</a>
-            </div>
-          </div>
-            <div class="flex items-center mb-3 w-100">
-            <img class="h-10 w-10 rounded-full " src="https://picsum.photos/id/1027/150/150"/>
-            <div class="ml-3 w-full">
-              <span class="text-sm font-semibold antialiased block leading-tight">8fact</span>
-              <h2>Christiano Mafra</h2>
-              
-            </div>
-            <div class="text-center w-full">
-              <a class="ml-5 text-purple-500 hover:text-purple-600" href="#">Conectar</a>
-            </div>
-          </div>
           <a href="#" class="mt-2 border-t border-lightergray pt-2">Ver mais</a>
           </div>
       </div>
@@ -50,6 +31,8 @@
 <script>
 export default {
   name: 'SuggestedConection',
+  props: ["suggestedConection"],
+
   data() {
     return {
       name: this.$store.getters.Username,

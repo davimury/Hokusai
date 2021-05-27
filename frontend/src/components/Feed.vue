@@ -47,7 +47,7 @@
       </div>
 
       <div id="right-bar" class="w-1/3 md:2/4 hidden lg:block h-screen p-3">
-        <SuggestedConection></SuggestedConection>
+        <SuggestedConection :suggestedConection="suggestedConection"></SuggestedConection>
       </div>
     </main>
     <img :src="imgDataUrl" />
@@ -156,6 +156,7 @@ export default {
       ],
       recomendedTags: [],
       selectedTags: [],
+      suggestedConection: []
     };
   },
   computed: {
@@ -167,6 +168,9 @@ export default {
   mounted() {
     axios.get("/v1/posts/").then((response) => {
       this.postsData = response["data"];
+    });
+    axios.get("/v1/user/suggestedUsers").then((response) => {
+      this.suggestedConection = response["data"];
     });
   },
   methods: {
