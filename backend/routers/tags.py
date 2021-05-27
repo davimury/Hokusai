@@ -64,8 +64,6 @@ async def get_user_tags(user=Depends(manager)):
 
         for tag in tags:
             tag_arr.append(tag.tag_name)
-
-        print(tag_arr)
     except:
         flag = False
     

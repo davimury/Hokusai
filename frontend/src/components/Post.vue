@@ -24,14 +24,15 @@
         <slide
           v-for="(slide, index) in postData.slides"
           :key="index"
-          class="m-auto"
+          class="m-auto float-right"
         >
-          <img :src="require(`@/assets/img/posts/${slide}`)" />
           <span
           v-if="currentPage == index"
-            class="fixed z-50 block right-2 top-2 bg-black p-1 px-2 rounded-lg text-sm font-semibold bg-opacity-50"
+            class="absolute z-50 block top-2 bg-black p-1 px-2 rounded-lg text-sm font-semibold bg-opacity-50"
             >{{index + 1}}/{{ postData.slides.length }}</span
           >
+          <img :src="require(`@/assets/img/posts/${slide}`)" />
+          
         </slide>
       </carousel>
     </div>
@@ -46,7 +47,7 @@
             arrow_upward
           </span>
         </button>
-        <span class="text-white mx-1">30k</span>
+        <span class="text-white mx-1">{{postData.likes}}</span>
         <button class="focus:outline-none">
           <span
             class="material-icons text-gray-500 hover:text-red-600"
@@ -89,9 +90,6 @@ export default {
   directives: {
     onClickaway: onClickaway,
   },
-  mounted(){
-    console.log(this.postData)
-  },
   data: () => ({
     isActive: true,
     isDisabled: false,
@@ -100,7 +98,7 @@ export default {
     currentPage: 0
   }),
   methods: {
-    pageChange(i){ this.currentPage = i },
+    pageChange(i){  this.currentPage = i;  },
     isSaved: function () {
       this.bookmarkType == "bookmark_border"
         ? (this.bookmarkType = "bookmark")
@@ -108,6 +106,21 @@ export default {
     },
     chooseVote: function(voteType){
       this.vote = voteType
+      if (voteType == 0){
+        axios({
+          method: "post",
+          url: `/v1/post/${this.postData.post_id}/like`,
+        }).then(res => {
+          this.postData.likes = res['data']
+        });
+      } else {
+        axios({
+          method: "post",
+          url: `/v1/post/${this.postData.post_id}/dislike`,
+        }).then(res => {
+          this.postData.likes = res['data']
+        });
+      }
     }
   },
 };

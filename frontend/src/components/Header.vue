@@ -50,9 +50,9 @@
           <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
               <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
               <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-              <div class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" v-on-clickaway="modalAway">
+              <div class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" >
                 <div class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white">
-                  <CreatePost></CreatePost>
+                  <CreatePost @closeModal="showModal = !showModal"></CreatePost>
               </div>
             </div>
         </div>
@@ -83,13 +83,13 @@
             >
               <ul class="text-left">
                 <li class="my-2 hover:text-gray-300">
-                  <a href="/profile" class="px-4 py-2"> Perfil </a>
+                  <a :href="this.username" class="px-4 py-2"> Perfil </a>
                 </li>
                 <li class="my-2 hover:text-gray-300">
                   <a href="#" class="px-4 py-2">Configurações</a>
                 </li>
                 <li class="my-2 hover:text-gray-300">
-                  <a href="#" class="px-4 py-2"> Logout </a>
+                  <a @click="logout" class="px-4 py-2"> Logout </a>
                 </li>
               </ul>
             </div>
@@ -104,6 +104,8 @@
 <script>
 import { directive as onClickaway } from "vue-clickaway";
 import CreatePost from "./CreatePost.vue";
+import { mapActions } from "vuex";
+
 export default {
   name: "Header",
   components: {
@@ -125,14 +127,20 @@ export default {
     return {
       show: false,
       showModal: false,
+      username: this.$store.getters.Username
     };
   },
   methods: {
+    ...mapActions(["LogOut"]),
     away: function () {
       this.show = false;
     },
     modalAway: function () {
       this.showModal = false;
+    },
+    logout: async function () {
+      await this.$store.dispatch("LogOut");
+      this.$router.push("/login");
     },
   },
 };

@@ -22,12 +22,6 @@ const router = new Router({
       meta: {requiresAuth: true},
     },
     {
-      path: '/profile',
-      name: 'Profile',
-      component: Profile,
-      meta: { guest: true },
-    },
-    {
       path: '/login',
       name: 'Login',
       component: Login,
@@ -56,6 +50,12 @@ const router = new Router({
       name: 'SearchConnection',
       component: SearchConnection,
       meta: { guest: true },
+    },
+    {
+      path: '/:username',
+      name: 'Profile',
+      component: Profile,
+      meta: {requiresAuth: false},
     },
   ],
 })

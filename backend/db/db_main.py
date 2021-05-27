@@ -61,7 +61,6 @@ class POSTS(Base):
     post_img = Column(ARRAY(String))
     post_type = Column(Integer)
     likes = Column(Integer)
-    dislikes = Column(Integer)
     created_at = Column(DateTime)
 
     author = relationship("USERS", back_populates="posts", lazy='subquery') # Objeto do sqlalchemy que representa o autor do post

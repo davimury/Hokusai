@@ -27,10 +27,9 @@
           v-if="feedType == 1"
           class="overflow-y-scroll w-full flex flex-col posts h-100"
         >
-        
           <Post
             v-for="postData in postsData"
-            :key="postData.username"
+            :key="postData.post_id"
             :postData="postData"
           ></Post>
         </div>
@@ -41,7 +40,7 @@
         
           <Post
             v-for="postData in postsData"
-            :key="postData.username"
+            :key="postData.post_id"
             :postData="postData"
           ></Post>
         </div>
@@ -171,13 +170,9 @@ export default {
     });
   },
   methods: {
+    ...mapActions(["setFirstLogin"]),
     changeFeedType: function (type) {
       this.feedType = type;
-    },
-    ...mapActions(["setFirstLogin"]),
-    logout: async function () {
-      await this.$store.dispatch("LogOut");
-      this.$router.push("/login");
     },
     select: async function (tag, e) {
       this.selectedTags.push(tag.id);
@@ -223,7 +218,6 @@ export default {
           )
             resolve(false);
           else {
-            console.log(this.croppieImage);
             axios.get("/v1/tags/").then((response) => {
               this.recomendedTags = response["data"];
               resolve(true);

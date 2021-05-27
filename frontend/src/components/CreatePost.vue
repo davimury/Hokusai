@@ -8,6 +8,16 @@
           leave-active-class="animate__animated animate__fadeOut"
         >
           <div v-if="postType == 2" class="mx-auto my-auto text-center">
+            <button
+              class="focus:outline-none self-start mb-6"
+              @click="closeModal()"
+            >
+              <span
+                class="material-icons text-purple-500 hover:text-purple-600 text-3xl"
+              >
+                clear
+              </span>
+            </button>
             <h1 class="text-white font-bold text-xl mb-5">
               Comece a criar uma nova postagem:
             </h1>
@@ -158,7 +168,7 @@ export default {
       dropzoneOptions: {
         url: "https://httpbin.org/post",
         thumbnailWidth: 140,
-        maxFilesize: 0.5,
+        maxFilesize: 5,
         headers: { "My-Awesome-Header": "header value" },
         dictDefaultMessage:
           "<span class='material-icons text-purple-500 text-4xl'>cloud_upload</span>",
@@ -222,10 +232,9 @@ export default {
       if( file.status === 'success')
         this.imageArray.push(file.dataURL)
     },
-    publish(e){
+    publish: async function(e){
       if (this.imageArray.length > 0){
-        console.log(this.imageArray)
-        axios.post(
+        await axios.post(
           "/v1/new_post",
           JSON.stringify({
             body: e.target.elements.description.value,
@@ -234,10 +243,10 @@ export default {
             tags: this.selectedTags,
           })
         );
+        this.$router.go(this.$router.currentRoute)
       }
     },
     addTag(e){
-      console.log(e)
       axios({
         method: 'post',
         url: '/v1/add_tag',
@@ -250,8 +259,9 @@ export default {
     },
     appendTag(e){
       this.selectedTags = e;
-      //this.selectedTags.forEach(function(v){ delete v.name });
-      console.log(this.selectedTags)
+    },
+    closeModal(){
+      this.$emit('closeModal')
     }
   },
 };

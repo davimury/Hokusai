@@ -1,7 +1,7 @@
 import base64
 from fastapi import APIRouter, Request, HTTPException, Depends
 from starlette.responses import Response
-from db.db_main import Session, POSTS, TAGS
+from db.db_main import Session, POSTS, TAGS, USERS
 from datetime import datetime
 from sqlalchemy import exc
 from models import Posts
@@ -37,14 +37,46 @@ def auth_register(user=Depends(manager)):
                 'username': post.author.username,
                 'author_id': post.author.user_id,
                 'postType': post.post_type,
+                'likes': post.likes,
             })
         
         return posts_arr
 
-@router.get("/v1/post/{post_id}")
-def auth_register(post_id: int, user=Depends(manager)):
+@router.get("/v1/post/{username}")
+def auth_register(username: str):
     """ Retorna um post especifico """
-    print(post_id)
+    """ Retorna todos posts de um user """
+    try:
+        flag = True
+        session = Session()
+
+        user_id = session.query(USERS.user_id).filter_by(username = username).first()
+        posts = session.query(POSTS).filter_by(post_author=user_id).order_by(POSTS.post_id.desc()).all()
+        print(posts)
+    except Exception as e:
+        print(e)
+        flag = False
+        #raise HTTPException(status_code=409, detail="email ou username já cadastrados!")
+    
+    finally:
+        session.close()
+        
+    if flag: 
+        posts_arr = []
+
+        for post in posts:
+            posts_arr.append({
+                'post_id': post.post_id,
+                'description': post.post_body,
+                'slides': post.post_img,
+                'username': post.author.username,
+                'name': post.author.name,
+                'author_id': post.author.user_id,
+                'postType': post.post_type,
+                'likes': post.likes,
+            })
+        
+        return posts_arr
 
 @router.post("/v1/new_post/")
 def auth_register(post_data:Posts, user=Depends(manager)):
@@ -57,9 +89,6 @@ def auth_register(post_data:Posts, user=Depends(manager)):
         files = []
         for tag in post_data.tags:
             tags.append(session.query(TAGS).filter_by(tag_id = tag.id).first())
-
-        print(post_data.images[0].find('base64,'))
-        print(post_data.images[0][15 + 7])
 
         for image in post_data.images:
             filename = str(user.user_id) + image[150:155].replace("/", "") + str(datetime.now().second * datetime.now().day) + ".jpg"
@@ -75,7 +104,8 @@ def auth_register(post_data:Posts, user=Depends(manager)):
             post_img = files,
             post_type = post_data.type,
             created_at = datetime.now(),
-            tags = tags
+            tags = tags,
+            likes = 0,
         )
 
         session.add(new_post)
@@ -116,7 +146,6 @@ def auth_register(id: int, user=Depends(manager)):
         flag = False
 
     finally:
-        print(posts_arr)
         session.close()
     
     if flag:
@@ -126,3 +155,70 @@ def auth_register(id: int, user=Depends(manager)):
 @router.get("/v1/user/posts/count")
 def auth_register(user=Depends(manager)):
     return len(user.posts)
+
+@router.get("/v1/post/{id}/likes")
+def auth_register(id: int):
+    try:
+        flag = True
+        session = Session()
+
+        post = session.query(POSTS).filter_by(post_id = id).first()
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+    
+    if flag:
+        return post.likes
+
+@router.post("/v1/post/{id}/like")
+def like_post(id: int):
+    try:
+        flag = True
+        session = Session()
+
+        post = session.query(POSTS).filter_by(post_id = id).first()
+
+        if post.likes != None:
+            post.likes = post.likes + 1
+        else:
+            post.likes = 1
+
+        session.commit()
+        session.refresh(post)
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+    
+    if flag:
+        return post.likes
+
+@router.post("/v1/post/{id}/dislike")
+def like_post(id: int):
+    try:
+        flag = True
+        session = Session()
+
+        post = session.query(POSTS).filter_by(post_id = id).first()
+
+        if post.likes != None and post.likes > 0:
+            post.likes = post.likes - 1
+        else:
+            post.likes = 0
+
+        session.commit()
+        session.refresh(post)
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+    
+    if flag:
+        return post.likes

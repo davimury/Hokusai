@@ -24,3 +24,6 @@ class Posts(BaseModel):
 class Profile(BaseModel):
     image: str
     tags: List[int] = []
+
+class Base64(BaseModel):
+    base: str
