@@ -97,6 +97,13 @@ export default {
     bookmarkType: "bookmark_border",
     currentPage: 0
   }),
+  mounted(){
+    console.log(this.postData)
+    if(this.postData.like)
+      this.vote = 0
+    else if (this.postData.dislike)
+      this.vote = 1
+  },
   methods: {
     pageChange(i){  this.currentPage = i;  },
     isSaved: function () {

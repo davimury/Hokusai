@@ -168,6 +168,7 @@ export default {
   mounted() {
     axios.get("/v1/posts/").then((response) => {
       this.postsData = response["data"];
+      console.log(response['data'])
     });
     axios.get("/v1/user/suggestedUsers").then((response) => {
       this.suggestedConection = response["data"];

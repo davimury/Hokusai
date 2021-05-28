@@ -291,6 +291,7 @@ export default {
   mounted() {
     axios.get(`/v1/user/${this.$route.params.username}/info`).then( response => {
       this.posts = response['data']['posts']
+      console.log(this.posts)
       this.userTags = response['data']['tags']
       this.postsCounter = response['data']['posts_count']
       this.name = response['data']['name']

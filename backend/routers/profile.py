@@ -1,7 +1,8 @@
 import base64
 import random
 from fastapi import APIRouter, Depends
-from db.db_main import Session, USERS, POSTS, TAGS
+from sqlalchemy import and_
+from db.db_main import Session, USERS, POSTS, TAGS, LIKES
 from routers.login import manager
 from models import Profile, Base64
 
@@ -51,22 +52,30 @@ async def change_header(base: Base64, user=Depends(manager)):
     with open('../frontend/src/assets/img/header/' + filename, "wb") as f:
         f.write(base64.b64decode(base.base[base.base.find(",")+1:]))
 
-
 @router.get("/v1/user/{username}/info")
-async def get_user_info(username: str):
+async def get_user_info(username: str, user=Depends(manager)):
     try:
         session = Session()
         posts_arr = []
         tags_arr = []
 
-        user = session.query(USERS).filter_by(username = username).first()
-        posts = session.query(POSTS).filter_by(post_author=user.user_id).order_by(POSTS.post_id.desc()).all()
-        tags = session.query(TAGS).filter(TAGS.tag_id.in_(user.tags)).all()
+        this_user = session.query(USERS).filter_by(username = username).first()
+        posts = session.query(POSTS).filter_by(post_author=this_user.user_id).order_by(POSTS.post_id.desc()).all()
+        tags = session.query(TAGS).filter(TAGS.tag_id.in_(this_user.tags)).all()
 
         for tag in tags:
             tags_arr.append(tag.tag_name)
 
         for post in posts:
+            like_obj = session.query(LIKES).filter_by(post_id = post.post_id, user_id=user.user_id).first()
+            like = False
+            dislike = False
+
+            if like_obj and like_obj.like_type == True:
+                like = True
+            elif like_obj and like_obj.like_type == False:
+                dislike = True
+            
             posts_arr.append({
                 'post_id': post.post_id,
                 'description': post.post_body,
@@ -76,6 +85,9 @@ async def get_user_info(username: str):
                 'author_id': post.author.user_id,
                 'postType': post.post_type,
                 'likes': post.likes,
+                'likes': post.likes,
+                'like': like,
+                'dislike': dislike,
             })
     except Exception as e:
         print(e)
@@ -93,33 +105,19 @@ async def get_user_info(username: str):
     }
     
 @router.get("/v1/user/suggestedUsers")
-async def get_user_info():
+async def get_suggested_users(user=Depends(manager)):
     try:
         session = Session()
-        count = 0
-        users = session.query(USERS).all()
+        sugested_array = session.query(USERS).filter(and_(USERS.tags.contains(user.tags), USERS.user_id != user.user_id)).all()
         users_arr = []
 
-        while(count < 3):
-            random_user = random.choice(users)
-
-            if len(users_arr) > 0:
-                if any(random_user.user_id in d.values() for d in users_arr):
-                    print(random_user.user_id)
-                else:
-                    users_arr.append({
-                        'user_id': random_user.user_id,
-                        'username': random_user.username,
-                        'name': random_user.name,
-                    })
-                    count = count + 1 
-            else:
-                users_arr.append({
-                    'user_id': random_user.user_id,
-                    'username': random_user.username,
-                    'name': random_user.name,
-                })
-                count = count + 1
+        for user_ in sugested_array:
+            users_arr.append({
+                'user_id': user_.user_id,
+                'username': user_.username,
+                'name': user_.name,
+            })
+            
     except Exception as e:
         print(e)
         #raise HTTPException(status_code=409, detail="email ou username já cadastrados!")
