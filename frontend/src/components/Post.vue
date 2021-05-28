@@ -1,9 +1,10 @@
 <template>
+
   <div
     class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white"
   >
     <div class="flex items-center px-4 py-3">
-      <img class="h-8 w-8 rounded-full" :src="postData.profile_picture" />
+      <img class="h-8 w-8 rounded-full" :src="require('@/assets/img/profile/' + postData.author_id + '.jpg')" />
       <div class="ml-3">
         <span class="text-sm font-semibold antialiased block leading-tight">{{
           postData.username
@@ -12,7 +13,7 @@
     </div>
     <div>
       <carousel
-        v-if="postData.postType == 1"
+        v-if="postData.postType == 0"
         :per-page="1"
         :mouse-drag="true"
         :centerMode="true"
@@ -23,9 +24,15 @@
         <slide
           v-for="(slide, index) in postData.slides"
           :key="index"
-          class="m-auto"
+          class="m-auto float-right"
         >
-          <img :src="slide" />
+          <span
+          v-if="currentPage == index"
+            class="absolute z-50 block top-2 bg-black p-1 px-2 rounded-lg text-sm font-semibold bg-opacity-50"
+            >{{index + 1}}/{{ postData.slides.length }}</span
+          >
+          <img :src="require(`@/assets/img/posts/${slide}`)" />
+          
         </slide>
       </carousel>
     </div>
@@ -40,7 +47,7 @@
             arrow_upward
           </span>
         </button>
-        <span class="text-white mx-1">30k</span>
+        <span class="text-white mx-1">{{postData.likes}}</span>
         <button class="focus:outline-none">
           <span
             class="material-icons text-gray-500 hover:text-red-600"
@@ -60,8 +67,8 @@
       </div>
       <div class="relative flex">
         <button class="focus:outline-none" @click="isSaved()">
-          <span class="material-icons text-3xl">
-            {{ bookmarkType }}
+          <span  class="material-icons text-3xl" >
+            <!-- {{bookmarkType}} -->
           </span>
         </button>
       </div>
@@ -106,21 +113,24 @@ export default {
         ? (this.bookmarkType = "bookmark")
         : (this.bookmarkType = "bookmark_border");
     },
-    chooseVote: function (voteType) {
-      this.vote = voteType;
-    },
-    createPost: function () {
-      axios.post(
-        "/v1/new_post/",
-        JSON.stringify({
-          body: "NOVO",
-          images: [
-            "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          ],
-        })
-      );
-    },
+    chooseVote: function(voteType){
+      this.vote = voteType
+      if (voteType == 0){
+        axios({
+          method: "post",
+          url: `/v1/post/${this.postData.post_id}/like`,
+        }).then(res => {
+          this.postData.likes = res['data']
+        });
+      } else {
+        axios({
+          method: "post",
+          url: `/v1/post/${this.postData.post_id}/dislike`,
+        }).then(res => {
+          this.postData.likes = res['data']
+        });
+      }
+    }
   },
 };
 </script>

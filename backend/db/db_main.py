@@ -13,6 +13,7 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from passlib.context import CryptContext
+from sqlalchemy.sql.sqltypes import INTEGER
 
 db_string = "postgresql://postgres:1234@localhost:5432/hokusai" # Conexão com um banco de dados Postgresql
 db_engine = create_engine(db_string)
@@ -58,7 +59,8 @@ class POSTS(Base):
     post_author = Column(Integer, ForeignKey('users.user_id'))
     post_body = Column(String)
     post_img = Column(ARRAY(String))
-    post_reactions = Column(ARRAY(Integer))
+    post_type = Column(Integer)
+    likes = Column(Integer)
     created_at = Column(DateTime)
 
     author = relationship("USERS", back_populates="posts", lazy='subquery') # Objeto do sqlalchemy que representa o autor do post

@@ -7,11 +7,11 @@
       <div class="relative h-40">
         <img
           class="absolute h-full w-full object-cover"
-          src="https://images.unsplash.com/photo-1448932133140-b4045783ed9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80"
+          :src="getHeader"
         />
-        <button class="focus:outline-none">
+        <button v-if="this.$route.params.username == this.$store.getters.Username" class="focus:outline-none" v-on:click="modalHeader = !modalHeader">
           <span
-            class="material-icons z-50 absolute bottom-2 right-3 text-purple-500 hover:purple-600"
+            class="material-icons z-10 absolute bottom-2 right-3 text-purple-500 hover:purple-600"
           >
             photo_camera
           </span>
@@ -22,12 +22,12 @@
       >
         <img
           class="object-cover w-full h-full"
-          src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=80"
+          :src="getProfilePic"
         />
         
       </div>
       <div class="flex justify-center ml-11 mt-6 relative">
-      <button class="focus:outline-none text-center bg-lightgray rounded-full p-1">
+      <button class="focus:outline-none text-center bg-lightgray rounded-full p-1" v-if="this.$route.params.username == this.$store.getters.Username" v-on:click="modalProfile = !modalProfile">
           <span
             class="material-icons text-purple-500 hover:purple-600"
           >
@@ -36,9 +36,9 @@
         </button>
       </div>
       <div class="mt-4">
-        <h1 class="text-lg text-center font-semibold">Cassie</h1>
+        <h1 class="text-lg text-center font-semibold">{{this.name}}</h1>
         <div class="flex justify-center text-gray-500">
-          <p class="mx-1"><span class="font-medium">35</span> Posts</p>
+          <p class="mx-1"><span class="font-medium">{{this.postsCounter}}</span> Posts</p>
           <p class="mx-1"><span class="font-medium">150</span> Conexões</p>
         </div>
         <div class="flex justify-center text-gray-500">
@@ -69,11 +69,11 @@
     >
       <div
         v-for="post in posts"
-        :key="post.postId"
+        :key="post.post_id"
         class="bg-lightgray post-card cursor-pointer"
-        @click="showPost(post.postId)"
+        @click="showPost(post)"
       >
-        <img :src="post.firstSlide" alt="" class="media" />
+        <img :src="require(`@/assets/img/posts/${post.slides[0]}`)" alt="" class="media" />
       </div>
     </div>
 
@@ -87,7 +87,7 @@
         aria-labelledby="modal-title"
         role="dialog"
         aria-modal="true"
-        v-if="showModalPost"
+        v-if="modalPost"
       >
         <div
           class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
@@ -106,7 +106,124 @@
             class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
             v-on-clickaway="awayModalPost"
           >
-            <Post :postData="postData"></Post>
+            <Post :postData="this.postData"></Post>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <transition
+      mode="out-in"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+    >
+      <div
+        class="fixed z-10 inset-0 overflow-y-auto"
+        aria-labelledby="modal-title"
+        role="dialog"
+        aria-modal="true"
+        v-if="modalHeader"
+      >
+        <div
+          class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+        >
+          <div
+            class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
+            aria-hidden="true"
+          ></div>
+
+          <span
+            class="hidden sm:inline-block sm:align-middle sm:h-screen"
+            aria-hidden="true"
+            >&#8203;</span
+          >
+          <div
+            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:w-6/12"
+            
+          >
+          <div
+              class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white py-10"
+            >
+             <vue-dropzone
+                  id="dropzone"
+                  :options="dropzoneOptions"
+                  class="mb-5"
+                  @vdropzone-success="croppieHeader"
+                  :style="{display: !croppieHeaderState ? 'block' : 'none'}"
+                ></vue-dropzone>
+            <vue-croppie
+                ref="croppieRef"
+                :enableExif="true"
+                :enableOrientation="true"
+                :boundary="{ width: 896, height: 360 }"
+                :viewport="{ width: 896, height: 360, type: 'rectangle' }"
+                :style="{display: croppieHeaderState ? 'block' : 'none'}"
+              ></vue-croppie>
+            <button
+              class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
+              @click="changeHeader"
+            >
+              Atualizar
+            </button>
+          </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <transition
+      mode="out-in"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+    >
+      <div
+        class="fixed z-10 inset-0 overflow-y-auto"
+        aria-labelledby="modal-title"
+        role="dialog"
+        aria-modal="true"
+        v-if="modalProfile"
+      >
+        <div
+          class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+        >
+          <div
+            class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
+            aria-hidden="true"
+          ></div>
+
+          <span
+            class="hidden sm:inline-block sm:align-middle sm:h-screen"
+            aria-hidden="true"
+            >&#8203;</span
+          >
+          <div
+            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:w-3/12"
+            
+          >
+          <div
+              class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white py-10"
+            >
+            <vue-dropzone
+                  ref="headerRef"
+                  id="dropzone"
+                  :options="dropzoneOptions"
+                  class="mb-5"
+                  @vdropzone-success="croppieProfile"
+                  :style="{display: !croppieProfileState ? 'block' : 'none'}"
+                ></vue-dropzone>
+            <vue-croppie
+                ref="croppieRef"
+                :enableExif="true"
+                :enableOrientation="true"
+                :boundary="{ width: 300, height: 300 }"
+                :viewport="{ width: 250, height: 250, type: 'circle' }"
+                :style="{display: croppieProfileState ? 'block' : 'none'}"
+              ></vue-croppie>
+            <button
+              class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
+              @click="changeProfile"
+            >
+              Atualizar
+            </button>
+          </div>
           </div>
         </div>
       </div>
@@ -120,56 +237,155 @@ import Header from "./Header.vue";
 import Post from "./Post.vue";
 import Footer from "./Footer.vue";
 import { directive as onClickaway } from "vue-clickaway";
+import vue2Dropzone from "vue2-dropzone";
+import "../assets/css/dropzone.css";
+import axios from 'axios';
+
 export default {
   name: "Profile",
   components: {
     Header,
     Post,
     Footer,
+    vueDropzone: vue2Dropzone,
   },
   directives: {
     onClickaway: onClickaway,
   },
   data() {
     return {
-      postData: {
-        username: "Chris",
-        description: "Isso é uma descrição",
-        postType: 1,
-        profile_picture: "https://picsum.photos/id/1027/150/150",
-        slides: [
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
-        ],
+      dropzoneOptions: {
+        url: "https://httpbin.org/post",
+        thumbnailWidth: 140,
+        maxFilesize: 5,
+        headers: { "My-Awesome-Header": "header value" },
+        dictDefaultMessage:
+          "<span class='material-icons text-purple-500 text-4xl'>cloud_upload</span>",
+        addRemoveLinks: true,
+        dictFileTooBig:
+          "Arquivo muito grande. Tamanho máximo {{maxFilesize}}MB",
+        dictInvalidFileType: "Arquivo inválido",
+        dictRemoveFile: "<span class='material-icons'>close</span>",
+        dictMaxFilesExceeded:
+          "Número máximo de arquivos permitidos: {{maxFiles}}",
+        maxFiles: 10,
       },
-      showModalPost: false,
-      posts: [
-        {
-          postId: 1,
-          firstSlide:
-            "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        },
-      ],
-      userTags: ["Manga", "Anime", "Alguma coisa"],
+      posts: [],
+      name: '',
+      user_id: '',
+      username: this.$route.params.username,
+      userTags: [],
+      postData: {},
+      postsCounter: 0,
+      profilePic: '',
+      modalPost: false,
+      modalProfile: false,
+      modalHeader: false,
+      croppieImage: "",
+      cropped: null,
+      croppieHeaderState: false,
+      croppieProfileState: false,
+      imgDataUrl: "", // the datebase64 url of created image
     };
+  },
+  mounted() {
+    axios.get(`/v1/user/${this.$route.params.username}/info`).then( response => {
+      this.posts = response['data']['posts']
+      this.userTags = response['data']['tags']
+      this.postsCounter = response['data']['posts_count']
+      this.name = response['data']['name']
+      this.user_id = response['data']['user_id']
+    })
+  },
+  computed : {
+    getProfilePic() { 
+      try{
+        return require('@/assets/img/profile/' + this.user_id + '.jpg')
+      } 
+      catch{
+        return require('@/assets/img/profile/1.jpg')
+      }
+    },
+    getHeader() { 
+      try{
+        return require('@/assets/img/header/' + this.user_id + '.jpg')
+      } 
+      catch{
+        return require('@/assets/img/header/1.jpg')
+      }
+    }
   },
   methods: {
     awayModalPost: function () {
-      this.showModalPost = false;
+      this.modalPost = false;
     },
-    showPost: function (id) {
-      this.showModalPost = true;
-      console.log(id);
-      //usar id para receber do backend o post relacionado
+    awayModalHeader: function () {
+      this.modalHeader = false;
+      this.coppieState = true;
     },
+    awayModalProfile: function () {
+      this.modalProfile = false;
+      this.coppieState = true;
+    },
+    showPost: function (post) {
+      this.postData = post;
+      this.modalPost = true;
+    },
+    getPostData: function(){
+      return this.postData;
+    },
+    croppieHeader(e) {
+      console.log(this.$refs.croppieRef)
+      this.$refs.croppieRef.bind({
+        url: e.dataURL,
+      });
+      
+      this.croppieHeaderState = true;
+    },
+    croppieProfile(e) {
+      console.log(this.$refs.croppieRef)
+      this.$refs.croppieRef.bind({
+        url: e.dataURL,
+      });
+      
+      this.croppieProfileState = true;
+    },
+    changeProfile: async function() {
+      let options = {
+        type: 'base64',
+        size: { width: 250, height: 250 },
+        format: 'jpeg'
+      };
+      await this.$refs.croppieRef.result(options, output => {
+        this.cropped = this.croppieImage = output;
+      });
+
+      await axios({
+        method: "post",
+        url: "/v1/change/profile",
+        data: {
+          base: this.croppieImage,
+        },
+      });
+    },
+    changeHeader: async function() {
+      let options = {
+        type: 'base64',
+        size: { width: 896, height: 360 },
+        format: 'jpeg'
+      };
+      await this.$refs.croppieRef.result(options, output => {
+        this.cropped = this.croppieImage = output;
+      });
+
+      await axios({
+        method: "post",
+        url: "/v1/change/header",
+        data: {
+          base: this.croppieImage,
+        },
+      });
+    }
   },
 };
 </script>

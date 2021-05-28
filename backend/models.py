@@ -11,15 +11,19 @@ class Registro(BaseModel):
     email: str
     password: str
 
+class Tags(BaseModel):
+    id: int = None
+    name: str
+    
 class Posts(BaseModel):
     body: str
+    type: int
     images: List[str]
-    reactions: List[int]
+    tags: List[Tags]
 
-
-class Tags(BaseModel):
-    tag_name: str
-    
 class Profile(BaseModel):
     image: str
     tags: List[int] = []
+
+class Base64(BaseModel):
+    base: str
