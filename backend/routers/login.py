@@ -21,6 +21,7 @@ async def load_user(email: str):
     try:
         session = Session()
         user = session.query(USERS).filter_by(email=email).first()
+        session.close()
 
         if not user:
             return None
@@ -29,9 +30,6 @@ async def load_user(email: str):
 
     except Exception as e:
         raise e
-    
-    finally:
-        session.close()
 
 @router.post("/v1/login")
 async def auth_login(formData: Login):

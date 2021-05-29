@@ -20,15 +20,7 @@
 
       <div class="hidden sm:flex text-center text-purple-500">
         <div class="mr-5 hover:text-purple-600 text-3xl relative">
-          <button>
-            <span class="material-icons">
-              notifications
-              <div
-                style="width: 0.5rem; height: 0.5rem"
-                class="bg-red-600 rounded-full -ml-1 float-right z-10"
-              ></div>
-            </span>
-          </button>
+          <Notification></Notification>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
           <button v-on:click="showModal = !showModal"><span class="material-icons"> queue </span></button>
@@ -102,14 +94,17 @@
 </template>
 
 <script>
+import Notification from './Notification'
 import { directive as onClickaway } from "vue-clickaway";
 import CreatePost from "./CreatePost.vue";
 import { mapActions } from "vuex";
 
+
 export default {
   name: "Header",
   components: {
-    CreatePost
+    CreatePost,
+    Notification
   },
   directives: {
     onClickaway: onClickaway,
@@ -127,7 +122,8 @@ export default {
     return {
       show: false,
       showModal: false,
-      username: this.$store.getters.Username
+      username: this.$store.getters.Username,
+      userId: this.$store.getters.UserId
     };
   },
   methods: {
@@ -147,4 +143,5 @@ export default {
 </script>
 
 <style>
+
 </style>

@@ -13,7 +13,10 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from passlib.context import CryptContext
+from sqlalchemy.orm.attributes import flag_modified
+from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.sql.sqltypes import Boolean, INTEGER
+from datetime import datetime
 
 db_string = "postgresql://postgres:1234@localhost:5432/hokusai" # Conexão com um banco de dados Postgresql
 db_engine = create_engine(db_string)
@@ -21,12 +24,28 @@ db_engine = create_engine(db_string)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto") # bcrypt para fazer a cryptografia da senha
 
 Session = sessionmaker(db_engine)
+session = Session()
+
 Base = declarative_base()
 
 posts_tags = Table('posts_tags', Base.metadata,
     Column('post_id', Integer, ForeignKey('posts.post_id')),
     Column('tag_id', Integer, ForeignKey('tags.tag_id'))
 )
+
+class MutableList(Mutable, list):
+    def append(self, value):
+        list.append(self, value)
+        self.changed()
+
+    @classmethod
+    def coerce(cls, key, value):
+        if not isinstance(value, MutableList):
+            if isinstance(value, list):
+                return MutableList(value)
+            return Mutable.coerce(key, value)
+        else:
+            return value
 
 class USERS(Base):
     __tablename__ = "users"
@@ -35,7 +54,7 @@ class USERS(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password_hash = Column(String)
-    tags = Column(ARRAY(Integer)) # tags que o user tem interesse
+    tags = Column(MutableList.as_mutable(ARRAY(Integer))) # tags que o user tem interesse
 
     posts = relationship("POSTS", back_populates="author", lazy='subquery')
 
@@ -52,6 +71,17 @@ class USERS(Base):
         Verifica se o password e valido
         """
         return pwd_context.verify(password, self.password_hash)
+    
+    def add_tag(self, session, tag_id):
+        tags_arr = self.tags
+
+        self.tags = None
+        session.commit()
+        session.refresh(self)
+
+        tags_arr.append(tag_id)
+        self.tags = tags_arr
+        session.commit()
 
 class POSTS(Base):
     __tablename__ = "posts"
@@ -70,6 +100,7 @@ class TAGS(Base):
     __tablename__ = "tags"
     tag_id = Column(Integer, primary_key=True, autoincrement=True)
     tag_name = Column(String, unique=True)
+    created_at = Column(DateTime)
 
 class LIKES(Base):
     __tablename__ = "likes"
@@ -77,16 +108,28 @@ class LIKES(Base):
     like_type = Column(Boolean)
     user_id = Column(Integer, ForeignKey('users.user_id'))
     post_id = Column(Integer, ForeignKey('posts.post_id'))
+    created_at = Column(DateTime)
+    last_updated = Column(DateTime)
 
     user = relationship("USERS")
     post = relationship("POSTS")
 
+    def update_date(self):   
+        if self.created_at == None:
+            self.created_at = datetime.now()
+            
+        self.last_updated = datetime.now()
+
+        print(self.last_updated)
+    
 class CONNECTIONS(Base):
     __tablename__ = "connections"
     con_id = Column(Integer, primary_key=True, autoincrement=True)
     con_status = Column(Boolean)
     user_1_id = Column(Integer, ForeignKey('users.user_id'))
     user_2_id = Column(Integer, ForeignKey('users.user_id'))
+
+
 
 
 Base.metadata.create_all(db_engine)
