@@ -2,7 +2,6 @@ from sqlalchemy import (
     create_engine,
     Column,
     Table,
-    ARRAY,
     Integer,
     DateTime,
     String,
@@ -10,10 +9,11 @@ from sqlalchemy import (
     Date,
     func,
 )
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from passlib.context import CryptContext
-from sqlalchemy.sql.sqltypes import INTEGER
+from sqlalchemy.sql.sqltypes import Boolean, INTEGER
 
 db_string = "postgresql://postgres:1234@localhost:5432/hokusai" # Conexão com um banco de dados Postgresql
 db_engine = create_engine(db_string)
@@ -71,6 +71,22 @@ class TAGS(Base):
     tag_id = Column(Integer, primary_key=True, autoincrement=True)
     tag_name = Column(String, unique=True)
 
+class LIKES(Base):
+    __tablename__ = "likes"
+    like_id = Column(Integer, primary_key=True, autoincrement=True)
+    like_type = Column(Boolean)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+    post_id = Column(Integer, ForeignKey('posts.post_id'))
+
+    user = relationship("USERS")
+    post = relationship("POSTS")
+
+class CONNECTIONS(Base):
+    __tablename__ = "connections"
+    con_id = Column(Integer, primary_key=True, autoincrement=True)
+    con_status = Column(Boolean)
+    user_1_id = Column(Integer, ForeignKey('users.user_id'))
+    user_2_id = Column(Integer, ForeignKey('users.user_id'))
 
 
 Base.metadata.create_all(db_engine)

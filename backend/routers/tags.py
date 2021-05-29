@@ -15,7 +15,6 @@ async def get_all_tags():
         session = Session()
 
         tags = session.query(TAGS).all()
-        print(tags)
         
         for tag in tags:
             tags_arr.append({'id': tag.tag_id, 'name': tag.tag_name.title()})
@@ -35,7 +34,6 @@ async def get_all_tags():
 @router.post("/v1/add_tag")
 async def add_tag(tag: Tags):
     try:
-        print(tag)
         flag = True
         session = Session()
 
