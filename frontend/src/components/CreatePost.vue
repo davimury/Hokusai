@@ -241,10 +241,15 @@ main {
   max-width: 100%;
   max-height: 85%;
   overflow: auto;
+  height: 60%;
 }
-h1 {
-  font-size: 3rem;
+.ck.ck-editor__main {
+  height: 100%;
 }
+.ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline {
+  height: 100%;
+}
+
 
 
 </style>
