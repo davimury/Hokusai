@@ -3,10 +3,7 @@
     <Header></Header>
     <main class="flex justify-between container h-screen w-full mx-auto">
       <div class="w-1/3 h-screen hidden lg:block"></div>
-      <div
-        
-        class="w-full md:w-4/5 lg:w-3/5 h-screen p-3"
-      >
+      <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
             class="text-white border-b-2 hover:border-purple-600 focus:outline-none"
@@ -27,7 +24,6 @@
           v-if="feedType == 1"
           class="overflow-y-scroll w-full flex flex-col posts h-100"
         >
-        
           <Post
             v-for="postData in postsData"
             :key="postData.username"
@@ -38,7 +34,6 @@
           v-if="feedType == 2"
           class="overflow-y-scroll w-full flex flex-col posts h-100"
         >
-        
           <Post
             v-for="postData in postsData"
             :key="postData.username"
@@ -78,11 +73,22 @@
           <div
             class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white"
           >
-            <form-wizard @on-complete="onComplete">
+            <form-wizard
+              @on-complete="onComplete"
+              :title="''"
+              :subtitle="''"
+              :color="'#8B5CF6'"
+              :errorColor="'#B91C1C'"
+              :finishButtonText="'Finalizar'"
+              :nextButtonText="'Avançar'"
+              :backButtonText="'Voltar'"
+              :stepSize="'sm'"
+            >
               <tab-content
-                title="Escolha sua foto de perfil"
+                
                 :before-change="crop"
               >
+              <h2 class="text-center mb-4 font-semibold">Escolha sua foto de perfil</h2>
                 <vue-croppie
                   ref="croppieRef"
                   :enableExif="true"
@@ -92,8 +98,9 @@
                 ></vue-croppie>
                 <input type="file" @change="croppie" />
               </tab-content>
-              <tab-content title="Escolha categorias que você tem interesse">
+              <tab-content>
                 <div class="flex flex-wrap content-center justify-center">
+                  <h2 class="text-center mb-4 font-semibold">Escolha categorias que você tem interesse</h2>
                   <div
                     class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default"
                     v-for="tag in recomendedTags"
@@ -153,8 +160,7 @@ export default {
         smail: "*_~",
       },
       imgDataUrl: "", // the datebase64 url of created image
-      postsData: [
-      ],
+      postsData: [],
       recomendedTags: [],
       selectedTags: [],
     };
@@ -283,5 +289,14 @@ export default {
 #right-bar::-webkit-scrollbar {
   width: 0px;
   background: transparent; /* make scrollbar transparent */
+}
+.stepTitle{
+  color: #3b3b3b;
+  line-height: 1.2rem;
+  margin-top: .7rem;
+}
+.vue-form-wizard .wizard-icon-circle{
+  background-color: #1e1e1e;
+  color: white;
 }
 </style>
