@@ -2,7 +2,7 @@
   <main class="h-screen">
     <Header></Header>
     <div
-      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto"
+      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto "
     >
       <div class="relative h-40">
         <img
@@ -103,7 +103,7 @@
             >&#8203;</span
           >
           <div
-            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full  "
             v-on-clickaway="awayModalPost"
           >
             <Post :postData="this.postData"></Post>

@@ -1,7 +1,7 @@
 <template>
 
   <div
-    class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white"
+    class="bg-lightgray border border-lightgray rounded-lg block w-full text-white"
   >
     <div class="flex items-center px-4 py-3">
       <img class="h-8 w-8 rounded-full" :src="require('@/assets/img/profile/' + postData.author_id + '.jpg')" />
@@ -11,7 +11,8 @@
         }}</span>
       </div>
     </div>
-    <div>
+
+    <div class="carousel-div bg-black bg-opacity-50">
       <carousel
         v-if="postData.postType == 0"
         :per-page="1"
@@ -20,6 +21,12 @@
         :paginationEnabled="false"
         :navigationEnabled="true"
         v-on:pageChange="pageChange"
+        navigationNextLabel="<span class='material-icons text-white bg-black bg-opacity-70 rounded-md'>
+chevron_right
+</span>"
+        navigationPrevLabel="<span class='material-icons text-white bg-black bg-opacity-70 rounded-md'>
+chevron_left
+</span>"
       >
         <slide
           v-for="(slide, index) in postData.slides"
@@ -33,14 +40,64 @@
           >
           <img :src="require(`@/assets/img/posts/${slide}`)" />
           
+          <img :src="slide" class="object-contain mx-auto my-auto max-h-70vh" />
         </slide>
       </carousel>
+      <div
+        class="w-100 text-left p-3 overflow-y-auto"
+        style="height: 60vh"
+        v-if="postData.postType == 2"
+      >
+        <h1 class="text-center">Lero Lero</h1>
+        <p>
+          A equipe de suporte precisa saber que um erro não identificado causou
+          o bug na estabilidade do protocolo de transferência de dados. Explica
+          pro Product Onwer que o gerenciador de dependências do frontend causou
+          a race condition na interpolação dinâmica de strings. Explica pro
+          Product Onwer que a otimização de performance da renderização do DOM
+          causou a race condition do carregamento de JSON delimitado por linhas.
+          Nesse pull request, um erro não identificado facilitou a resolução de
+          conflito do nosso servidor de DNS. A equipe de suporte precisa saber
+          que o gerenciador de dependências do frontend otimizou a renderização
+          na criação de novos polyfills para suportar os processos. Explica pro
+          Product Onwer que a otimização de performance da renderização do DOM
+          causou a race condition do carregamento de JSON delimitado por linhas.
+          Nesse pull request, um erro não identificado facilitou a resolução de
+          conflito do nosso servidor de DNS. A equipe de suporte precisa saber
+          que o gerenciador de dependências do frontend otimizou a renderização
+          na criação de novos polyfills para suportar os processos. Explica pro
+          Product Onwer que a otimização de performance da renderização do DOM
+          causou a race condition do carregamento de JSON delimitado por linhas.
+        </p>
+        <br />
+        <p>
+          A equipe de suporte precisa saber que um erro não identificado causou
+          o bug na estabilidade do protocolo de transferência de dados. Explica
+          pro Product Onwer que o gerenciador de dependências do frontend causou
+          a race condition na interpolação dinâmica de strings. Explica pro
+          Product Onwer que a otimização de performance da renderização do DOM
+          causou a race condition do carregamento de JSON delimitado por linhas.
+          Nesse pull request, um erro não identificado facilitou a resolução de
+          conflito do nosso servidor de DNS. A equipe de suporte precisa saber
+          que o gerenciador de dependências do frontend otimizou a renderização
+          na criação de novos polyfills para suportar os processos. Explica pro
+          Product Onwer que a otimização de performance da renderização do DOM
+          causou a race condition do carregamento de JSON delimitado por linhas.
+          Nesse pull request, um erro não identificado facilitou a resolução de
+          conflito do nosso servidor de DNS. A equipe de suporte precisa saber
+          que o gerenciador de dependências do frontend otimizou a renderização
+          na criação de novos polyfills para suportar os processos. Explica pro
+          Product Onwer que a otimização de performance da renderização do DOM
+          causou a race condition do carregamento de JSON delimitado por linhas.
+        </p>
+      </div>
     </div>
+
     <div class="flex items-center justify-between mx-3 mt-1 text-purple-500">
       <div class="relative flex -ml-2">
         <button class="focus:outline-none">
           <span
-            class="material-icons  text-gray-500 hover:text-purple-500"
+            class="material-icons text-gray-500 hover:text-purple-500"
             :class="vote == 0 ? 'text-purple-500' : ''"
             @click="chooseVote(0)"
           >
@@ -57,6 +114,12 @@
             arrow_downward
           </span>
         </button>
+      </div>
+      <div class="relative flex">
+        <span
+          class="bg-black p-1 px-2 rounded-lg text-sm font-semibold bg-opacity-50 text-white"
+          >{{ currentPage + 1 }}/{{ postData.slides.length }}</span
+        >
       </div>
       <div class="relative flex">
         <button class="focus:outline-none" @click="isSaved()">
@@ -95,7 +158,7 @@ export default {
     isDisabled: false,
     vote: null,
     bookmarkType: "bookmark_border",
-    currentPage: 0
+    currentPage: 0,
   }),
   mounted(){
     console.log(this.postData)
@@ -105,7 +168,9 @@ export default {
       this.vote = 1
   },
   methods: {
-    pageChange(i){  this.currentPage = i;  },
+    pageChange(i) {
+      this.currentPage = i;
+    },
     isSaved: function () {
       this.bookmarkType == "bookmark_border"
         ? (this.bookmarkType = "bookmark")
@@ -137,9 +202,32 @@ export default {
 button.VueCarousel-dot:focus {
   outline: none;
 }
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+
+.carousel-div.VueCarousel {
+  max-height: 100%;
 }
+button.VueCarousel-navigation-button{
+  display: none;
+}
+
+@media (min-width: 1024px) { 
+  button.VueCarousel-navigation-button{
+  display: inline-block;
+}
+}
+button.VueCarousel-navigation-button.VueCarousel-navigation-next {
+  right: 2.5rem;
+  
+}
+
+button.VueCarousel-navigation-button.VueCarousel-navigation-prev {
+  left: 2.5rem;
+  
+}
+
+button.VueCarousel-navigation-button.VueCarousel-navigation-next:focus, button.VueCarousel-navigation-button.VueCarousel-navigation-prev:focus{
+  outline: none;
+}
+
+
 </style>
