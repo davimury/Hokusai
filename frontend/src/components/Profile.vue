@@ -2,7 +2,7 @@
   <main class="h-screen">
     <Header></Header>
     <div
-      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto"
+      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto "
     >
       <div class="relative h-40">
         <img
@@ -11,7 +11,7 @@
         />
         <button class="focus:outline-none">
           <span
-            class="material-icons z-50 absolute bottom-2 right-3 text-purple-500 hover:purple-600"
+            class="material-icons z-10 absolute bottom-2 right-3 text-purple-500 hover:purple-600"
           >
             photo_camera
           </span>
@@ -103,7 +103,7 @@
             >&#8203;</span
           >
           <div
-            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full  "
             v-on-clickaway="awayModalPost"
           >
             <Post :postData="postData"></Post>
@@ -138,7 +138,7 @@ export default {
         postType: 1,
         profile_picture: "https://picsum.photos/id/1027/150/150",
         slides: [
-          "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1453413453658-27fec8f43f29?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80",
           "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
           "https://images.unsplash.com/photo-1619898109079-a0d36c4b35e6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
           "https://images.unsplash.com/photo-1531501410720-c8d437636169?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1267&q=80",
