@@ -38,9 +38,7 @@ chevron_left
             class="absolute z-50 block top-2 bg-black p-1 px-2 rounded-lg text-sm font-semibold bg-opacity-50"
             >{{index + 1}}/{{ postData.slides.length }}</span
           >
-          <img :src="require(`@/assets/img/posts/${slide}`)" />
-          
-          <img :src="slide" class="object-contain mx-auto my-auto max-h-70vh" />
+          <img :src="require(`@/assets/img/posts/${slide}`)" class="object-contain mx-auto my-auto max-h-70vh"/>
         </slide>
       </carousel>
       <div
