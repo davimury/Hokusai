@@ -11,14 +11,16 @@
                         <svg class="h-3 w-3 fill-current" viewBox="0 0 20 20"><path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"/></svg>
                     </button>
                 </div>
-                <div @click="sendMessage('teste')" class="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 py-1 cursor-pointer">
-                    <div class="flex flex-shrink-0 ">
-                        <img class="h-16 w-16 rounded-full" :src="getProfilePic">
-                    </div>
-                    <div class="ml-3 text-left">
-                        <span class="font-medium text-sm">John Doe</span>
-                        <p class="text-sm">reacted to your comment: "Comment..."</p>
-                        <span class="text-sm text-blue font-semibold">Alguns segundos atrás</span>
+                <div v-for="data in dataArr" :key="data['user_id']"> 
+                    <div class="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 py-1 cursor-pointer">
+                        <div class="flex flex-shrink-0 ">
+                            <img class="h-16 w-16 rounded-full" :src="require('@/assets/img/profile/' + data['user_id'] + '.jpg')">
+                        </div>
+                        <div class="ml-3 text-left">
+                            <span class="font-medium text-sm">{{data['name']}}</span>
+                            <p class="text-sm">{{data['username']}} pediu para se conectar com você!</p>
+                            <span class="text-sm text-blue font-semibold">Alguns segundos atrás</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -27,41 +29,39 @@
 </template>
 <script>
 import NotificationBell from 'vue-notification-bell'
+import Pusher from 'pusher-js';
 
 export default ({
     name: "Notification",
-    props: ["postData"],
 
     components: {
         NotificationBell 
     },
-    created: function() {
-        /* console.log("Starting connection to WebSocket Server")
-        this.connection = new WebSocket("ws://127.0.0.1:8000/ws")
-
-        this.connection.onmessage = function(event) {
-        console.log(event);
+    data() {
+        return {
+            isActive: false,
+            count: 0,
+            dataArr: []
         }
+    },
+    created() {
+        const pusher = new Pusher('ad8252dd0a9b80dd351f', {cluster: 'us2'});
+        const channel = pusher.subscribe('hokusai-notify');
 
-        this.connection.onopen = function(event) {
-        console.log(event)
-        console.log("Successfully connected to the echo websocket server...")
-        }
- */
+        channel.bind(this.$store.getters.Username, function (data) {
+             console.log(this.dataArr)
+            this.dataArr.push(data);
+           
+        }, this);
     },
     computed: {
-        getProfilePic() { 
-            return require('@/assets/img/profile/' + this.$store.getters.UserId + '.jpg')
+        getProfilePic(id) { 
+            return require('@/assets/img/profile/' + id + '.jpg')
         }
     },
-    data: () => ({
-        isActive: false,
-    }),
+    
     methods: {
-        sendMessage: function(message) {
-            console.log(this.connection);
-            this.connection.send(message);
-        }
+        
     },
 })
 </script>

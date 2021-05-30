@@ -1,19 +1,16 @@
-from fastapi import FastAPI, Request, HTTPException
-from starlette.responses import Response, RedirectResponse, JSONResponse
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import login, register, feed, posts, tags, profile, notifications
+from routers import auth, register, posts, tags, profile
 
 app = FastAPI()
 
-app.include_router(login.router)
+app.include_router(auth.router)
 app.include_router(register.router)
-app.include_router(feed.router)
 app.include_router(posts.router)
 app.include_router(tags.router)
 app.include_router(profile.router)
-app.include_router(notifications.router)
 
-login.manager.useRequest(app)
+auth.manager.useRequest(app)
 
 origins = [
     "http://localhost:8080", # frontend
