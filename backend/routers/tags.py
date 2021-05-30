@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
 from starlette.responses import Response, JSONResponse
-from db.db_main import Session, TAGS
+from db.db_main import Session, TAGS, USERS
 from sqlalchemy import or_
 from models import Tags
 from routers.login import manager
@@ -27,22 +27,27 @@ async def get_all_tags():
         
     if flag:
         if len(tags_arr) == 0:
-            tags_arr.append({'id': None, 'name': 'Nenhuma tag encontrada, digite para criar novas tags!'}) 
+            tags_arr.append({'id': None, 'name': 'Nenhuma tag encontrada!'}) 
 
         return JSONResponse(status_code=200, content=tags_arr)
 
 @router.post("/v1/add_tag")
-async def add_tag(tag: Tags):
+async def add_tag(tag: Tags, user=Depends(manager)):
     try:
         flag = True
         session = Session()
+        session.expire_on_commit = False
 
         new_tag = TAGS(tag_name = tag.name.lower())  
-        session.add(new_tag)
+        cur_user = session.query(USERS).filter_by(email=user.email).first()
 
+        session.add(new_tag)
         session.commit()
         session.refresh(new_tag)
-    except:
+        
+        cur_user.add_tag(session, new_tag.tag_id)
+    except Exception as e:
+        print(e)
         flag = False
     
     finally:
@@ -50,6 +55,8 @@ async def add_tag(tag: Tags):
         
     if flag: 
         return JSONResponse(content={'id': new_tag.tag_id, "name": new_tag.tag_name}, status_code=200)
+    else:
+        return JSONResponse(content={'status': e}, status_code=500)
 
 @router.get("/v1/user/tags")
 async def get_user_tags(user=Depends(manager)):

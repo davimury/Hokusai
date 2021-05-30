@@ -41,8 +41,9 @@
           <p class="mx-1"><span class="font-medium">{{this.postsCounter}}</span> Posts</p>
           <p class="mx-1"><span class="font-medium">150</span> Conexões</p>
         </div>
-        <div class="flex justify-center text-gray-500">
+        <div v-if="this.username != this.$store.getters.Username" class="flex justify-center text-gray-500">
           <button
+            @click="requestConnection"
             class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2"
           >
             Conectar
@@ -289,9 +290,8 @@ export default {
     };
   },
   mounted() {
-    axios.get(`/v1/user/${this.$route.params.username}/info`).then( response => {
+    axios.get(`/profile/${this.$route.params.username}`).then( response => {
       this.posts = response['data']['posts']
-      console.log(this.posts)
       this.userTags = response['data']['tags']
       this.postsCounter = response['data']['posts_count']
       this.name = response['data']['name']
@@ -336,7 +336,6 @@ export default {
       return this.postData;
     },
     croppieHeader(e) {
-      console.log(this.$refs.croppieRef)
       this.$refs.croppieRef.bind({
         url: e.dataURL,
       });
@@ -344,7 +343,6 @@ export default {
       this.croppieHeaderState = true;
     },
     croppieProfile(e) {
-      console.log(this.$refs.croppieRef)
       this.$refs.croppieRef.bind({
         url: e.dataURL,
       });
@@ -363,7 +361,7 @@ export default {
 
       await axios({
         method: "post",
-        url: "/v1/change/profile",
+        url: "/profile/image",
         data: {
           base: this.croppieImage,
         },
@@ -381,11 +379,18 @@ export default {
 
       await axios({
         method: "post",
-        url: "/v1/change/header",
+        url: "/profile/header",
         data: {
           base: this.croppieImage,
         },
       });
+    },
+    requestConnection: async function() {
+      await axios({
+        method: "post",
+        url: `/profile/${this.username}/connect`,
+      });
+      
     }
   },
 };

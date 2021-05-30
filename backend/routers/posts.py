@@ -147,6 +147,7 @@ def like_post(id: int, user=Depends(manager)):
         else:
             like.like_type = True
 
+        like.update_date()
         like_count = session.query(LIKES).filter(and_(LIKES.post_id == id, LIKES.like_type == True)).count()
         post = session.query(POSTS).filter_by(post_id = id).first()
         post.likes = like_count
@@ -176,6 +177,7 @@ def dislike_post(id: int, user=Depends(manager)):
         else:
             like.like_type = False
         
+        like.update_date()
         like_count = session.query(LIKES).filter(and_(LIKES.post_id == id, LIKES.like_type == True)).count()
         post = session.query(POSTS).filter_by(post_id = id).first()
         post.likes = like_count

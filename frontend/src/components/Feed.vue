@@ -168,16 +168,14 @@ export default {
   },
   computed: {
     isFirstLogin: function () {
-      console.log(this.$store.getters.isFirstLogin);
       return this.$store.getters.isFirstLogin;
     },
   },
   mounted() {
     axios.get("/v1/posts/").then((response) => {
       this.postsData = response["data"];
-      console.log(response['data'])
     });
-    axios.get("/v1/user/suggestedUsers").then((response) => {
+    axios.get("/profile/suggested").then((response) => {
       this.suggestedConection = response["data"];
     });
   },
@@ -188,7 +186,6 @@ export default {
     },
     select: async function (tag, e) {
       this.selectedTags.push(tag.id);
-      console.log(this.selectedTags);
       e.target.classList.add("bg-purple-500");
     },
     awayModalPost: function () {
@@ -196,8 +193,6 @@ export default {
     },
     showPost: function (id) {
       this.showModalPost = true;
-      console.log(id);
-      //usar id para receber do backend o post relacionado
     },
     croppie(e) {
       var files = e.target.files || e.dataTransfer.files;
@@ -239,15 +234,25 @@ export default {
       });
     },
     onComplete: async function () {
+      console.log(this.selectedTags)
       axios({
         method: "post",
-        url: "/v1/first_login",
+        url: "/profile/image",
         data: {
-          image: this.croppieImage,
-          tags: this.selectedTags,
+          base: this.croppieImage,
         },
       });
-
+      this.selectedTags.forEach(element => {
+        console.log(element)
+        axios({
+          method: "post",
+          url: "/profile/add/tag",
+          data: {
+            id: element,
+          },
+        });
+      });
+      
       await this.setFirstLogin(false);
     },
   },

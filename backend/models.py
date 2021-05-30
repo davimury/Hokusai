@@ -13,7 +13,7 @@ class Registro(BaseModel):
 
 class Tags(BaseModel):
     id: int = None
-    name: str
+    name: str = None
     
 class Posts(BaseModel):
     body: str
@@ -27,3 +27,6 @@ class Profile(BaseModel):
 
 class Base64(BaseModel):
     base: str
+
+class Connection(BaseModel):
+    id: int
