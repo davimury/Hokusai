@@ -10,6 +10,7 @@ import axios from 'axios';
 import CKEditor from '@ckeditor/ckeditor5-vue2';
 import 'animate.css'
 import './assets/css/main.css'
+import VueNativeSock from 'vue-native-websocket'
 
 axios.defaults.withCredentials = true
 axios.defaults.baseURL = 'http://localhost:8000/';
@@ -25,6 +26,12 @@ axios.interceptors.response.use(undefined, function (error) {
     }
   }
 })
+Vue.use(VueNativeSock, 'ws://127.0.0.1:8000/ws', {
+  reconnection: true,
+  reconnectionAttempts: 5, 
+  reconnectionDelay: 3000
+});
+
 Vue.use( CKEditor );
 Vue.use(Vuelidate)
 Vue.use(VueCarousel)

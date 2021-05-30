@@ -13,8 +13,6 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from passlib.context import CryptContext
-from sqlalchemy.orm.attributes import flag_modified
-from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.sql.sqltypes import Boolean, INTEGER
 from datetime import datetime
 
@@ -33,20 +31,6 @@ posts_tags = Table('posts_tags', Base.metadata,
     Column('tag_id', Integer, ForeignKey('tags.tag_id'))
 )
 
-class MutableList(Mutable, list):
-    def append(self, value):
-        list.append(self, value)
-        self.changed()
-
-    @classmethod
-    def coerce(cls, key, value):
-        if not isinstance(value, MutableList):
-            if isinstance(value, list):
-                return MutableList(value)
-            return Mutable.coerce(key, value)
-        else:
-            return value
-
 class USERS(Base):
     __tablename__ = "users"
     user_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -54,7 +38,7 @@ class USERS(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password_hash = Column(String)
-    tags = Column(MutableList.as_mutable(ARRAY(Integer))) # tags que o user tem interesse
+    tags = Column(ARRAY(Integer)) # tags que o user tem interesse
 
     posts = relationship("POSTS", back_populates="author", lazy='subquery')
 
@@ -73,7 +57,10 @@ class USERS(Base):
         return pwd_context.verify(password, self.password_hash)
     
     def add_tag(self, session, tag_id):
-        tags_arr = self.tags
+        if self.tags is not None:
+            tags_arr = self.tags
+        else:
+            tags_arr = []
 
         self.tags = None
         session.commit()
@@ -125,11 +112,19 @@ class LIKES(Base):
 class CONNECTIONS(Base):
     __tablename__ = "connections"
     con_id = Column(Integer, primary_key=True, autoincrement=True)
-    con_status = Column(Boolean)
-    user_1_id = Column(Integer, ForeignKey('users.user_id'))
-    user_2_id = Column(Integer, ForeignKey('users.user_id'))
+    con_status = Column(Boolean) # Se a conexão foi aceita ou recusada
+    user_1_id = Column(Integer, ForeignKey('users.user_id')) # O user que pediu a conexão
+    user_2_id = Column(Integer, ForeignKey('users.user_id')) # O user que recebeu a requisição de conexão
 
 
+class NOTIFICATIONS(Base):
+    __tablename__ = "NOTIFICATIONS"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'))
+    message = Column(String)
+    type = Column(Integer) # 0 - Normal, 1 - Conexão
+    status = Column(Boolean) 
+    created_at = Column(DateTime)
 
 
 Base.metadata.create_all(db_engine)

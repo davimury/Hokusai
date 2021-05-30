@@ -1,7 +1,7 @@
 <template>
     <div id="notification">
         <button @click="isActive = !isActive">
-            <notification-bell count=1 iconColor="#8b5cf6" size=24 counterLocation="lowerRight" animated="true"/>
+            <notification-bell :count="1" iconColor="#8b5cf6" :size="24" counterLocation="lowerRight" :animated="true"/>
         </button>
         <div v-if="isActive" class="flex justify-center fixed" style="right: 185px; top: -100px;">
             <div class="bg-white mt-40 px-4 py-3 rounded-lg shadow-md max-w-xs">
@@ -11,7 +11,7 @@
                         <svg class="h-3 w-3 fill-current" viewBox="0 0 20 20"><path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"/></svg>
                     </button>
                 </div>
-                <div class="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 py-1 cursor-pointer">
+                <div @click="sendMessage('teste')" class="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 py-1 cursor-pointer">
                     <div class="flex flex-shrink-0 ">
                         <img class="h-16 w-16 rounded-full" :src="getProfilePic">
                     </div>
@@ -35,6 +35,20 @@ export default ({
     components: {
         NotificationBell 
     },
+    created: function() {
+        /* console.log("Starting connection to WebSocket Server")
+        this.connection = new WebSocket("ws://127.0.0.1:8000/ws")
+
+        this.connection.onmessage = function(event) {
+        console.log(event);
+        }
+
+        this.connection.onopen = function(event) {
+        console.log(event)
+        console.log("Successfully connected to the echo websocket server...")
+        }
+ */
+    },
     computed: {
         getProfilePic() { 
             return require('@/assets/img/profile/' + this.$store.getters.UserId + '.jpg')
@@ -42,7 +56,13 @@ export default ({
     },
     data: () => ({
         isActive: false,
-  }),
+    }),
+    methods: {
+        sendMessage: function(message) {
+            console.log(this.connection);
+            this.connection.send(message);
+        }
+    },
 })
 </script>
 <style>

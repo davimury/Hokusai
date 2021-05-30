@@ -10,8 +10,8 @@ SECRET = "434d502035aa8243868e3e5767afb5943c75fb5f0a18e013"
 
 router = APIRouter()
 
-manager = LoginManager(SECRET, "/", use_cookie=True)
-manager.cookie_name = "rsa_cookie"
+manager = LoginManager(SECRET, "/v1/login", use_cookie=True)
+manager.cookie_name = "hokusai_cookie"
 
 @manager.user_loader
 async def load_user(email: str):
@@ -65,7 +65,7 @@ async def upload_image(image: UploadFile = File(...)):
 @router.delete("/v1/logout", response_class=HTMLResponse)
 async def auth_logout(res: Response):
     try:
-        res.delete_cookie("rsa_cookie")
+        res.delete_cookie("hokusai_cookie")
 
     except Exception as e:
         print(f'Error: Impossivel deletar cookie do cliente:\n{e}')
