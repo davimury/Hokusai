@@ -290,7 +290,7 @@ export default {
     };
   },
   mounted() {
-    axios.get(`/profile/${this.$route.params.username}`).then( response => {
+    axios.get(`/profile/${this.$route.params.username}/`).then( response => {
       this.posts = response['data']['posts']
       this.userTags = response['data']['tags']
       this.postsCounter = response['data']['posts_count']

@@ -40,8 +40,9 @@ async def add_tag(tag: Tags, user=Depends(manager)):
         session = Session()
         session.expire_on_commit = False
 
-        new_tag = TAGS(tag_name=tag.name.lower())
         cur_user = session.query(USERS).filter_by(email=user.email).first()
+        new_tag = TAGS(tag_name=tag.name.lower())
+        new_tag.update_date()
 
         session.add(new_tag)
         session.commit()

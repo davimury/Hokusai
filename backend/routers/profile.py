@@ -1,10 +1,11 @@
 import base64
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy import and_, or_
-from db.db_main import Session, USERS, POSTS, TAGS, LIKES, CONNECTIONS
+from db.db_main import Session, USERS, POSTS, TAGS, LIKES, CONNECTIONS, NOTIFICATIONS
 from routers.auth import manager
 from models import Tags, Base64
 import pusher
+import json
 
 pusher_client = pusher.Pusher(
     app_id="1211691",
@@ -83,7 +84,141 @@ async def change_header(base: Base64, user=Depends(manager)):
         return Response(status_code=500)
 
 
-@router.get("/profile/{username}")
+@router.get("/profile/suggested")
+async def get_suggested_users(user=Depends(manager)):
+    flag = True
+
+    try:
+        session = Session()
+        sugested_array = session.query(USERS).filter(
+            and_(USERS.tags.contains(user.tags), USERS.user_id != user.user_id)).all()
+        users_arr = []
+
+        for user_ in sugested_array:
+            users_arr.append({
+                'user_id': user_.user_id,
+                'username': user_.username,
+                'name': user_.name,
+            })
+
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        return users_arr
+    else:
+        return Response(status_code=500)
+
+
+@router.get("/profile/notifications")
+def get_user_notifications(user=Depends(manager)):
+    flag = True
+    try:
+        session = Session()
+        notify_arr = []
+        notifications = session.query(NOTIFICATIONS).filter_by(
+            target_id=user.user_id).all()
+
+        for notification in notifications:
+            recipient = session.query(USERS).filter_by(
+                user_id=notification.recipient_id).first()
+            notify_arr.append(
+                {
+                    'id': notification.id,
+                    'type': 1,
+                    'name': recipient.name,
+                    'user_id': recipient.user_id,
+                    'status': notification.status,
+                    'username': recipient.username,
+                    'last_updated': notification.last_updated.isoformat()
+                }
+            )
+
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        return notify_arr
+    else:
+        return Response(status_code=500)
+
+
+@router.post("/profile/{username}/connect")
+async def connection_request(username: str, user=Depends(manager)):
+    """ Request connection with other user """
+    flag = True
+    try:
+        session = Session()
+        this_user = session.query(USERS).filter_by(username=username).first()
+
+    except Exception as e:
+        print(e)
+        flag = False
+
+    try:  # Cria uma nova conexão
+        connection = session.query(CONNECTIONS).filter_by(user_1_id=this_user.user_id, user_2_id=user.user_id).first()
+        if not connection:
+            connection = CONNECTIONS(
+                con_status=False, user_1_id=user.user_id, user_2_id=this_user.user_id)
+
+            session.add(connection)
+            session.commit()
+
+            session.refresh(connection)
+
+            try:    # Cria uma nova notificação destinada ao target_user
+                notification = NOTIFICATIONS(
+                    type=1,
+                    status=False,
+                    target_id=this_user.user_id,
+                    recipient_id=user.user_id,
+                    con_id=connection.con_id
+                )
+                notification.update_date()
+                session.add(notification)
+                session.commit()
+
+                session.refresh(notification)
+                pusher_client.trigger(
+                    'hokusai-notify',
+                    this_user.username,
+                    {
+                        'id': notification.id,
+                        'type': 1,
+                        'name': user.name,
+                        'user_id': user.user_id,
+                        'username': user.username,
+                        'last_updated': notification.last_updated.isoformat()
+                    }
+                )
+            except Exception as e:
+                print(e)
+                flag = False
+        else:
+            flag = False
+
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        return Response(status_code=200)
+    else:
+        return Response(status_code=500)
+
+
+@router.get("/profile/{username}/")
 async def get_user_info(username: str, user=Depends(manager)):
     flag = True
 
@@ -147,27 +282,19 @@ async def get_user_info(username: str, user=Depends(manager)):
         Response(status_code=500)
 
 
-@router.post("/profile/{username}/connect")
-async def connection_request(username: str, user=Depends(manager)):
+@router.post("/connection/{id}/accept")
+async def accept_connection(id: int, user=Depends(manager)):
     """ Request connection with other user """
     flag = True
     try:
         session = Session()
-
-        this_user = session.query(USERS).filter_by(username=username).first()
-        check_connection = session.query(CONNECTIONS).filter(or_(
-            CONNECTIONS.user_1_id == user.user_id, CONNECTIONS.user_2_id == this_user.user_id)).first()
-
-        if not check_connection:
-            # Por padrão a conexão vem no estado pendente = Falso
-            connection = CONNECTIONS(
-                con_status=False, user_1_id=user.user_id, user_2_id=this_user.user_id)
-            session.add(connection)
-
-        pusher_client.trigger('hokusai-notify', this_user.username,
-                              {'username': user.username, 'name': user.name, 'user_id': user.user_id})
-
+        notification = session.query(NOTIFICATIONS).filter_by(id=id).first()
+        connection = session.query(CONNECTIONS).filter_by(con_id=notification.con_id).first()
+        
+        connection.con_status = True
+        notification.status = True
         session.commit()
+
     except Exception as e:
         print(e)
         flag = False
@@ -177,34 +304,5 @@ async def connection_request(username: str, user=Depends(manager)):
 
     if flag:
         return Response(status_code=200)
-    else:
-        return Response(status_code=500)
-
-
-@router.get("/profile/suggested")
-async def get_suggested_users(user=Depends(manager)):
-    flag = True
-
-    try:
-        session = Session()
-        sugested_array = session.query(USERS).filter(
-            and_(USERS.tags.contains(user.tags), USERS.user_id != user.user_id)).all()
-        users_arr = []
-
-        for user_ in sugested_array:
-            users_arr.append({
-                'user_id': user_.user_id,
-                'username': user_.username,
-                'name': user_.name,
-            })
-
-    except:
-        flag = False
-
-    finally:
-        session.close()
-
-    if flag:
-        return users_arr
     else:
         return Response(status_code=500)

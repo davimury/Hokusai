@@ -6,6 +6,7 @@ from sqlalchemy import (
     DateTime,
     String,
     ForeignKey,
+    UniqueConstraint
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
@@ -90,6 +91,9 @@ class TAGS(Base):
     tag_name = Column(String, unique=True)
     created_at = Column(DateTime)
 
+    def update_date(self):
+        self.created_at = datetime.now() if self.created_at == None else None
+
 
 class LIKES(Base):
     __tablename__ = "likes"
@@ -110,6 +114,7 @@ class LIKES(Base):
 
 class CONNECTIONS(Base):
     __tablename__ = "connections"
+    __table_args__ = (UniqueConstraint('user_1_id', 'user_2_id'),)
     con_id = Column(Integer, primary_key=True, autoincrement=True)
     con_status = Column(Boolean)  # Se a conexão foi aceita ou recusada
 
@@ -122,8 +127,9 @@ class CONNECTIONS(Base):
 class NOTIFICATIONS(Base):
     __tablename__ = "notifications"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'))
-    message = Column(String)
+    target_id = Column(Integer, ForeignKey('users.user_id'))
+    recipient_id = Column(Integer, ForeignKey('users.user_id'))
+    con_id =  Column(Integer, ForeignKey('connections.con_id'))
     type = Column(Integer)  # 0 - Normal, 1 - Conexão
     status = Column(Boolean)
     created_at = Column(DateTime)
