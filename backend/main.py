@@ -1,11 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, register, posts, tags, profile
+from routers import auth, posts, tags, profile
 
 app = FastAPI()
 
 app.include_router(auth.router)
-app.include_router(register.router)
 app.include_router(posts.router)
 app.include_router(tags.router)
 app.include_router(profile.router)
