@@ -8,14 +8,14 @@
             </div>
           </div>
           <div class="flex flex-col px-4 py-3 ">
-            <h1 class="mb-5">Sugestões de conexão</h1>
+            <h1 class="mb-5 text-lg font-semibold">Sugestões de conexão</h1>
             <div v-for="user in suggestedConection" :key="user.user_id">
               <a :href="user.username">
                 <div class="flex items-center mb-3 w-100">
                   <img class="h-10 w-10 rounded-full " :src="require(`@/assets/img/profile/${user.user_id}.jpg`)"/>
                   <div class="ml-3 w-full">
                     <span class="text-sm font-semibold antialiased block leading-tight">{{user.username}}</span>
-                    <h2>{{user.name}}</h2>
+                    <h2 class="text-base font-semibold">{{user.name}}</h2>
                   </div>
                   <div class="text-center w-full">
                     <a class="ml-5 text-purple-500 hover:text-purple-600" href="#">Conectar</a>

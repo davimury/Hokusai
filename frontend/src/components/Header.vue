@@ -1,9 +1,12 @@
 <template>
-  <header class="sticky z-20 bg-darkgray top-0 p-2 px-2 ">
-    <nav class=" flex justify-between">
+  <header class="sticky z-20 bg-darkgray top-0 p-2 px-2">
+    <nav class="flex justify-between">
       <div>
         <a href="/">
-          <img class="w-48 md:w-60 inline-block" src="@/assets/img/logo-symb-nobg.svg" />
+          <img
+            class="w-48 md:w-60 inline-block"
+            src="@/assets/img/logo-symb-nobg.svg"
+          />
         </a>
       </div>
 
@@ -23,33 +26,56 @@
           <Notification></Notification>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
-          <button v-on:click="showModal = !showModal"><span class="material-icons"> queue </span></button>
+          <button v-on:click="showModal = !showModal">
+            <span class="material-icons"> queue </span>
+          </button>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
-          <a href="/chat"><span class="material-icons"> question_answer </span></a>
+          <a href="/chat"
+            ><span class="material-icons"> question_answer </span></a
+          >
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
           <a href="/saved"><span class="material-icons"> bookmark </span></a>
         </div>
-        
-        <div
-            class="fixed z-10 inset-0 overflow-y-auto"
+
+        <transition
+          mode="out-in"
+          enter-active-class="animate__animated animate__fadeIn"
+          leave-active-class="animate__animated animate__fadeOut"
+        >
+          <div
+            class="fixed z-10 inset-0 overflow-y-autok"
             aria-labelledby="modal-title"
             role="dialog"
             aria-modal="true"
             v-if="showModal"
           >
-          <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-              <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-              <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-              <div class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" >
-                <div class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white">
+            <div
+              class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+            >
+              <div
+                class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
+                aria-hidden="true"
+              ></div>
+              <span
+                class="hidden sm:inline-block sm:align-middle sm:h-screen"
+                aria-hidden="true"
+                >&#8203;</span
+              >
+              <div
+                class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+              >
+                <div
+                  class="bg-lightgray border border-lightgray rounded-lg block w-full text-white"
+                >
                   <CreatePost @closeModal="showModal = !showModal"></CreatePost>
+                </div>
               </div>
             </div>
-        </div>
-        </div>
-        
+          </div>
+        </transition>
+
         <div class="relative">
           <button
             v-on-clickaway="away"
@@ -57,10 +83,7 @@
             class="flex items-center outline-none focus:outline-none rounded-full"
             :class="{ 'focus:ring-2 focus:ring-purple-500': show === true }"
           >
-            <img
-              class="h-8 w-8 rounded-full"
-              :src="getProfilePic"
-            />
+            <img class="h-8 w-8 rounded-full" :src="getProfilePic" />
           </button>
           <!-- Dropdown Body -->
           <transition
@@ -109,14 +132,16 @@ export default {
   directives: {
     onClickaway: onClickaway,
   },
-  computed : {
-    getProfilePic() { 
-      return require('@/assets/img/profile/' + this.$store.getters.UserId + '.jpg')
+  computed: {
+    getProfilePic() {
+      return require("@/assets/img/profile/" +
+        this.$store.getters.UserId +
+        ".jpg");
     },
-    openModal(){
-      console.log('teste')
-      this.modalState = true
-    }
+    openModal() {
+      console.log("teste");
+      this.modalState = true;
+    },
   },
   data() {
     return {
@@ -143,6 +168,11 @@ export default {
 };
 </script>
 
-<style>
-
+<style scoped>
+  .animate__animated.animate__fadeIn {
+    --animate-duration: 0.3s;
+  }
+  .animate__animated.animate__fadeOut {
+    --animate-duration: 0.3s;
+  }
 </style>
