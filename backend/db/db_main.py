@@ -16,7 +16,7 @@ from passlib.context import CryptContext
 from datetime import datetime
 
 # Conexão com um banco de dados Postgresql
-db_string = "postgresql://postgres:1234@localhost:5432/hokusai"
+db_string = "postgresql://hokusai@hokusai:Pr0t3g1d0@hokusai.postgres.database.azure.com:5432/hokusai"
 db_engine = create_engine(db_string)
 
 # bcrypt para fazer a cryptografia da senha
