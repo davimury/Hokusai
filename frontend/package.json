@@ -23,6 +23,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "postcss-loader": "^3.0.0",
+    "pusher-js": "^7.0.3",
     "raw-loader": "^0.5.1",
     "vue": "^2.6.11",
     "vue-carousel": "^0.18.0",
