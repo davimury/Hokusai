@@ -57,4 +57,4 @@ jobs:
         with:
           app-name: 'hokusai'
           slot-name: 'production'
-          publish-profile: \${{ secrets.AzureAppService_PublishProfile_1234 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_63754E8205944C189675D2D59FD2B736 }}
