@@ -16,7 +16,7 @@ from passlib.context import CryptContext
 from datetime import datetime
 
 # Conexão com um banco de dados Postgresql
-db_string = "postgresql://hokusai@hokusai:Pr0t3g1d0@hokusai.postgres.database.azure.com:5432/hokusai"
+db_string = "postgresql://postgres:1234@127.0.0.1:5432/hokusai"
 db_engine = create_engine(db_string)
 
 # bcrypt para fazer a cryptografia da senha
@@ -114,7 +114,7 @@ class LIKES(Base):
 
 class CONNECTIONS(Base):
     __tablename__ = "connections"
-    __table_args__ = (UniqueConstraint('user_1_id', 'user_2_id'),)
+    """ __table_args__ = (UniqueConstraint('user_1_id', 'user_2_id'),) """
     con_id = Column(Integer, primary_key=True, autoincrement=True)
     con_status = Column(Boolean)  # Se a conexão foi aceita ou recusada
 
