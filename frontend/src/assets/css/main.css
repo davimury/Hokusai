@@ -22,7 +22,9 @@ body {
 body {
   background-color: #121212;
 }
-
+button:focus{
+  outline: none;
+}
 
 select {
   -webkit-appearance: none;

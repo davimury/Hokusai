@@ -22,7 +22,7 @@
       </div>
 
       <div class="hidden sm:flex text-center text-purple-500">
-        <div class="mr-5 hover:text-purple-600 text-3xl relative">
+        <div class="mr-5 text-3xl relative">
           <Notification></Notification>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">

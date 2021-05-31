@@ -40,6 +40,69 @@
                   require('@/assets/img/profile/' + data['user_id'] + '.jpg')
                 "
               />
+  <div id="notification">
+    <button @click="isActive = !isActive">
+      <notification-bell
+        :count="1"
+        iconColor="#8b5cf6"
+        :size="24"
+        counterLocation="lowerRight"
+        :animated="true"
+      />
+    </button>
+    <div
+      v-if="isActive"
+      class="flex justify-center fixed"
+      style="right: 185px; top: -100px"
+    >
+      <div
+        class="bg-white mt-40 px-4 py-3 rounded-lg shadow-md max-w-xs bg-lightgray"
+      >
+        <div class="flex items-center justify-between">
+          <span class="font-medium text-sm">Notificações</span>
+          <button
+            class="bg-lightgray p-2 rounded-full hover:text-purple-600"
+            @click="isActive = !isActive"
+          >
+            <span class="material-icons"> close </span>
+          </button>
+        </div>
+        <div
+          @click="sendMessage('teste')"
+          class="flex items-center hover:bg-lightergray rounded-lg px-1 py-1 cursor-pointer"
+        >
+          <div class="flex flex-shrink-0">
+            <img class="h-16 w-16 rounded-full" :src="getProfilePic" />
+          </div>
+          <div class="ml-3 text-left">
+            <span class="font-medium text-sm">John Doe</span>
+            <p class="text-sm text-white">
+              reacted to your comment: "Comment..."
+            </p>
+            <span class="text-sm text-blue font-semibold"
+              >Alguns segundos atrás</span
+            >
+          </div>
+        </div>
+        <div
+          @click="sendMessage('teste')"
+          class="flex items-center hover:bg-lightergray rounded-lg px-1 py-1 cursor-pointer"
+        >
+          <div class="flex flex-shrink-0">
+            <img class="h-16 w-16 rounded-full" :src="getProfilePic" />
+          </div>
+          <div class="ml-3 text-left">
+            <span class="font-medium text-sm">John Doe</span>
+            <p class="text-sm text-white">Enviou solicitação de conexão</p>
+            <div class="flex justify-between mt-2">
+              <button class="flex items-center group">
+                <span class="material-icons group-hover:text-purple-600"> done </span>
+                <span class="text-sm text-white font-semibold group-hover:text-gray-300">Aceitar</span>
+              </button>
+              <button class="flex items-center group">
+                <span class="material-icons text-red-600 group-hover:text-red-700"> close </span>
+                <span class="text-sm text-white font-semibold group-hover:text-gray-300">Recusar</span>
+              </button>
             </div>
             <div class="ml-3 text-left">
               <span class="font-medium text-sm">{{ data["name"] }}</span>

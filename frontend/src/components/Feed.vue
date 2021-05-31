@@ -1,8 +1,7 @@
 <template>
   <div>
     <Header></Header>
-    <main class="flex justify-between container h-screen w-full mx-auto">
-      <div class="w-1/3 h-screen hidden lg:block"></div>
+    <main class="flex justify-center mx-auto h-screen w-full md:max-w-4xl">
       <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
@@ -22,22 +21,24 @@
         </div>
         <div
           v-if="feedType == 1"
-          class="overflow-y-scroll w-full flex flex-col posts h-100"
+          class=" w-full flex flex-col posts h-100"
         >
           <Post
             v-for="postData in postsData"
             :key="postData.post_id"
             :postData="postData"
+            class="my-4"
           ></Post>
         </div>
         <div
           v-if="feedType == 2"
-          class="overflow-y-scroll w-full flex flex-col posts h-100"
+          class=" w-full flex flex-col posts h-100"
         >
           <Post
             v-for="postData in postsData"
             :key="postData.post_id"
             :postData="postData"
+            class="my-4"
           ></Post>
         </div>
       </div>
