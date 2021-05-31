@@ -28,11 +28,3 @@ jobs:
       with:
         platform: python
         platform-version: '3.8'
-
-    - name: Run Azure webapp deploy action using publish profile credentials
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: hokusai
-        slot-name: Production
-        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_63754E8205944C189675D2D59FD2B736 }}
-
