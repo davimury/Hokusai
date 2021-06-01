@@ -2,16 +2,17 @@
   <main class="h-screen">
     <Header></Header>
     <div
-      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto "
+      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto"
     >
       <div class="relative h-40">
-        <img
-          class="absolute h-full w-full object-cover"
-          :src="getHeader"
-        />
-        <button v-if="this.$route.params.username == this.$store.getters.Username" class="focus:outline-none" v-on:click="modalHeader = !modalHeader">
+        <img class="absolute h-full w-full object-cover" :src="getHeader" />
+        <button
+          v-if="this.$route.params.username == this.$store.getters.Username"
+          class="focus:outline-none"
+          v-on:click="modalHeader = !modalHeader"
+        >
           <span
-            class="material-icons z-10 absolute bottom-2 right-3 text-purple-500 hover:purple-600"
+            class="material-icons z-10 absolute bottom-2 right-3 text-purple-500 hover:text-purple-600"
           >
             photo_camera
           </span>
@@ -20,28 +21,34 @@
       <div
         class="relative shadow mx-auto h-24 w-24 -my-12 border-lightgray rounded-full overflow-hidden border-4"
       >
-        <img
-          class="object-cover w-full h-full"
-          :src="getProfilePic"
-        />
-        
+        <img class="object-cover w-full h-full" :src="getProfilePic" />
       </div>
       <div class="flex justify-center ml-11 mt-6 relative">
-      <button class="focus:outline-none text-center bg-lightgray rounded-full p-1" v-if="this.$route.params.username == this.$store.getters.Username" v-on:click="modalProfile = !modalProfile">
-          <span
-            class="material-icons text-purple-500 hover:purple-600"
-          >
+        <button
+          class="focus:outline-none text-center bg-lightgray rounded-full p-1"
+          v-if="this.$route.params.username == this.$store.getters.Username"
+          v-on:click="modalProfile = !modalProfile"
+        >
+          <span class="material-icons text-purple-500 hover:text-purple-600">
             photo_camera
           </span>
         </button>
       </div>
-      <div class="mt-4">
-        <h1 class="text-lg text-center font-semibold">{{this.name}}</h1>
+      <div>
+        <div class="text-center">
+          <h1 class="text-lg text-center font-semibold inline-block">{{ this.name }}</h1>
+          <button class="ml-1 -mt-1 absolute text-purple-500 hover:text-purple-600 "><span class="material-icons text-lg"> edit </span></button>
+        </div>
         <div class="flex justify-center text-gray-500">
-          <p class="mx-1"><span class="font-medium">{{this.postsCounter}}</span> Posts</p>
+          <p class="mx-1">
+            <span class="font-medium">{{ this.postsCounter }}</span> Posts
+          </p>
           <p class="mx-1"><span class="font-medium">150</span> Conexões</p>
         </div>
-        <div v-if="this.username != this.$store.getters.Username" class="flex justify-center text-gray-500">
+        <div
+          v-if="this.username != this.$store.getters.Username"
+          class="flex justify-center text-gray-500"
+        >
           <button
             @click="requestConnection"
             class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2"
@@ -74,7 +81,11 @@
         class="bg-lightgray post-card cursor-pointer"
         @click="showPost(post)"
       >
-        <img :src="require(`@/assets/img/posts/${post.slides[0]}`)" alt="" class="media" />
+        <img
+          :src="require(`@/assets/img/posts/${post.slides[0]}`)"
+          alt=""
+          class="media"
+        />
       </div>
     </div>
 
@@ -104,7 +115,7 @@
             >&#8203;</span
           >
           <div
-            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full  "
+            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
             v-on-clickaway="awayModalPost"
           >
             <Post :postData="this.postData"></Post>
@@ -139,33 +150,32 @@
           >
           <div
             class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:w-6/12"
-            
           >
-          <div
+            <div
               class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white py-10"
             >
-             <vue-dropzone
-                  id="dropzone"
-                  :options="dropzoneOptions"
-                  class="mb-5"
-                  @vdropzone-success="croppieHeader"
-                  :style="{display: !croppieHeaderState ? 'block' : 'none'}"
-                ></vue-dropzone>
-            <vue-croppie
+              <vue-dropzone
+                id="dropzone"
+                :options="dropzoneOptions"
+                class="mb-5"
+                @vdropzone-success="croppieHeader"
+                :style="{ display: !croppieHeaderState ? 'block' : 'none' }"
+              ></vue-dropzone>
+              <vue-croppie
                 ref="croppieRef"
                 :enableExif="true"
                 :enableOrientation="true"
                 :boundary="{ width: 896, height: 360 }"
                 :viewport="{ width: 896, height: 360, type: 'rectangle' }"
-                :style="{display: croppieHeaderState ? 'block' : 'none'}"
+                :style="{ display: croppieHeaderState ? 'block' : 'none' }"
               ></vue-croppie>
-            <button
-              class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
-              @click="changeHeader"
-            >
-              Atualizar
-            </button>
-          </div>
+              <button
+                class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
+                @click="changeHeader"
+              >
+                Atualizar
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -197,34 +207,33 @@
           >
           <div
             class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:w-3/12"
-            
           >
-          <div
+            <div
               class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white py-10"
             >
-            <vue-dropzone
-                  ref="headerRef"
-                  id="dropzone"
-                  :options="dropzoneOptions"
-                  class="mb-5"
-                  @vdropzone-success="croppieProfile"
-                  :style="{display: !croppieProfileState ? 'block' : 'none'}"
-                ></vue-dropzone>
-            <vue-croppie
+              <vue-dropzone
+                ref="headerRef"
+                id="dropzone"
+                :options="dropzoneOptions"
+                class="mb-5"
+                @vdropzone-success="croppieProfile"
+                :style="{ display: !croppieProfileState ? 'block' : 'none' }"
+              ></vue-dropzone>
+              <vue-croppie
                 ref="croppieRef"
                 :enableExif="true"
                 :enableOrientation="true"
                 :boundary="{ width: 300, height: 300 }"
                 :viewport="{ width: 250, height: 250, type: 'circle' }"
-                :style="{display: croppieProfileState ? 'block' : 'none'}"
+                :style="{ display: croppieProfileState ? 'block' : 'none' }"
               ></vue-croppie>
-            <button
-              class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
-              @click="changeProfile"
-            >
-              Atualizar
-            </button>
-          </div>
+              <button
+                class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
+                @click="changeProfile"
+              >
+                Atualizar
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -240,7 +249,7 @@ import Footer from "./Footer.vue";
 import { directive as onClickaway } from "vue-clickaway";
 import vue2Dropzone from "vue2-dropzone";
 import "../assets/css/dropzone.css";
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "Profile",
@@ -272,13 +281,13 @@ export default {
         maxFiles: 10,
       },
       posts: [],
-      name: '',
-      user_id: '',
+      name: "",
+      user_id: "",
       username: this.$route.params.username,
       userTags: [],
       postData: {},
       postsCounter: 0,
-      profilePic: '',
+      profilePic: "",
       modalPost: false,
       modalProfile: false,
       modalHeader: false,
@@ -290,31 +299,29 @@ export default {
     };
   },
   mounted() {
-    axios.get(`/profile/${this.$route.params.username}/`).then( response => {
-      this.posts = response['data']['posts']
-      this.userTags = response['data']['tags']
-      this.postsCounter = response['data']['posts_count']
-      this.name = response['data']['name']
-      this.user_id = response['data']['user_id']
-    })
+    axios.get(`/profile/${this.$route.params.username}/`).then((response) => {
+      this.posts = response["data"]["posts"];
+      this.userTags = response["data"]["tags"];
+      this.postsCounter = response["data"]["posts_count"];
+      this.name = response["data"]["name"];
+      this.user_id = response["data"]["user_id"];
+    });
   },
-  computed : {
-    getProfilePic() { 
-      try{
-        return require('@/assets/img/profile/' + this.user_id + '.jpg')
-      } 
-      catch{
-        return require('@/assets/img/profile/1.jpg')
+  computed: {
+    getProfilePic() {
+      try {
+        return require("@/assets/img/profile/" + this.user_id + ".jpg");
+      } catch {
+        return require("@/assets/img/profile/1.jpg");
       }
     },
-    getHeader() { 
-      try{
-        return require('@/assets/img/header/' + this.user_id + '.jpg')
-      } 
-      catch{
-        return require('@/assets/img/header/1.jpg')
+    getHeader() {
+      try {
+        return require("@/assets/img/header/" + this.user_id + ".jpg");
+      } catch {
+        return require("@/assets/img/header/1.jpg");
       }
-    }
+    },
   },
   methods: {
     awayModalPost: function () {
@@ -332,30 +339,30 @@ export default {
       this.postData = post;
       this.modalPost = true;
     },
-    getPostData: function(){
+    getPostData: function () {
       return this.postData;
     },
     croppieHeader(e) {
       this.$refs.croppieRef.bind({
         url: e.dataURL,
       });
-      
+
       this.croppieHeaderState = true;
     },
     croppieProfile(e) {
       this.$refs.croppieRef.bind({
         url: e.dataURL,
       });
-      
+
       this.croppieProfileState = true;
     },
-    changeProfile: async function() {
+    changeProfile: async function () {
       let options = {
-        type: 'base64',
+        type: "base64",
         size: { width: 250, height: 250 },
-        format: 'jpeg'
+        format: "jpeg",
       };
-      await this.$refs.croppieRef.result(options, output => {
+      await this.$refs.croppieRef.result(options, (output) => {
         this.cropped = this.croppieImage = output;
       });
 
@@ -367,13 +374,13 @@ export default {
         },
       });
     },
-    changeHeader: async function() {
+    changeHeader: async function () {
       let options = {
-        type: 'base64',
+        type: "base64",
         size: { width: 896, height: 360 },
-        format: 'jpeg'
+        format: "jpeg",
       };
-      await this.$refs.croppieRef.result(options, output => {
+      await this.$refs.croppieRef.result(options, (output) => {
         this.cropped = this.croppieImage = output;
       });
 
@@ -385,13 +392,12 @@ export default {
         },
       });
     },
-    requestConnection: async function() {
+    requestConnection: async function () {
       await axios({
         method: "post",
         url: `/profile/${this.username}/connect`,
       });
-      
-    }
+    },
   },
 };
 </script>
