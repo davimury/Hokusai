@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header></Header>
-    <main class="flex justify-center mx-auto h-screen w-full md:max-w-4xl">
+    <main class="flex justify-center mx-auto h-screen w-full md:max-w-4xl ">
       <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
@@ -100,7 +100,7 @@
                 <input type="file" @change="croppie" />
               </tab-content>
               <tab-content>
-                <div class="flex flex-wrap content-center justify-center">
+                <div class="flex flex-wrap content-center justify-center ">
                   <h2 class="text-center mb-4 font-semibold">Escolha categorias que você tem interesse</h2>
                   <div
                     class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-purple-600 cursor-default"

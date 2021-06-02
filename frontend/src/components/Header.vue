@@ -1,6 +1,6 @@
 <template>
-  <header class="sticky z-20 bg-darkgray top-0 p-2 px-2">
-    <nav class="flex justify-between">
+  <header class="sticky z-50 bg-darkgray top-0 p-2 px-2 ">
+    <nav class="flex justify-between ">
       <div>
         <a href="/">
           <img
@@ -45,7 +45,7 @@
           leave-active-class="animate__animated animate__fadeOut"
         >
           <div
-            class="fixed z-10 inset-0 overflow-y-autok"
+            class="fixed z-10 inset-0 overflow-y-auto"
             aria-labelledby="modal-title"
             role="dialog"
             aria-modal="true"
@@ -88,8 +88,8 @@
           <!-- Dropdown Body -->
           <transition
             mode="out-in"
-            enter-active-class="animate__animated animate__flipInX"
-            leave-active-class="animate__animated animate__flipOutX"
+            enter-active-class="animate__animated animate__fadeInDown"
+            leave-active-class="animate__animated animate__fadeOutUp"
           >
             <div
               v-if="show"
@@ -174,5 +174,33 @@ export default {
   }
   .animate__animated.animate__fadeOut {
     --animate-duration: 0.3s;
+  }
+   
+</style>
+<style>
+.vs__selected{
+    background-color: #3b3b3b;
+    color: white;
+  }
+  .vs__deselect{
+    fill: #8B5CF6;
+  }
+  .vs__deselect:hover{
+    fill: #7C3AED;
+  }
+  .vs__dropdown-menu{
+    background-color: #3b3b3b;
+  }
+  .vs__actions{
+    cursor:pointer;
+  }
+  .vs__dropdown-option{
+    color: white;
+  }
+  .vs__dropdown-option--highlight{
+    background-color: #1e1e1e;
+  }
+  .vs__open-indicator{
+    fill: #8B5CF6;
   }
 </style>

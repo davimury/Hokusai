@@ -2,7 +2,7 @@
   <main class="h-screen">
     <Header></Header>
     <div
-      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-hidden md:max-w-4xl rounded-lg shadow-sm mx-auto"
+      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-visible md:max-w-4xl rounded-lg shadow-sm mx-auto"
     >
       <div class="relative h-40">
         <img class="absolute h-full w-full object-cover" :src="getHeader" />
@@ -36,8 +36,14 @@
       </div>
       <div>
         <div class="text-center">
-          <h1 class="text-lg text-center font-semibold inline-block">{{ this.name }}</h1>
-          <button class="ml-1 -mt-1 absolute text-purple-500 hover:text-purple-600 "><span class="material-icons text-lg"> edit </span></button>
+          <h1 class="text-lg text-center font-semibold inline-block">
+            {{ this.name }}
+          </h1>
+          <button
+            class="ml-1 -mt-1 absolute text-purple-500 hover:text-purple-600"
+          >
+            <span class="material-icons text-lg"> edit </span>
+          </button>
         </div>
         <div class="flex justify-center text-gray-500">
           <p class="mx-1">
@@ -62,7 +68,9 @@
           </button>
         </div>
       </div>
-      <div class="mt-6 pt-3 flex flex-wrap mx-6 border-t border-lightergray">
+      <div
+        class="mt-6 pt-3 flex flex-wrap mx-6 border-t border-lightergray w-100"
+      >
         <div
           class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:text-purple-600 hover:border-purple-600 cursor-pointer"
           v-for="userTag in userTags"
@@ -70,7 +78,45 @@
         >
           {{ userTag }}
         </div>
+        <button
+          class="ml-1 -mt-1 text-purple-500 hover:text-purple-600 -mt-4"
+          @click="editTags(true)"
+        >
+          <span class="material-icons text-lg"> edit </span>
+        </button>
       </div>
+      <transition
+        mode="out-in"
+        enter-active-class="animate__animated animate__fadeIn"
+        leave-active-class="animate__animated animate__fadeOut"
+      >
+        <div v-if="isEditingTags" class="pt-3 mx-6 w-100 overflow-visible">
+          <v-select
+            taggable
+            multiple
+            push-tags
+            name="tags"
+            label="name"
+            @option:created="addTag"
+            @input="appendTag"
+            :options="recomendedTags"
+          ></v-select>
+          <div class="flex justify-end mt-2">
+            <button
+              @click="editTags(false)"
+              class="rounded-lg border border-purple-500 hover:border-purple-600 focus:outline-none text-white p-1 px-3 mx-1 mt-2"
+            >
+              Cancelar
+            </button>
+            <button
+              class="rounded-lg border border-purple-500 hover:border-purple-600 bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-1 px-3 mx-1 mt-2"
+              @click="editTags(false)"
+            >
+              Salvar
+            </button>
+          </div>
+        </div>
+      </transition>
     </div>
     <div
       class="pb-6 mt-6 w-full justify-center items-center overflow-hidden md:max-w-4xl mx-auto grid grid-cols-3 gap-1"
@@ -250,13 +296,15 @@ import { directive as onClickaway } from "vue-clickaway";
 import vue2Dropzone from "vue2-dropzone";
 import "../assets/css/dropzone.css";
 import axios from "axios";
-
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 export default {
   name: "Profile",
   components: {
     Header,
     Post,
     Footer,
+    vSelect,
     vueDropzone: vue2Dropzone,
   },
   directives: {
@@ -296,6 +344,7 @@ export default {
       croppieHeaderState: false,
       croppieProfileState: false,
       imgDataUrl: "", // the datebase64 url of created image
+      isEditingTags: false,
     };
   },
   mounted() {
@@ -324,6 +373,9 @@ export default {
     },
   },
   methods: {
+    editTags: function (isEditing) {
+      this.isEditingTags = isEditing;
+    },
     awayModalPost: function () {
       this.modalPost = false;
     },
