@@ -79,7 +79,7 @@
           {{ userTag }}
         </div>
         <button
-          class="ml-1 -mt-1 text-purple-500 hover:text-purple-600 -mt-4"
+          class="ml-1 -mt-1 text-purple-500 hover:text-purple-600 -mt-3"
           @click="editTags(true)"
         >
           <span class="material-icons text-lg"> edit </span>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-lightgray text-white pb-6 justify-center items-center overflow-hidden w-full sm:w-1/3 lg:w-1/4 rounded-lg shadow-sm"
+    class="bg-lightgray text-white pb-6 justify-center items-center overflow-hidden w-full sm:w-1/3 lg:w-1/4 rounded-lg shadow-sm m-2"
   >
     <div class="relative h-20">
       <img
