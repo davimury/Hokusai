@@ -19,10 +19,10 @@
         <a href="#"><span class="material-icons"> queue </span></a>
       </div>
       <div class="mr-5 hover:text-purple-600 text-3xl">
-        <a href="#"><span class="material-icons"> question_answer </span></a>
+        <a href="/chat"><span class="material-icons"> question_answer </span></a>
       </div>
       <div class="mr-5 hover:text-purple-600 text-3xl">
-        <a href="#"><span class="material-icons"> bookmark </span></a>
+        <a href="/saved"><span class="material-icons"> bookmark </span></a>
       </div>
 
       <div class="relative">
@@ -40,8 +40,8 @@
         <!-- Dropdown Body -->
         <transition
           mode="out-in"
-          enter-active-class="animate__animated animate__flipInX"
-          leave-active-class="animate__animated animate__flipOutX"
+          enter-active-class="animate__animated animate__fadeInUp"
+          leave-active-class="animate__animated animate__fadeOutDown"
         >
           <div
             v-if="show"
@@ -50,13 +50,10 @@
           >
             <ul class="text-left">
               <li class="my-2 hover:text-gray-300">
-                <a href="#" class="px-4 py-2"> Perfil </a>
+                <a :href="this.username" class="px-4 py-2"> Perfil </a>
               </li>
               <li class="my-2 hover:text-gray-300">
-                <a href="#" class="px-4 py-2">Configurações</a>
-              </li>
-              <li class="my-2 hover:text-gray-300">
-                <a href="#" class="px-4 py-2"> Logout </a>
+                <a @click="logout" class="px-4 py-2"> Logout </a>
               </li>
             </ul>
           </div>
