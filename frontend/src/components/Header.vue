@@ -101,9 +101,6 @@
                   <a :href="this.username" class="px-4 py-2"> Perfil </a>
                 </li>
                 <li class="my-2 hover:text-gray-300">
-                  <a href="#" class="px-4 py-2">Configurações</a>
-                </li>
-                <li class="my-2 hover:text-gray-300">
                   <a @click="logout" class="px-4 py-2"> Logout </a>
                 </li>
               </ul>
