@@ -162,15 +162,16 @@ export default {
 </script>
 
 <style scoped>
-  .animate__animated.animate__fadeIn {
+  
+   
+</style>
+<style>
+.animate__animated.animate__fadeIn {
     --animate-duration: 0.3s;
   }
   .animate__animated.animate__fadeOut {
     --animate-duration: 0.3s;
   }
-   
-</style>
-<style>
 .vs__selected{
     background-color: #3b3b3b;
     color: white;

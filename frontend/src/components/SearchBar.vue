@@ -54,6 +54,8 @@
           overflow-y-auto
           max-h-30vh
           px-3
+          hidden
+          sm:block
         "
       >
         <ul class="text-left">
