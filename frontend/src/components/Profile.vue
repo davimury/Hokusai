@@ -201,25 +201,20 @@
             >&#8203;</span
           >
           <div
-            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:w-6/12"
+            class="inline-block align-bottom overflow-hidden transform transition-all  sm:align-middle "
           >
             <div
-              class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white py-10"
+              class="bg-lightgray border border-lightgray rounded-lg block w-full text-white py-10"
+              v-on-clickaway="awayModalHeader"
             >
-              <vue-dropzone
-                id="dropzone"
-                :options="dropzoneOptions"
-                class="mb-5"
-                @vdropzone-success="croppieHeader"
-                :style="{ display: !croppieHeaderState ? 'block' : 'none' }"
-              ></vue-dropzone>
+              
               <vue-croppie
                 ref="croppieRef"
                 :enableExif="true"
                 :enableOrientation="true"
                 :boundary="{ width: 896, height: 360 }"
                 :viewport="{ width: 896, height: 360, type: 'rectangle' }"
-                :style="{ display: croppieHeaderState ? 'block' : 'none' }"
+                
               ></vue-croppie>
               <button
                 class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
@@ -243,6 +238,7 @@
         role="dialog"
         aria-modal="true"
         v-if="modalProfile"
+        
       >
         <div
           class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
@@ -258,29 +254,23 @@
             >&#8203;</span
           >
           <div
-            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:w-3/12"
+            class="inline-block align-bottom overflow-hidden transform transition-all  sm:align-middle "
           >
             <div
-              class="bg-lightgray border border-lightgray rounded-lg block w-full mb-16 text-white py-10"
+              class="bg-lightgray border border-lightgray rounded-lg block w-full text-white py-8"
+              v-on-clickaway="awayModalProfile"
             >
-              <vue-dropzone
-                ref="headerRef"
-                id="dropzone"
-                :options="dropzoneOptions"
-                class="mb-5"
-                @vdropzone-success="croppieProfile"
-                :style="{ display: !croppieProfileState ? 'block' : 'none' }"
-              ></vue-dropzone>
               <vue-croppie
                 ref="croppieRef"
                 :enableExif="true"
                 :enableOrientation="true"
                 :boundary="{ width: 300, height: 300 }"
                 :viewport="{ width: 250, height: 250, type: 'circle' }"
-                :style="{ display: croppieProfileState ? 'block' : 'none' }"
+                
               ></vue-croppie>
+              <input type="file" @change="croppieProfile" />
               <button
-                class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
+                class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mt-4 self-start"
                 @click="changeProfile"
               >
                 Atualizar
@@ -396,12 +386,13 @@ export default {
       this.modalPost = false;
     },
     awayModalHeader: function () {
+      console.log('t')
       this.modalHeader = false;
-      this.coppieState = true;
+      this.croppieHeaderState = true;
     },
     awayModalProfile: function () {
       this.modalProfile = false;
-      this.coppieState = true;
+      this.croppieProfileState = true;
     },
     showPost: function (post) {
       this.postData = post;
