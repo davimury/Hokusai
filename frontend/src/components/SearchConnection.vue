@@ -3,6 +3,9 @@
     <Header></Header>
     <main class="h-content">
       <div class="w-full md:max-w-4xl mx-auto p-3">
+        <div class="block sm:hidden relative w-full mb-4">
+          <SearchBar></SearchBar>
+        </div>
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
             class="
@@ -138,6 +141,7 @@ import Footer from "./Footer.vue";
 import ProfileCard from "./ProfileCard";
 import { directive as onClickaway } from "vue-clickaway";
 import Post from "./Post.vue";
+import SearchBar from "./SearchBar.vue";
 export default {
   name: "SearchConnection",
   components: {
@@ -145,6 +149,7 @@ export default {
     Footer,
     ProfileCard,
     Post,
+    SearchBar
   },
   directives: {
     onClickaway: onClickaway,

@@ -12,7 +12,7 @@
     "
   >
     <div class="flex flex-col px-4 py-3">
-      <h1 class="mb-5 text-lg font-semibold">
+      <h1 class="mb-5 text-lg font-semibold border-b border-lightergray pb-2">
         <span class="text-purple-500 frontend">#</span> Tags em alta
       </h1>
       <div class="mt-1 flex flex-col w-100">

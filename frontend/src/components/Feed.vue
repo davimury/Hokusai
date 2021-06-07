@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <div id="right-bar" class="w-1/3 md:2/4 hidden lg:block h-screen p-3">
+      <div id="right-bar" class="w-1/3 md:2/4 hidden lg:block h-screen p-3 ">
         <SuggestedConection
           :suggestedConection="suggestedConection"
           class="mb-4"

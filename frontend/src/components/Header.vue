@@ -11,14 +11,7 @@
       </div>
 
       <div class="hidden sm:block relative inline-block w-1/3">
-        <span
-          class="material-icons md-18 text-gray-400 cursor-pointer select-none absolute inset-y-0 right-3 mt-2 flex items-center"
-          >search</span
-        >
-        <input
-          class="block p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-indigo-500 w-full text-white"
-          placeholder="Pesquisar"
-        />
+        <SearchBar></SearchBar>
       </div>
 
       <div class="hidden sm:flex text-center text-purple-500">
@@ -117,14 +110,17 @@
 import Notification from './Notification'
 import { directive as onClickaway } from "vue-clickaway";
 import CreatePost from "./CreatePost.vue";
+import SearchBar from "./SearchBar.vue";
 import { mapActions } from "vuex";
-
+import vSelect from 'vue-select'
 
 export default {
   name: "Header",
   components: {
     CreatePost,
-    Notification
+    Notification,
+    vSelect,
+    SearchBar
   },
   directives: {
     onClickaway: onClickaway,
@@ -166,15 +162,16 @@ export default {
 </script>
 
 <style scoped>
-  .animate__animated.animate__fadeIn {
+  
+   
+</style>
+<style>
+.animate__animated.animate__fadeIn {
     --animate-duration: 0.3s;
   }
   .animate__animated.animate__fadeOut {
     --animate-duration: 0.3s;
   }
-   
-</style>
-<style>
 .vs__selected{
     background-color: #3b3b3b;
     color: white;

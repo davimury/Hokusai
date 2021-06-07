@@ -38,7 +38,7 @@ export default {
       username: this.$store.getters.Name,
       user_id: this.$store.getters.UserId,
       cacheKey: +new Date(),
-    }
+    };
   },
   created() {
     this.interval = setInterval(() => {
@@ -48,10 +48,8 @@ export default {
   destroyed() {
     clearInterval(this.interval);
   },
-  methods: {
-    
-  }
-}
+  methods: {},
+};
 </script>
 
 <style>
