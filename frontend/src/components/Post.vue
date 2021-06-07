@@ -4,7 +4,7 @@
     class="bg-lightgray border border-lightgray rounded-lg block w-full text-white"
   >
     <div class="flex items-center px-4 py-3">
-      <img class="h-8 w-8 rounded-full" :src="require('@/assets/img/profile/' + postData.author_id + '.jpg')" />
+      <img class="h-8 w-8 rounded-full" :src="require(`@/assets/img/profile/${postData.author_id}.jpg`)"  @error="$event.target.src = '@/src/assets/img/profile/default.jpg'" />
       <div class="ml-3">
         <span class="text-sm font-semibold antialiased block leading-tight">{{
           postData.username
@@ -33,7 +33,7 @@ chevron_left
           :key="index"
           class="m-auto float-right"
         >
-          <img :src="require(`@/assets/img/posts/${slide}`)" class="object-contain mx-auto my-auto max-h-70vh"/>
+          <img :src="require(`@/assets/img/posts/${slide}`)"  @error="$event.target.src = '@/src/assets/img/posts/default.jpg'" class="object-contain mx-auto my-auto max-h-70vh"/>
         </slide>
       </carousel>
       <div

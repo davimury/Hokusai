@@ -1,5 +1,5 @@
 import base64
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, Request
 from sqlalchemy import and_, or_
 from db.db_main import Session, USERS, POSTS, TAGS, LIKES, CONNECTIONS, NOTIFICATIONS
 from routers.auth import manager
@@ -48,7 +48,7 @@ async def get_suggested_users(user=Depends(manager)):
 
 
 @router.get("/profile/notifications")
-def get_user_notifications(user=Depends(manager)):
+async def get_user_notifications(user=Depends(manager)):
     flag = True
     try:
         session = Session()
@@ -94,12 +94,15 @@ async def get_user_info(username: str, user=Depends(manager)):
         tags_arr = []
 
         this_user = session.query(USERS).filter_by(username=username).first()
-        posts = session.query(POSTS).filter_by(
-            post_author=this_user.user_id).order_by(POSTS.post_id.desc()).all()
-        tags = session.query(TAGS).filter(
-            TAGS.tag_id.in_(this_user.tags)).all()
+        posts = session.query(POSTS).filter_by(post_author=this_user.user_id).order_by(POSTS.post_id.desc()).all()
 
-    except:
+        if posts:
+            tags = session.query(TAGS).filter(TAGS.tag_id.in_(this_user.tags)).all()
+        else:
+            posts = []
+            tags = []
+    except Exception as e:
+        print(e)
         flag = False
 
     if flag:
@@ -130,7 +133,9 @@ async def get_user_info(username: str, user=Depends(manager)):
                     'like': like,
                     'dislike': dislike,
                 })
-        except:
+
+        except Exception as e:
+            print(e)
             flag = False
 
         finally:
@@ -178,14 +183,15 @@ async def add_tag(tag: Tags, user=Depends(manager)):
 
 
 @router.post("/profile/image")
-def change_profile(base: str, user=Depends(manager)):
+async def change_profile(request: Request, user=Depends(manager)):
     flag = True
+    base = await request.json()
 
     try:
         filename = str(user.user_id) + ".jpg"
 
         with open('../frontend/src/assets/img/profile/' + filename, "wb") as f:
-            f.write(base64.b64decode(base.base[base.base.find(",")+1:]))
+            f.write(base64.b64decode(base['base'][base['base'].find(",")+1:]))
 
     except:
         flag = False
@@ -197,15 +203,16 @@ def change_profile(base: str, user=Depends(manager)):
 
 
 @router.post("/profile/header")
-def change_header(base: str, user=Depends(manager)):
+async def change_header(request: Request, user=Depends(manager)):
     """ Update profile image """
     flag = True
+    base = await request.json()
 
     try:
         filename = str(user.user_id) + ".jpg"
 
         with open('../frontend/src/assets/img/header/' + filename, "wb") as f:
-            f.write(base64.b64decode(base.base[base.base.find(",")+1:]))
+            f.write(base64.b64decode(base['base'][base['base'].find(",")+1:]))
     except:
         flag = False
 

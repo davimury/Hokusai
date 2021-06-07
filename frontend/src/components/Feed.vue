@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header></Header>
-    <main class="flex justify-center mx-auto h-screen w-full md:max-w-4xl">
+    <main class="flex justify-center mx-auto h-screen w-full md:max-w-4xl" @mousemove="mouseMove">
       <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
@@ -30,20 +30,30 @@
           </button>
         </div>
         <div v-if="feedType == 1" class="w-full flex flex-col posts h-100">
-          <Post
-            v-for="postData in followPosts.slice().reverse()"
-            :key="postData.post_id"
-            :postData="postData"
-            class="my-4"
-          ></Post>
+          <div v-if="followPosts.length > 0">
+            <Post
+              v-for="postData in followPosts.slice().reverse()"
+              :key="postData.post_id"
+              :postData="postData"
+              class="my-4"
+            ></Post>
+          </div>
+          <div class="my-4" v-else>
+            <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
+          </div>
         </div>
         <div v-if="feedType == 2" class="w-full flex flex-col posts h-100">
-          <Post
-            v-for="postData in recPosts.slice()"
-            :key="postData.post_id"
-            :postData="postData"
-            class="my-4"
-          ></Post>
+          <div v-if="recPosts.length > 0">
+            <Post
+              v-for="postData in recPosts.slice()"
+              :key="postData.post_id"
+              :postData="postData"
+              class="my-4"
+            ></Post>
+          </div>
+          <div class="my-4" v-else>
+            <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
+          </div>
         </div>
       </div>
 
@@ -178,6 +188,7 @@
 <script>
 import { directive as onClickaway } from "vue-clickaway";
 import Post from "./Post.vue";
+import NotFoundGhost from "./NotFoundGhost.vue";
 import { FormWizard, TabContent } from "vue-form-wizard";
 import "vue-form-wizard/dist/vue-form-wizard.min.css";
 import SuggestedConection from "./SuggestedConection.vue";
@@ -194,6 +205,7 @@ export default {
     SuggestedConection,
     Header,
     Footer,
+    NotFoundGhost,
     FormWizard,
     TabContent,
     TrendingTags,
@@ -220,6 +232,10 @@ export default {
       recomendedTags: [],
       selectedTags: [],
       suggestedConection: [],
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight,
+      xAxis: 0,
+      yAxis: 0,
     };
   },
   computed: {
@@ -351,6 +367,19 @@ export default {
       });
 
       await this.setFirstLogin(false);
+    },
+    mouseMove: function (event) {
+      var pageX = this.windowWidth;
+      var pageY = this.windowHeight;
+      var mouseY=0;
+      var mouseX=0;
+
+      //verticalAxis
+      mouseY = event.clientY;
+      this.yAxis = (pageY-mouseY)/pageY*100; 
+      //horizontalAxis
+      mouseX = event.clientX / -pageX;
+      this.xAxis = -mouseX * 50 - 50;
     },
   },
   "pt-pt": {
