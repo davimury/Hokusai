@@ -129,7 +129,7 @@ class NOTIFICATIONS(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     target_id = Column(Integer, ForeignKey('users.user_id'))
     recipient_id = Column(Integer, ForeignKey('users.user_id'))
-    con_id =  Column(Integer, ForeignKey('connections.con_id'))
+    con_id =  Column(Integer, ForeignKey('connections.con_id',  ondelete='CASCADE'))
     type = Column(Integer)  # 0 - Normal, 1 - Conexão
     status = Column(Boolean)
     created_at = Column(DateTime)

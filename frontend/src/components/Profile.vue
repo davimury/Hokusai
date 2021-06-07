@@ -1,5 +1,5 @@
 <template>
-  <main class="h-screen">
+  <main class="h-screen" @mousemove="mouseMove">
     <Header></Header>
     <div
       class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-visible md:max-w-4xl rounded-lg shadow-sm mx-auto"
@@ -120,8 +120,10 @@
     </div>
     <div
       class="pb-6 mt-6 w-full justify-center items-center overflow-hidden md:max-w-4xl mx-auto grid grid-cols-3 gap-1"
+      v-if="posts.length > 0"
     >
       <div
+        
         v-for="post in posts"
         :key="post.post_id"
         class="bg-lightgray post-card cursor-pointer"
@@ -134,7 +136,43 @@
         />
       </div>
     </div>
-
+    <div
+    class="pb-6 mt-6 w-full justify-center items-center overflow-hidden mx-auto text-white text-center md:max-w-4xl mx-auto"
+    v-else>
+    <div class="box">
+  <div id="ghost" class="box__ghost">
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    
+    <div class="box__ghost-container">
+      <div class="box__ghost-eyes" :style="style">
+        <div class="box__eye-left"></div>
+        <div class="box__eye-right"></div>
+      </div>
+      <div class="box__ghost-bottom">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div class="box__ghost-shadow"></div>
+  </div>
+  
+  <div class="box__description">
+    <div class="box__description-container">
+      <div class="box__description-title">Whoops!</div>
+      <div class="box__description-text">Nenhum post foi encontrado!!</div>
+    </div>
+  </div>
+  
+</div>
+    </div>
     <transition
       mode="out-in"
       enter-active-class="animate__animated animate__fadeIn"
@@ -288,6 +326,7 @@ import "../assets/css/dropzone.css";
 import axios from "axios";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+
 export default {
   name: "Profile",
   components: {
@@ -301,6 +340,7 @@ export default {
     onClickaway: onClickaway,
   },
   data() {
+    
     return {
       dropzoneOptions: {
         url: "https://httpbin.org/post",
@@ -335,6 +375,10 @@ export default {
       croppieProfileState: false,
       imgDataUrl: "", // the datebase64 url of created image
       isEditingTags: false,
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight,
+      xAxis: 0,
+      yAxis: 0,
     };
   },
   mounted() {
@@ -351,15 +395,18 @@ export default {
       try {
         return require("@/assets/img/profile/" + this.user_id + ".jpg");
       } catch {
-        return require("@/assets/img/profile/1.jpg");
+        return require("@/assets/img/profile/default.jpg");
       }
     },
     getHeader() {
       try {
         return require("@/assets/img/header/" + this.user_id + ".jpg");
       } catch {
-        return require("@/assets/img/header/1.jpg");
+        return require("@/assets/img/header/default.jpg");
       }
+    },
+    style () {
+     return { transform: 'translate('+ this.xAxis +'%,-'+ this.yAxis +'%)'}
     },
   },
   methods: {
@@ -441,6 +488,19 @@ export default {
         url: `/profile/${this.username}/connect`,
       });
     },
+    mouseMove: function (event) {
+      var pageX = this.windowWidth;
+      var pageY = this.windowHeight ;
+      var mouseY=0;
+      var mouseX=0;
+
+      //verticalAxis
+      mouseY = event.clientY;
+      this.yAxis = (pageY-mouseY)/pageY*100; 
+      //horizontalAxis
+      mouseX = event.clientX / -pageX;
+      this.xAxis = -mouseX * 50 - 50;
+    },
   },
 };
 </script>
@@ -461,5 +521,281 @@ export default {
 }
 .animate__animated.animate__fadeOut {
   --animate-duration: 0.3s;
+}
+
+.box {
+  min-height: 350px;
+  height: 100%;
+  position: relative;
+}
+.box .box__ghost {
+  padding: 15px 25px 25px;
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -30%);
+}
+.box .box__ghost .symbol:nth-child(1) {
+  opacity: 0.2;
+  animation: shine 4s ease-in-out 3s infinite;
+}
+.box .box__ghost .symbol:nth-child(1):before, .box .box__ghost .symbol:nth-child(1):after {
+  content: "";
+  width: 12px;
+  height: 4px;
+  background: #fff;
+  position: absolute;
+  border-radius: 5px;
+  bottom: 65px;
+  left: 0;
+}
+.box .box__ghost .symbol:nth-child(1):before {
+  transform: rotate(45deg);
+}
+.box .box__ghost .symbol:nth-child(1):after {
+  transform: rotate(-45deg);
+}
+.box .box__ghost .symbol:nth-child(2) {
+  position: absolute;
+  left: -5px;
+  top: 30px;
+  height: 18px;
+  width: 18px;
+  border: 4px solid;
+  border-radius: 50%;
+  border-color: #fff;
+  opacity: 0.2;
+  animation: shine 4s ease-in-out 1.3s infinite;
+}
+.box .box__ghost .symbol:nth-child(3) {
+  opacity: 0.2;
+  animation: shine 3s ease-in-out 0.5s infinite;
+}
+.box .box__ghost .symbol:nth-child(3):before, .box .box__ghost .symbol:nth-child(3):after {
+  content: "";
+  width: 12px;
+  height: 4px;
+  background: #fff;
+  position: absolute;
+  border-radius: 5px;
+  top: 5px;
+  left: 40px;
+}
+.box .box__ghost .symbol:nth-child(3):before {
+  transform: rotate(90deg);
+}
+.box .box__ghost .symbol:nth-child(3):after {
+  transform: rotate(180deg);
+}
+.box .box__ghost .symbol:nth-child(4) {
+  opacity: 0.2;
+  animation: shine 6s ease-in-out 1.6s infinite;
+}
+.box .box__ghost .symbol:nth-child(4):before, .box .box__ghost .symbol:nth-child(4):after {
+  content: "";
+  width: 15px;
+  height: 4px;
+  background: #fff;
+  position: absolute;
+  border-radius: 5px;
+  top: 10px;
+  right: 30px;
+}
+.box .box__ghost .symbol:nth-child(4):before {
+  transform: rotate(45deg);
+}
+.box .box__ghost .symbol:nth-child(4):after {
+  transform: rotate(-45deg);
+}
+.box .box__ghost .symbol:nth-child(5) {
+  position: absolute;
+  right: 5px;
+  top: 40px;
+  height: 12px;
+  width: 12px;
+  border: 3px solid;
+  border-radius: 50%;
+  border-color: #fff;
+  opacity: 0.2;
+  animation: shine 1.7s ease-in-out 7s infinite;
+}
+.box .box__ghost .symbol:nth-child(6) {
+  opacity: 0.2;
+  animation: shine 2s ease-in-out 6s infinite;
+}
+.box .box__ghost .symbol:nth-child(6):before, .box .box__ghost .symbol:nth-child(6):after {
+  content: "";
+  width: 15px;
+  height: 4px;
+  background: #fff;
+  position: absolute;
+  border-radius: 5px;
+  bottom: 65px;
+  right: -5px;
+}
+.box .box__ghost .symbol:nth-child(6):before {
+  transform: rotate(90deg);
+}
+.box .box__ghost .symbol:nth-child(6):after {
+  transform: rotate(180deg);
+}
+.box .box__ghost .box__ghost-container {
+  background: #fff;
+  width: 100px;
+  height: 100px;
+  border-radius: 100px 100px 0 0;
+  position: relative;
+  margin: 0 auto;
+  animation: upndown 3s ease-in-out infinite;
+}
+.box .box__ghost .box__ghost-container .box__ghost-eyes {
+  position: absolute;
+  left: 35%;
+  top: 45%;
+  height: 12px;
+  width: 70px;
+}
+.box .box__ghost .box__ghost-container .box__ghost-eyes .box__eye-left {
+  width: 12px;
+  height: 12px;
+  background: #332F63;
+  border-radius: 50%;
+  margin: 0 10px;
+  position: absolute;
+  left: 0;
+}
+.box .box__ghost .box__ghost-container .box__ghost-eyes .box__eye-right {
+  width: 12px;
+  height: 12px;
+  background: #332F63;
+  border-radius: 50%;
+  margin: 0 10px;
+  position: absolute;
+  right: 0;
+}
+.box .box__ghost .box__ghost-container .box__ghost-bottom {
+  display: flex;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.box .box__ghost .box__ghost-container .box__ghost-bottom div {
+  flex-grow: 1;
+  position: relative;
+  top: -10px;
+  height: 20px;
+  border-radius: 100%;
+  background-color: #fff;
+}
+.box .box__ghost .box__ghost-container .box__ghost-bottom div:nth-child(2n) {
+  top: -12px;
+  margin: 0 0px;
+  border-top: 15px solid #332F63;
+  background: transparent;
+}
+.box .box__ghost .box__ghost-shadow {
+  height: 20px;
+  box-shadow: 0 50px 15px 5px #332F63;
+  border-radius: 50%;
+  margin: 0 auto;
+  animation: smallnbig 3s ease-in-out infinite;
+}
+.box .box__description {
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.box .box__description .box__description-container {
+  color: #fff;
+  text-align: center;
+  width: 200px;
+  font-size: 16px;
+  margin: 0 auto;
+}
+.box .box__description .box__description-container .box__description-title {
+  font-size: 24px;
+  letter-spacing: 0.5px;
+}
+.box .box__description .box__description-container .box__description-text {
+  color: #8C8AA7;
+  line-height: 20px;
+  margin-top: 20px;
+}
+.box .box__description .box__button {
+  display: block;
+  position: relative;
+  background: #FF5E65;
+  border: 1px solid transparent;
+  border-radius: 50px;
+  height: 50px;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  line-height: 50px;
+  font-size: 18px;
+  padding: 0 70px;
+  white-space: nowrap;
+  margin-top: 25px;
+  transition: background 0.5s ease;
+  overflow: hidden;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+.box .box__description .box__button:before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 100px;
+  background: #fff;
+  bottom: -25px;
+  left: 0;
+  border: 2px solid #fff;
+  transform: translateX(-50px) rotate(45deg);
+  transition: transform 0.5s ease;
+}
+.box .box__description .box__button:hover {
+  background: transparent;
+  border-color: #fff;
+}
+.box .box__description .box__button:hover:before {
+  transform: translateX(250px) rotate(45deg);
+}
+
+@keyframes upndown {
+  0% {
+    transform: translateY(5px);
+  }
+  50% {
+    transform: translateY(15px);
+  }
+  100% {
+    transform: translateY(5px);
+  }
+}
+@keyframes smallnbig {
+  0% {
+    width: 90px;
+  }
+  50% {
+    width: 100px;
+  }
+  100% {
+    width: 90px;
+  }
+}
+@keyframes shine {
+  0% {
+    opacity: 0.2;
+  }
+  25% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.2;
+  }
 }
 </style>

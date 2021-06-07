@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi_login import LoginManager
 from starlette.responses import Response, JSONResponse, HTMLResponse
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy import exc
 from db.db_main import Session, USERS
 from datetime import timedelta
@@ -9,7 +10,7 @@ from models import Login, Registro
 SECRET = "434d502035aa8243868e3e5767afb5943c75fb5f0a18e013"
 
 router = APIRouter()
-manager = LoginManager(SECRET, "/v1/login", use_cookie=True)
+manager = LoginManager(SECRET, "/token", use_cookie=True)
 manager.cookie_name = "hokusai_cookie"
 
 
@@ -76,6 +77,23 @@ async def auth_login(formData: Login):
 
     if flag:
         return response
+
+@router.post("/token")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    session = Session()
+    user_obj = session.query(USERS).filter_by(username = form_data.username).first()
+    user = await load_user(user_obj.email)
+
+    if not user:
+        raise HTTPException(status_code=401, detail="email não cadastrado")
+    elif not user.verify_password(form_data.password):
+        raise HTTPException(status_code=401, detail="senha incorreta")
+
+    token = manager.create_access_token(
+        data=dict(sub=user.username)
+    )
+
+    return {"access_token": token, "token_type": "bearer"}
 
 
 @router.delete("/v1/logout", response_class=HTMLResponse)

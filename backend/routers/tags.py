@@ -33,6 +33,27 @@ async def get_all_tags():
         return JSONResponse(status_code=200, content=tags_arr)
 
 
+@router.get("/v1/user/tags")
+async def get_user_tags(user=Depends(manager)):
+    try:
+        flag = True
+        tag_arr = []
+        session = Session()
+
+        tags = session.query(TAGS).filter(TAGS.tag_id.in_(user.tags)).all()
+
+        for tag in tags:
+            tag_arr.append(tag.tag_name)
+    except:
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        return JSONResponse(status_code=200, content=tag_arr)
+
+
 @router.post("/v1/add_tag")
 async def add_tag(tag: Tags, user=Depends(manager)):
     try:
@@ -60,24 +81,4 @@ async def add_tag(tag: Tags, user=Depends(manager)):
         return JSONResponse(content={'id': new_tag.tag_id, "name": new_tag.tag_name}, status_code=200)
     else:
         return JSONResponse(content={'status': e}, status_code=500)
-
-
-@router.get("/v1/user/tags")
-async def get_user_tags(user=Depends(manager)):
-    try:
-        flag = True
-        tag_arr = []
-        session = Session()
-
-        tags = session.query(TAGS).filter(TAGS.tag_id.in_(user.tags)).all()
-
-        for tag in tags:
-            tag_arr.append(tag.tag_name)
-    except:
-        flag = False
-
-    finally:
-        session.close()
-
-    if flag:
-        return JSONResponse(status_code=200, content=tag_arr)
+        
