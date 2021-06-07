@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get("/v1/tags/")
-async def get_all_tags():
+async def get_all_tags(user=Depends(manager)):
     try:
         flag = True
         tags_arr = []
@@ -18,7 +18,8 @@ async def get_all_tags():
         tags = session.query(TAGS).all()
 
         for tag in tags:
-            tags_arr.append({'id': tag.tag_id, 'name': tag.tag_name.title()})
+            if tag.tag_id not in user.tags:
+                tags_arr.append({'id': tag.tag_id, 'name': tag.tag_name.title()})
 
     except:
         flag = False
@@ -41,6 +42,28 @@ async def get_user_tags(user=Depends(manager)):
         session = Session()
 
         tags = session.query(TAGS).filter(TAGS.tag_id.in_(user.tags)).all()
+
+        for tag in tags:
+            tag_arr.append(tag.tag_name)
+    except:
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        return JSONResponse(status_code=200, content=tag_arr)
+
+
+@router.get("/v1/{username}/tags")
+async def get_tags_by_username(username: str, user=Depends(manager)):
+    try:
+        flag = True
+        tag_arr = []
+        session = Session()
+
+        user_ = session.query(USERS).filter_by(username=username).first()
+        tags = session.query(TAGS).filter(TAGS.tag_id.in_(user_.tags)).all()
 
         for tag in tags:
             tag_arr.append(tag.tag_name)

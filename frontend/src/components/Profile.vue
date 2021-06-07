@@ -49,7 +49,7 @@
           <p class="mx-1">
             <span class="font-medium">{{ this.postsCounter }}</span> Posts
           </p>
-          <p class="mx-1"><span class="font-medium">150</span> Conexões</p>
+          <p class="mx-1"><span class="font-medium">{{con_count}}</span> Conexões</p>
         </div>
         <div
           v-if="this.username != this.$store.getters.Username"
@@ -329,8 +329,10 @@ export default {
         maxFiles: 10,
       },
       posts: [],
+      recomendedTags: [],
       name: "",
       user_id: "",
+      con_count: 0,
       username: this.$route.params.username,
       userTags: [],
       postData: {},
@@ -355,16 +357,23 @@ export default {
     axios.get(`/profile/${this.$route.params.username}/`).then((response) => {
       console.log(response)
       this.posts = response["data"]["posts"];
-      this.userTags = response["data"]["tags"];
       this.postsCounter = response["data"]["posts_count"];
       this.name = response["data"]["name"];
       this.user_id = response["data"]["user_id"];
+      this.con_count = response["data"]["con_count"];
     });
+
+    axios.get('/v1/tags/').then( response => {
+      this.recomendedTags = response['data']
+    })
+    
+    axios.get(`/v1/${this.username}/tags`).then( response => {
+      this.userTags = response["data"];
+    })
   },
   computed: {
     getProfilePic() {
       try {
-        console.log('teste')
         return require(`@/assets/img/profile/${this.user_id}.jpg`);
       } catch {
         return require("@/assets/img/profile/default.jpg");
@@ -381,6 +390,17 @@ export default {
   methods: {
     editTags: function (isEditing) {
       this.isEditingTags = isEditing;
+    },
+    addTag: function (e){
+      axios({
+        method: 'post',
+        url: '/v1/add_tag',
+        data: {
+          "name": e['name'],
+        }
+      }).then(res => {
+        e['id'] = res['data']['id']
+      });
     },
     awayModalPost: function () {
       this.modalPost = false;

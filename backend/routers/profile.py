@@ -1,6 +1,6 @@
 import base64
 from fastapi import APIRouter, Depends, Response, Request
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from db.db_main import Session, USERS, POSTS, TAGS, LIKES, CONNECTIONS, NOTIFICATIONS
 from routers.auth import manager
 from models import Tags
@@ -20,19 +20,36 @@ router = APIRouter()
 @router.get("/profile/suggested")
 async def get_suggested_users(user=Depends(manager)):
     flag = True
-
+    
     try:
         session = Session()
-        sugested_array = session.query(USERS).filter(
-            and_(USERS.tags.contains(user.tags), USERS.user_id != user.user_id)).all()
+        connections_arr = [
+            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = user.user_id).all(),
+            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = user.user_id).all()
+        ]
+
+        sugested_array = []
+        connected_array = []
         users_arr = []
 
-        for user_ in sugested_array:
-            users_arr.append({
-                'user_id': user_.user_id,
-                'username': user_.username,
-                'name': user_.name,
-            })
+        for user_id in connections_arr:
+            user_ = session.query(USERS).filter_by(user_id= user_id[0]).first()
+            connected_array.append(user_)
+
+        for tag in user.tags:
+            rec_user = session.query(USERS).filter(USERS.tags.contains([tag])).all()
+            sugested_array.extend(rec_user)
+
+        s1 = set(sugested_array)
+        dif = s1.difference(connected_array)
+        
+        for user_ in dif:
+            if user_.user_id != user.user_id:
+                users_arr.append({
+                    'user_id': user_.user_id,
+                    'username': user_.username,
+                    'name': user_.name,
+                })
 
     except Exception as e:
         print(e)
@@ -90,6 +107,11 @@ async def get_user_info(username: str, user=Depends(manager)):
 
     try:
         session = Session()
+        connections_arr = [
+            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = user.user_id).all(),
+            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = user.user_id).all()
+        ]
+
         posts_arr = []
         tags_arr = []
 
@@ -147,6 +169,7 @@ async def get_user_info(username: str, user=Depends(manager)):
             'name': this_user.name,
             'tags': tags_arr,
             'posts_count': len(posts_arr),
+            'con_count': len(connections_arr),
             'posts': posts_arr,
         }
     else:
@@ -236,6 +259,7 @@ async def connection_request(username: str, user=Depends(manager)):
 
     try:  # Cria uma nova conexão
         connection = session.query(CONNECTIONS).filter_by(user_1_id=this_user.user_id, user_2_id=user.user_id).first()
+
         if not connection:
             connection = CONNECTIONS(
                 con_status=False, user_1_id=user.user_id, user_2_id=this_user.user_id)
@@ -274,7 +298,11 @@ async def connection_request(username: str, user=Depends(manager)):
                 print(e)
                 flag = False
         else:
-            flag = False
+            notification = session.query(NOTIFICATIONS).filter_by(con_id= connection.con_id).first()
+            notification.status = True
+            connection.con_status = True
+
+            session.commit()
 
     except Exception as e:
         print(e)

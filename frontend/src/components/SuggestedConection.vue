@@ -9,28 +9,37 @@
           </div>
           <div class="flex flex-col px-4 py-3 ">
             <h1 class="mb-5 text-lg font-semibold">Sugestões de conexão</h1>
-            <div v-for="user in suggestedConection" :key="user.user_id">
-              <a :href="user.username">
-                <div class="flex items-center mb-3 w-100">
-                  <img class="h-10 w-10 rounded-full " :src="require(`@/assets/img/profile/${user.user_id}.jpg`)" @error="$event.target.src = require(`@/assets/img/profile/default.jpg`)" />
-                  <div class="ml-3 w-full">
-                    <span class="text-sm font-semibold antialiased block leading-tight">{{user.username}}</span>
-                    <h2 class="text-base font-semibold">{{user.name}}</h2>
+            <div v-if="suggestedConection.length > 0">
+              <div v-for="user in suggestedConection" :key="user.user_id">
+                <a :href="user.username">
+                  <div class="flex items-center mb-3 w-100">
+                    <img class="h-10 w-10 rounded-full " :src="require(`@/assets/img/profile/${user.user_id}.jpg`)" @error="$event.target.src = require(`@/assets/img/profile/default.jpg`)" />
+                    <div class="ml-3 w-full">
+                      <span class="text-sm font-semibold antialiased block leading-tight">{{user.username}}</span>
+                      <h2 class="text-base font-semibold">{{user.name}}</h2>
+                    </div>
+                    <div class="text-center w-full">
+                      <a
+                      @click="requestConnection(user.username)" 
+                      class="ml-5 text-purple-500 hover:text-purple-600" href="#"
+                      >Conectar</a>
+                    </div>
                   </div>
-                  <div class="text-center w-full">
-                    <a class="ml-5 text-purple-500 hover:text-purple-600" href="#">Conectar</a>
-                  </div>
-                </div>
-              </a>
+                </a>
+              </div>
+            </div>
+            <div v-else>
+              <span class="text-gray-500 font-medium text-sm p-5 inline-block">Nenhuma conexão encontrada!</span>
             </div>
           </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "SuggestedConection",
-  props: ["suggestedConection"],
 
   data() {
     return {
@@ -38,6 +47,7 @@ export default {
       username: this.$store.getters.Name,
       user_id: this.$store.getters.UserId,
       cacheKey: +new Date(),
+      suggestedConection: [],
     };
   },
   created() {
@@ -48,7 +58,24 @@ export default {
   destroyed() {
     clearInterval(this.interval);
   },
-  methods: {},
+  mounted() {
+    axios.get("/profile/suggested").then((response) => {
+      this.suggestedConection = response["data"];
+    });
+  },
+  methods: {
+    updateConnections: async function (){
+      axios.get("/profile/suggested").then((response) => {
+        this.suggestedConection = response["data"];
+      });
+    },
+    requestConnection: async function (username) {
+      await axios({
+        method: "post",
+        url: `/profile/${username}/connect`,
+      }).then(() => this.updateConnections());
+    },
+  },
 };
 </script>
 

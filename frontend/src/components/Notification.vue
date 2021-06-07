@@ -136,7 +136,6 @@ export default {
   mounted() {
     axios.get("/profile/notifications").then((response) => {
       this.dataArr = response["data"];
-      console.log(response['data'])
       this.dataArr.forEach(element => {
         if(element['status'] != true)
           this.count = this.count + 1

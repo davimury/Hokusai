@@ -217,7 +217,6 @@ export default {
   },
   mounted (){
     axios.get('/v1/tags/').then( response => {
-      console.log(response)
       this.recomendedTags = response['data']
     })
   },
