@@ -2,19 +2,25 @@
   <div id="notification">
     <button @click="isActive = !isActive">
       <notification-bell
-        :count="1"
+        :count="this.count"
         iconColor="#8b5cf6"
         :size="24"
         counterLocation="lowerRight"
         :animated="true"
       />
     </button>
+    <transition
+            mode="out-in"
+            enter-active-class="animate__animated animate__fadeInDown"
+            leave-active-class="animate__animated animate__fadeOutUp"
+          >
     <div
       v-if="isActive"
       class="flex justify-center fixed"
-      style="right: 185px; top: -100px"
+      style="right: 185px; top: -100px;"
+      v-on-clickaway="away"
     >
-      <div class="bg-lightgray mt-40 px-4 py-3 rounded-lg shadow-md max-w-xs">
+      <div class="bg-lightgray mt-40 px-4 py-4 rounded-lg shadow-md max-w-xs">
         <div class="flex items-center justify-between">
           <span class="font-medium text-sm">Notificações</span>
           <button
@@ -24,66 +30,76 @@
             <span class="material-icons "> close </span>
           </button>
         </div>
-        <div v-for="data in dataArr" :key="data['id']">
-          <div
-            v-if="!data['status']"
-            class="flex items-center mt-3 hover:bg-gray-100 rounded-lg px-1 py-1 cursor-pointer"
-          >
-            <div class="flex flex-shrink-0">
-              <img
-                class="h-16 w-16 rounded-full"
-                :src="
-                  require('@/assets/img/profile/' + data['user_id'] + '.jpg')
-                "
-              />
-            </div>
-            <div class="ml-3 text-left">
-              <span class="font-medium text-sm">{{ data["name"] }}</span>
-              <p class="text-sm">
-                {{ data["username"] }} pediu para se conectar com você!
-              </p>
-              <!-- <span class="text-sm text-blue font-semibold">Alguns segundos atrás</span> -->
-              <button
-                @click="acceptConnection(data['id'])"
-                class="bg-purple-600 hover:bg-purple-800 text-white py-2 px-4 mr-2 border text-sm rounded-md"
+          <div v-if="dataArr.length > 0">
+            <div v-for="data in dataArr.slice(0, 5).reverse()" :key="data['id']">
+              
+                <div
+                  v-if="!data['status']"
+                  class="flex items-center mt-3 rounded-lg px-1 py-1 cursor-pointer"
+                >
+                  <div class="flex flex-shrink-0">
+                    <img
+                      class="h-16 w-16 rounded-full"
+                      :src="
+                        require('@/assets/img/profile/' + data['user_id'] + '.jpg')
+                      "
+                    />
+                  </div>
+                  <div class="ml-3 text-left">
+                    <span class="font-medium text-sm">{{ data["name"] }}</span>
+                    <p class="text-sm mt-2">
+                      {{ data["username"] }} pediu para se conectar com você!
+                    </p>
+                    <!-- <span class="text-sm text-blue font-semibold">Alguns segundos atrás</span> -->
+                    <button
+                      @click="acceptConnection(data['id'])"
+                      class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white py-2 px-4 mr-2 mt-4 text-sm "
+                    >
+                      Aceitar
+                    </button>
+                    <button
+                      @click="refuseConnection(data['id'])"
+                      class="rounded-lg bg-darkgray hover:bg-lightergray focus:outline-none border-darkgray py-2 px-4 mr-2 mt-4 text-sm "
+                    >
+                      Recusar
+                    </button>
+                  </div>
+                </div>
+              
+              <div
+                v-if="data['status']"
+                class="flex items-center mt-3 rounded-lg px-1 py-1 disabled opacity-50"
               >
-                Aceitar
-              </button>
-              <button
-                class="bg-white hover:bg-gray-50 py-2 px-4 text-sm border rounded-md"
-              >
-                Recusar
-              </button>
+                <div class="flex flex-shrink-0">
+                  <img
+                    class="h-16 w-16 rounded-full"
+                    :src="
+                      require('@/assets/img/profile/' + data['user_id'] + '.jpg')
+                    "
+                  />
+                </div>
+                <div class="ml-3 text-left text-gray-400">
+                  <p class="text-sm">
+                    Você aceitou o pedido de <b>{{data["username"]}}</b> para se conectar com você!
+                  </p>
+                  <vue-moments-ago :date="data['last_updated']" elementClass="text-sm text-blue"></vue-moments-ago>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div
-            v-if="data['status']"
-            class="flex items-center mt-3 rounded-lg px-1 py-1 cursor-pointer disabled opacity-50"
-          >
-            <div class="flex flex-shrink-0">
-              <img
-                class="h-16 w-16 rounded-full"
-                :src="
-                  require('@/assets/img/profile/' + data['user_id'] + '.jpg')
-                "
-              />
-            </div>
-            <div class="ml-3 text-left text-gray-400">
-              <span class="font-medium text-sm">{{ data["name"] }}</span>
-              <p class="text-sm">
-                {{ data["username"] }} pediu para se conectar com você!
-              </p>
-              <span class="text-sm text-blue">Alguns segundos atrás</span>
-            </div>
+          <div v-else>
+            <span class="text-gray-500 font-medium text-sm text-center p-5 inline-block">Nenhuma notificação encontrada!</span>
           </div>
-        </div>
       </div>
+    
     </div>
+    </transition>
   </div>
 </template>
 <script>
 import NotificationBell from "vue-notification-bell";
+import VueMomentsAgo from './MomentsAgo.vue'
+import { directive as onClickaway } from "vue-clickaway";
 import Pusher from "pusher-js";
 import axios from "axios";
 
@@ -92,6 +108,10 @@ export default {
 
   components: {
     NotificationBell,
+    VueMomentsAgo,
+  },
+  directives: {
+    onClickaway: onClickaway,
   },
   data() {
     return {
@@ -107,6 +127,7 @@ export default {
     channel.bind(
       this.$store.getters.Username,
       function (data) {
+        this.count = this.count + 1
         this.dataArr.push(data);
       },
       this
@@ -115,7 +136,11 @@ export default {
   mounted() {
     axios.get("/profile/notifications").then((response) => {
       this.dataArr = response["data"];
-      console.log(this.dataArr);
+      console.log(response['data'])
+      this.dataArr.forEach(element => {
+        if(element['status'] != true)
+          this.count = this.count + 1
+      });
     });
   },
   computed: {
@@ -125,16 +150,30 @@ export default {
   },
 
   methods: {
+    away: function () {
+      this.isActive = false;
+    },
+    updateConnections: async function (){
+      axios.get("/profile/notifications").then((response) => {
+        this.dataArr = response["data"];
+        this.count = 0
+        this.dataArr.forEach(element => {
+          if(element['status'] != true)
+            this.count = this.count + 1
+        });
+      });
+    },
     acceptConnection: async function (id) {
       axios({
         method: "post",
         url: `/connection/${id}/accept`,
-      });
-
-      axios.get("/profile/notifications").then((response) => {
-        console.log(this.dataArr);
-        this.dataArr = response["data"];
-      });
+      }).then(() => this.updateConnections());
+    },
+    refuseConnection: async function (id) {
+      axios({
+        method: "post",
+        url: `/connection/${id}/refuse`,
+      }).then(() => this.updateConnections());
     },
   },
 };
