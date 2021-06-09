@@ -59,13 +59,13 @@ export default {
     clearInterval(this.interval);
   },
   mounted() {
-    axios.get("/profile/suggested").then((response) => {
+    axios.get("/user/suggested").then((response) => {
       this.suggestedConection = response["data"];
     });
   },
   methods: {
     updateConnections: async function (){
-      axios.get("/profile/suggested").then((response) => {
+      axios.get("/user/suggested").then((response) => {
         this.suggestedConection = response["data"];
       });
     },

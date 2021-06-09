@@ -39,50 +39,10 @@ chevron_left
       <div
         class="w-100 text-left p-3 overflow-y-auto"
         style="height: 60vh"
-        v-if="postData.postType == 2"
+        v-if="postData.postType == 1"
+        v-html="postData.body"
       >
-        <h1 class="text-center">Lero Lero</h1>
-        <p>
-          A equipe de suporte precisa saber que um erro não identificado causou
-          o bug na estabilidade do protocolo de transferência de dados. Explica
-          pro Product Onwer que o gerenciador de dependências do frontend causou
-          a race condition na interpolação dinâmica de strings. Explica pro
-          Product Onwer que a otimização de performance da renderização do DOM
-          causou a race condition do carregamento de JSON delimitado por linhas.
-          Nesse pull request, um erro não identificado facilitou a resolução de
-          conflito do nosso servidor de DNS. A equipe de suporte precisa saber
-          que o gerenciador de dependências do frontend otimizou a renderização
-          na criação de novos polyfills para suportar os processos. Explica pro
-          Product Onwer que a otimização de performance da renderização do DOM
-          causou a race condition do carregamento de JSON delimitado por linhas.
-          Nesse pull request, um erro não identificado facilitou a resolução de
-          conflito do nosso servidor de DNS. A equipe de suporte precisa saber
-          que o gerenciador de dependências do frontend otimizou a renderização
-          na criação de novos polyfills para suportar os processos. Explica pro
-          Product Onwer que a otimização de performance da renderização do DOM
-          causou a race condition do carregamento de JSON delimitado por linhas.
-        </p>
-        <br />
-        <p>
-          A equipe de suporte precisa saber que um erro não identificado causou
-          o bug na estabilidade do protocolo de transferência de dados. Explica
-          pro Product Onwer que o gerenciador de dependências do frontend causou
-          a race condition na interpolação dinâmica de strings. Explica pro
-          Product Onwer que a otimização de performance da renderização do DOM
-          causou a race condition do carregamento de JSON delimitado por linhas.
-          Nesse pull request, um erro não identificado facilitou a resolução de
-          conflito do nosso servidor de DNS. A equipe de suporte precisa saber
-          que o gerenciador de dependências do frontend otimizou a renderização
-          na criação de novos polyfills para suportar os processos. Explica pro
-          Product Onwer que a otimização de performance da renderização do DOM
-          causou a race condition do carregamento de JSON delimitado por linhas.
-          Nesse pull request, um erro não identificado facilitou a resolução de
-          conflito do nosso servidor de DNS. A equipe de suporte precisa saber
-          que o gerenciador de dependências do frontend otimizou a renderização
-          na criação de novos polyfills para suportar os processos. Explica pro
-          Product Onwer que a otimização de performance da renderização do DOM
-          causou a race condition do carregamento de JSON delimitado por linhas.
-        </p>
+
       </div>
     </div>
 
@@ -110,6 +70,7 @@ chevron_left
       </div>
       <div class="relative flex">
         <span
+          v-if="postData.postType == 0"
           class="bg-black p-1 px-2 rounded-lg text-sm font-semibold bg-opacity-50 text-white"
           >{{ currentPage + 1 }}/{{ postData.slides.length }}</span
         >
@@ -162,19 +123,11 @@ export default {
     chooseVote: function(voteType){
       this.vote = voteType
       if (voteType == 0){
-        axios({
-          method: "post",
-          url: `/v1/post/${this.postData.post_id}/like`,
-        }).then(res => {
-          this.postData.likes = res['data']
-        });
+        axios.post('/post/like', {post_id: this.postData.post_id})
+        .then(res => { this.postData.likes = res['data'] });
       } else {
-        axios({
-          method: "post",
-          url: `/v1/post/${this.postData.post_id}/dislike`,
-        }).then(res => {
-          this.postData.likes = res['data']
-        });
+        axios.post('/post/dislike', {post_id: this.postData.post_id})
+        .then(res => { this.postData.likes = res['data'] });
       }
     }
   },

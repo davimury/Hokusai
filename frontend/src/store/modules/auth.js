@@ -21,18 +21,18 @@ const getters = {
 
 const actions = {
     async Register({dispatch}, form) {
-        await axios.post('/v1/register', form)
+        await axios.post('/register', form)
         await dispatch('LogIn', form) 
       },
 
     async LogIn({commit}, User) {
         User = JSON.parse(User)
-        let user = await axios.post('/v1/login', JSON.stringify({'email': User['email'], 'password': User['password']}))
+        let user = await axios.post('/login', JSON.stringify({'email': User['email'], 'password': User['password']}))
         await commit('setUser', user.data)
     },
     
     async LogOut({commit}){
-        await axios.delete('/v1/logout')
+        await axios.delete('/logout')
         commit('LogOut', null)
     },
 

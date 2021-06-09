@@ -75,6 +75,7 @@ class POSTS(Base):
     post_id = Column(Integer, primary_key=True, autoincrement=True)
     post_author = Column(Integer, ForeignKey('users.user_id'))
     post_body = Column(String)
+    post_desc = Column(String)
     post_img = Column(ARRAY(String))
     post_type = Column(Integer)
     likes = Column(Integer)
@@ -130,7 +131,7 @@ class NOTIFICATIONS(Base):
     target_id = Column(Integer, ForeignKey('users.user_id'))
     recipient_id = Column(Integer, ForeignKey('users.user_id'))
     con_id =  Column(Integer, ForeignKey('connections.con_id',  ondelete='CASCADE'))
-    type = Column(Integer)  # 0 - Normal, 1 - Conexão
+    type = Column(Integer)  # 0 - Mensagem, 1 - Conexão recebida, 2 - Conexão efetuada
     status = Column(Boolean)
     created_at = Column(DateTime)
     last_updated = Column(DateTime)

@@ -32,7 +32,9 @@
         </div>
           <div v-if="dataArr.length > 0">
             <div v-for="data in dataArr.slice(0, 5).reverse()" :key="data['id']">
-              
+              <div v-if="data['type'] == 0">
+              </div>
+              <div v-if="data['type'] == 1">
                 <div
                   v-if="!data['status']"
                   class="flex items-center mt-3 rounded-lg px-1 py-1 cursor-pointer"
@@ -65,24 +67,24 @@
                     </button>
                   </div>
                 </div>
-              
-              <div
-                v-if="data['status']"
-                class="flex items-center mt-3 rounded-lg px-1 py-1 disabled opacity-50"
-              >
-                <div class="flex flex-shrink-0">
-                  <img
-                    class="h-16 w-16 rounded-full"
-                    :src="
-                      require('@/assets/img/profile/' + data['user_id'] + '.jpg')
-                    "
-                  />
-                </div>
-                <div class="ml-3 text-left text-gray-400">
-                  <p class="text-sm">
-                    Você aceitou o pedido de <b>{{data["username"]}}</b> para se conectar com você!
-                  </p>
-                  <vue-moments-ago :date="data['last_updated']" elementClass="text-sm text-blue"></vue-moments-ago>
+                <div
+                  v-else
+                  class="flex items-center mt-3 rounded-lg px-1 py-1 disabled opacity-50"
+                >
+                  <div class="flex flex-shrink-0">
+                    <img
+                      class="h-16 w-16 rounded-full"
+                      :src="
+                        require('@/assets/img/profile/' + data['user_id'] + '.jpg')
+                      "
+                    />
+                  </div>
+                  <div class="ml-3 text-left text-gray-400">
+                    <p class="text-sm">
+                      Você aceitou o pedido de <b>{{data["username"]}}</b> para se conectar com você!
+                    </p>
+                    <vue-moments-ago :date="data['last_updated']" elementClass="text-sm text-blue"></vue-moments-ago>
+                  </div>
                 </div>
               </div>
             </div>
@@ -134,7 +136,7 @@ export default {
     );
   },
   mounted() {
-    axios.get("/profile/notifications").then((response) => {
+    axios.get("/user/notifications").then((response) => {
       this.dataArr = response["data"];
       this.dataArr.forEach(element => {
         if(element['status'] != true)
@@ -153,7 +155,8 @@ export default {
       this.isActive = false;
     },
     updateConnections: async function (){
-      axios.get("/profile/notifications").then((response) => {
+      axios.get("/user/notifications")
+      .then((response) => {
         this.dataArr = response["data"];
         this.count = 0
         this.dataArr.forEach(element => {
@@ -162,17 +165,13 @@ export default {
         });
       });
     },
-    acceptConnection: async function (id) {
-      axios({
-        method: "post",
-        url: `/connection/${id}/accept`,
-      }).then(() => this.updateConnections());
+    acceptConnection: function (id) {
+      axios.post('/connection/accept', {con_id: id})
+      .then(() => this.updateConnections());
     },
-    refuseConnection: async function (id) {
-      axios({
-        method: "post",
-        url: `/connection/${id}/refuse`,
-      }).then(() => this.updateConnections());
+    refuseConnection: function (id) {
+      axios.post('/connection/refuse', {con_id: id})
+      .then(() => this.updateConnections());
     },
   },
 };

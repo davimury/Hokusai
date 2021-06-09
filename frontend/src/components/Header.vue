@@ -130,7 +130,6 @@ export default {
         ".jpg");
     },
     openModal() {
-      console.log("teste");
       this.modalState = true;
     },
   },

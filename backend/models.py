@@ -2,34 +2,36 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import List
 
-class Login(BaseModel):
-    email: str
-    password: str
-
-class Registro(BaseModel):
-    name: str
-    username: str
-    email: str
-    password: str
-
-class Tags(BaseModel):
-    id: int = None
-    name: str = None
+class Tag(BaseModel):
+    tag_id      : int           = None
+    name        : str           = None
     
-class Posts(BaseModel):
-    post_id: int
-    description: str
-    slides: List[str]
-    username: str
-    author_id: int
-    postType: int
-    likes: int
-    created_at: datetime = None
-    like: bool = False
-    dislike: bool = False
+class Post(BaseModel):
+    post_id     : int           = None
+    body        : str           = None
+    description : str           = None
+    slides      : List[str]     = None
+    tags        : List[Tag]     = None
+    username    : str           = None
+    author_id   : int           = None
+    postType    : int           = None
+    likes       : int           = None
+    created_at  : datetime      = None
+    like        : bool          = None
+    dislike     : bool          = None
 
-class Add_Posts(BaseModel):
-    body: str
-    type: int
-    images: List[str]
-    tags: List[Tags]
+class User(BaseModel):
+    user_id     : int           = None
+    name        : str           = None
+    username    : str           = None
+    email       : str           = None
+    password    : str           = None
+    tags        : List[Tag]     = None
+    posts       : List[Post]    = None
+
+
+class Connection(BaseModel):
+    con_id      : int           = None
+    con_status  : bool          = None
+    user_1_id   : int           = None
+    user_2_id   : int           = None

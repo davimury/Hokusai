@@ -84,6 +84,7 @@
           class="flex justify-center text-gray-500"
         >
           <button
+          v-if="!this.isConnected"
             @click="requestConnection"
             class="
               rounded-lg
@@ -99,6 +100,22 @@
             Conectar
           </button>
           <button
+            v-if="this.isConnected && !this.conStatus"
+            disabled
+            class="
+              rounded-lg
+              bg-purple-400
+              text-white
+              p-2
+              mx-1
+              mt-2
+              cursor-not-allowed
+            "
+          >
+            Conexão Pendente
+          </button>
+          <button
+          v-if="this.isConnected && this.conStatus"
             class="
               rounded-lg
               bg-purple-500
@@ -133,15 +150,27 @@
             cursor-pointer
           "
           v-for="userTag in userTags"
-          :key="userTag"
+          :key="userTag['tag_id']"
+          :tag_id="userTag['tag_id']"
         >
-          {{ userTag }}
+          {{ userTag["name"] }}
+          <span
+            v-if="isEditingTags"
+            @click="removeTag"
+            class="material-icons text-purple-500 hover:text-purple-600 text-sm"
+            >clear</span
+          >
         </div>
         <button
           class="ml-1 -mt-1 text-purple-500 hover:text-purple-600 -mt-3"
           @click="editTags(true)"
         >
-          <span class="material-icons text-lg"> edit </span>
+          <span
+            v-if="this.$route.params.username == this.$store.getters.Username"
+            class="material-icons text-lg"
+          >
+            edit
+          </span>
         </button>
       </div>
       <transition
@@ -191,7 +220,7 @@
                 mx-1
                 mt-2
               "
-              @click="editTags(false)"
+              @click="saveTags"
             >
               Salvar
             </button>
@@ -221,8 +250,7 @@
         @click="showPost(post)"
       >
         <img
-          :src="require(`@/assets/img/posts/${post.slides[0]}`)"
-          alt=""
+          :src="thumbsData[post['post_id']]"
           class="media"
         />
       </div>
@@ -361,15 +389,21 @@
                 ref="croppieRef"
                 :enableExif="true"
                 :enableOrientation="true"
-                :boundary="{ width: windowWidth - 34, height: (windowWidth - 34) * 0.42 }"
-                :viewport="{ width: windowWidth - 34, height: (windowWidth - 34) * 0.42, type: 'rectangle' }"
+                :boundary="{
+                  width: windowWidth - 34,
+                  height: (windowWidth - 34) * 0.42,
+                }"
+                :viewport="{
+                  width: windowWidth - 34,
+                  height: (windowWidth - 34) * 0.42,
+                  type: 'rectangle',
+                }"
               ></vue-croppie>
               <div>
                 <label
                   for="croppieProfile"
                   class="
-                  border
-                    border-purple-500
+                    border border-purple-500
                     hover:border-purple-600
                     focus:outline-none
                     text-white
@@ -378,8 +412,7 @@
                     text-base
                     cursor-pointer
                   "
-                  >Escolher
-                  imagem</label
+                  >Escolher imagem</label
                 >
                 <input
                   class="hidden"
@@ -479,8 +512,7 @@
                 <label
                   for="croppieProfile"
                   class="
-                  border
-                    border-purple-500
+                    border border-purple-500
                     hover:border-purple-600
                     focus:outline-none
                     text-white
@@ -489,8 +521,7 @@
                     text-base
                     cursor-pointer
                   "
-                  >Escolher
-                  imagem</label
+                  >Escolher imagem</label
                 >
                 <input
                   class="hidden"
@@ -537,6 +568,7 @@ import "../assets/css/dropzone.css";
 import axios from "axios";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+import * as htmlToImage from 'html-to-image';
 
 export default {
   name: "Profile",
@@ -571,12 +603,17 @@ export default {
       },
       posts: [],
       recomendedTags: [],
+      isConnected: false,
+      conStatus: false,
       name: "",
+      image: "",
       user_id: "",
       con_count: 0,
       username: this.$route.params.username,
       userTags: [],
       postData: {},
+      thumbsData: {},
+      selectedTags: [],
       postsCounter: 0,
       profilePic: "",
       modalPost: false,
@@ -594,24 +631,27 @@ export default {
       yAxis: 0,
     };
   },
-  mounted() {
-    console.log(window.innerWidth)
-    axios.get(`/profile/${this.$route.params.username}/`).then((response) => {
-      console.log(response);
+  mounted: async function () {
+    let posts;
+    await axios.get(`/user/${this.$route.params.username}`)
+    .then(async response => {
+      await this.generateThumbs(response["data"]["posts"])
+
       this.posts = response["data"]["posts"];
+      this.userTags = response["data"]["tags"];
       this.postsCounter = response["data"]["posts_count"];
       this.name = response["data"]["name"];
       this.user_id = response["data"]["user_id"];
       this.con_count = response["data"]["con_count"];
-    });
+    })
 
-    axios.get("/v1/tags/").then((response) => {
-      this.recomendedTags = response["data"];
-    });
-
-    axios.get(`/v1/${this.username}/tags`).then((response) => {
-      this.userTags = response["data"];
-    });
+    if( this.username != this.$store.getters.Username){
+      axios.get(`/connection/${this.$route.params.username}`)
+      .then((response) => {
+        this.isConnected = response['data']['is_connected']
+        this.conStatus = response['data']['con_status']
+      });
+    }
   },
   computed: {
     getProfilePic() {
@@ -630,25 +670,65 @@ export default {
     },
   },
   methods: {
-    editTags: function (isEditing) {
-      this.isEditingTags = isEditing;
+    generateThumbs: async function(posts){
+      for (let i = 0; i < posts.length; i++) {
+        if (posts[i]['postType'] == 0){
+          this.thumbsData[posts[i]['post_id']] = require(`@/assets/img/posts/${posts[i]['slides'][0]}`);
+        } else {
+          var div = document.createElement('div');
+          div.style.backgroundColor = 'white';
+          div.innerHTML = posts[i]['body'].trim();
+          
+          const img = await htmlToImage.toJpeg(div, {width: 300, height: 300})
+          console.log(posts[i]['post_id'])
+          this.thumbsData[posts[i]['post_id']] = img
+        }
+      }
+
     },
+    /* Tags */
+    editTags: function (isEditing) {
+      axios.get("/tags/recommended").then((response) => {
+        this.recomendedTags = response["data"];
+      }).then(() => this.isEditingTags = isEditing);
+    },
+
     addTag: function (e) {
-      axios({
-        method: "post",
-        url: "/v1/add_tag",
-        data: {
-          name: e["name"],
-        },
-      }).then((res) => {
-        e["id"] = res["data"]["id"];
+      axios.post("/tag/new", {name: e["name"]})
+      .then((res) => e["id"] = res["data"]["id"]);
+    },
+
+    saveTags: function () {
+      axios.post("/tags/add", this.selectedTags)
+      .then( () => {
+        this.selectedTags = [];
+        this.editTags(false);
+        this.updateTags()
       });
     },
+
+    removeTag(e) {
+      axios.post("/tags/remove", [{ tag_id: e.path[1].getAttribute("tag_id") }])
+      .then(() => this.updateTags());
+    },
+
+    updateTags: async function () {
+      axios.get(`/tags/${this.username}`)
+      .then((response) => this.userTags = response["data"]);
+
+      axios.get("/tags/recommended")
+      .then((response) => this.recomendedTags = response["data"]);
+    },
+
+    appendTag(e) {
+      this.selectedTags = e;
+    },
+
+    /* Modal */
     awayModalPost: function () {
       this.modalPost = false;
     },
     awayModalHeader: function () {
-      console.log("t");
       this.modalHeader = false;
       this.croppieHeaderState = true;
     },
@@ -659,9 +739,6 @@ export default {
     showPost: function (post) {
       this.postData = post;
       this.modalPost = true;
-    },
-    getPostData: function () {
-      return this.postData;
     },
     croppieHeader(e) {
       this.$refs.croppieRef.bind({
@@ -713,10 +790,15 @@ export default {
         },
       });
     },
-    requestConnection: async function () {
-      await axios({
-        method: "post",
-        url: `/profile/${this.username}/connect`,
+    requestConnection: function () {
+      axios.post('/connection/new', {username: this.username})
+      .then(() => {
+        axios.get(`/connection/${this.$route.params.username}`)
+        .then((response) => {
+          this.isConnected = response['data']['is_connected']
+          this.conStatus = response['data']['con_status']
+          console.log(this.conStatus)
+        });
       });
     },
     mouseMove: function (event) {

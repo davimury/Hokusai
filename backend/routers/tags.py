@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends
 from starlette.responses import JSONResponse
 from db.db_main import Session, TAGS, USERS
-from sqlalchemy import or_
-from models import Tags
+from typing import List
+from models import Tag
 from routers.auth import manager
 
 router = APIRouter()
 
 
-@router.get("/v1/tags/")
+@router.get("/tags/recommended")
 async def get_all_tags(user=Depends(manager)):
     try:
         flag = True
@@ -19,7 +19,7 @@ async def get_all_tags(user=Depends(manager)):
 
         for tag in tags:
             if tag.tag_id not in user.tags:
-                tags_arr.append({'id': tag.tag_id, 'name': tag.tag_name.title()})
+                tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
 
     except:
         flag = False
@@ -29,33 +29,12 @@ async def get_all_tags(user=Depends(manager)):
 
     if flag:
         if len(tags_arr) == 0:
-            tags_arr.append({'id': None, 'name': 'Nenhuma tag encontrada!'})
+            tags_arr.append({'tag_id': None, 'name': 'Nenhuma tag encontrada!'})
 
         return JSONResponse(status_code=200, content=tags_arr)
 
 
-@router.get("/v1/user/tags")
-async def get_user_tags(user=Depends(manager)):
-    try:
-        flag = True
-        tag_arr = []
-        session = Session()
-
-        tags = session.query(TAGS).filter(TAGS.tag_id.in_(user.tags)).all()
-
-        for tag in tags:
-            tag_arr.append(tag.tag_name)
-    except:
-        flag = False
-
-    finally:
-        session.close()
-
-    if flag:
-        return JSONResponse(status_code=200, content=tag_arr)
-
-
-@router.get("/v1/{username}/tags")
+@router.get("/tags/{username}")
 async def get_tags_by_username(username: str, user=Depends(manager)):
     try:
         flag = True
@@ -66,7 +45,8 @@ async def get_tags_by_username(username: str, user=Depends(manager)):
         tags = session.query(TAGS).filter(TAGS.tag_id.in_(user_.tags)).all()
 
         for tag in tags:
-            tag_arr.append(tag.tag_name)
+            tag_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
+
     except:
         flag = False
 
@@ -77,8 +57,8 @@ async def get_tags_by_username(username: str, user=Depends(manager)):
         return JSONResponse(status_code=200, content=tag_arr)
 
 
-@router.post("/v1/add_tag")
-async def add_tag(tag: Tags, user=Depends(manager)):
+@router.post("/tag/new")
+async def new_tag(tag: Tag, user=Depends(manager)):
     try:
         flag = True
         session = Session()
@@ -105,3 +85,51 @@ async def add_tag(tag: Tags, user=Depends(manager)):
     else:
         return JSONResponse(content={'status': e}, status_code=500)
         
+
+@router.post("/tags/remove")
+async def remove_tag(tags: List[Tag], user=Depends(manager)):
+    try:
+        flag = True
+        session = Session()
+
+        for tag in tags:
+            user.tags.remove(tag.tag_id)
+
+        session.merge(user)
+        session.commit()
+
+    except Exception as e:
+        flag = False
+    
+    finally:
+        session.close()
+    
+    if flag:
+        return True
+    else:
+        return JSONResponse(content={'status': e}, status_code=500)
+
+
+@router.post("/tags/add")
+async def add_tag(tags: List[Tag], user=Depends(manager)):
+    try:
+        flag = True
+        session = Session()
+
+        for tag in tags:
+            user.tags.append(tag.tag_id)
+
+        session.merge(user)
+        session.commit()
+
+    except Exception as e:
+        flag = False
+
+    finally:
+        session.close()
+    
+    if flag:
+        return True
+    else:
+        return JSONResponse(content={'status': e}, status_code=500)
+

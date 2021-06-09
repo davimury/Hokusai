@@ -1,18 +1,19 @@
-from db.db_main import CONNECTIONS
 import base64
-from fastapi import APIRouter, Depends
-from starlette.responses import Response
-from db.db_main import Session, POSTS, TAGS, USERS, LIKES
+from db.db_main import Session, POSTS, TAGS, LIKES, CONNECTIONS
 from datetime import datetime, timedelta
-from sqlalchemy import and_, or_
-from models import Posts, Add_Posts
+from starlette.responses import Response
+from fastapi import APIRouter, Depends
 from routers.auth import manager
+from models import Post, Tag
+from sqlalchemy import and_
+
 
 router = APIRouter()
 
 
-@router.get("/tag/{tag}/posts/")
-def get_user_posts(user=Depends(manager)):
+# Getters
+@router.get("/posts/by_tag")
+def get_posts_by_tag(tag: Tag, user=Depends(manager)):
     """ Retorna todos posts do user logado user """
     try:
         flag = True
@@ -93,9 +94,10 @@ def get_recommended_posts(user=Depends(manager)):
             elif like_obj and like_obj.like_type == False:
                 dislike = True
 
-            posts_arr.append(Posts(**{
+            posts_arr.append(Post(**{
                 'post_id': post.post_id,
-                'description': post.post_body,
+                'body': post.post_body,
+                'description': post.post_desc,
                 'slides': post.post_img,
                 'username': post.author.username,
                 'author_id': post.author.user_id,
@@ -109,10 +111,9 @@ def get_recommended_posts(user=Depends(manager)):
         return posts_arr
 
 
-@router.get("/v1/post/following")
-def get_following_posts(user=Depends(manager)):
+@router.get("/posts/connections")
+def get_connections_posts(user=Depends(manager)):
     """ Retorna um post especifico """
-    """ Retorna todos posts de um user """
     try:
         flag = True
         session = Session()
@@ -138,9 +139,10 @@ def get_following_posts(user=Depends(manager)):
                     elif like_obj and like_obj.like_type == False:
                         dislike = True
 
-                    posts_arr.append(Posts(**{
+                    posts_arr.append(Post(**{
                         'post_id': post.post_id,
-                        'description': post.post_body,
+                        'body': post.post_body,
+                        'description': post.post_desc,
                         'slides': post.post_img,
                         'username': post.author.username,
                         'author_id': post.author.user_id,
@@ -163,78 +165,57 @@ def get_following_posts(user=Depends(manager)):
         return posts_arr
 
 
-@router.get("/v1/post/{username}")
-def get_posts(username: str):
-    """ Retorna um post especifico """
-    """ Retorna todos posts de um user """
-    try:
-        flag = True
-        session = Session()
-
-        user_id = session.query(USERS.user_id).filter_by(
-            username=username).first()
-        posts = session.query(POSTS).filter_by(
-            post_author=user_id).order_by(POSTS.post_id.desc()).all()
-    except Exception as e:
-        print(e)
-        flag = False
-        #raise HTTPException(status_code=409, detail="email ou username já cadastrados!")
-
-    finally:
-        session.close()
-
-    if flag:
-        posts_arr = []
-
-        for post in posts:
-            posts_arr.append({
-                'post_id': post.post_id,
-                'description': post.post_body,
-                'slides': post.post_img,
-                'username': post.author.username,
-                'name': post.author.name,
-                'author_id': post.author.user_id,
-                'postType': post.post_type,
-                'likes': post.likes,
-            })
-
-        return posts_arr
-
-
-@router.post("/v1/new_post/")
-def new_post(post_data: Add_Posts, user=Depends(manager)):
+#Setters
+@router.post("/post/new")
+def new_post(post: Post, user=Depends(manager)):
     """ Adiciona um novo post """
-    
     try:
         flag = True
         session = Session()
-
+        
         tags = []
-        files = []
-        for tag in post_data.tags:
-            tags.append(session.query(TAGS).filter_by(tag_id=tag.id).first())
+        for tag in post.tags:
+            tags.append(session.query(TAGS).filter_by(tag_id=tag.tag_id).first())
 
-        for image in post_data.images:
-            filename = str(user.user_id) + image[150:155].replace("/", "") + str(
-                datetime.now().second * datetime.now().day) + ".jpg"
-            files.append(filename)
+        if post.postType == 0:
+            files = []
 
-            with open('../frontend/src/assets/img/posts/' + filename, "wb") as f:
-                f.write(base64.b64decode(image[image.find(",")+1:]))
+            for image in post.slides:
+                filename = str(user.user_id) + image[150:155].replace("/", "") + str(
+                    datetime.now().second * datetime.now().day) + ".jpg"
+                files.append(filename)
 
-        new_post = POSTS(
-            author=user,
-            post_author=user.user_id,
-            post_body=post_data.body,
-            post_img=files,
-            post_type=post_data.type,
-            created_at=datetime.now(),
-            tags=tags,
-            likes=0,
-        )
+                with open('../frontend/src/assets/img/posts/' + filename, "wb") as f:
+                    f.write(base64.b64decode(image[image.find(",")+1:]))
 
-        session.add(new_post)
-        session.commit()
+            new_post = POSTS(
+                author=user,
+                post_author=user.user_id,
+                post_desc=post.desc,
+                post_img=files,
+                post_type=post.postType,
+                created_at=datetime.now(),
+                tags=tags,
+                likes=0,
+            )
+
+            session.add(new_post)
+            session.commit()
+
+        else:
+            new_post = POSTS(
+                author=user,
+                post_author=user.user_id,
+                post_body=post.body,
+                post_desc=post.desc,
+                post_type=post.postType,
+                created_at=datetime.now(),
+                tags=tags,
+                likes=0,
+            )
+
+            session.add(new_post)
+            session.commit()
 
     except Exception as e:
         print(e)
@@ -249,25 +230,27 @@ def new_post(post_data: Add_Posts, user=Depends(manager)):
         return Response(status_code=200)
 
 
-@router.post("/v1/post/{id}/like")
-def like_post(id: int, user=Depends(manager)):
+@router.post("/post/like")
+def like_post(post: Post, user=Depends(manager)):
+    flag = True
+
     try:
-        flag = True
+        
         session = Session()
 
         like = session.query(LIKES).filter_by(
-            post_id=id, user_id=user.user_id).first()
+            post_id=post.post_id, user_id=user.user_id).first()
 
         if not like:
-            like = LIKES(user_id=user.user_id, post_id=id, like_type=True)
+            like = LIKES(user_id=user.user_id, post_id=post.post_id, like_type=True)
             session.add(like)
         else:
             like.like_type = True
 
         like.update_date()
         like_count = session.query(LIKES).filter(
-            and_(LIKES.post_id == id, LIKES.like_type == True)).count()
-        post = session.query(POSTS).filter_by(post_id=id).first()
+            and_(LIKES.post_id == post.post_id, LIKES.like_type == True)).count()
+        post = session.query(POSTS).filter_by(post_id=post.post_id).first()
         post.likes = like_count
 
         session.commit()
@@ -282,25 +265,26 @@ def like_post(id: int, user=Depends(manager)):
         return like_count
 
 
-@router.post("/v1/post/{id}/dislike")
-def dislike_post(id: int, user=Depends(manager)):
+@router.post("/post/dislike")
+def dislike_post(post: Post, user=Depends(manager)):
+    flag = True
+
     try:
-        flag = True
         session = Session()
 
         like = session.query(LIKES).filter_by(
-            post_id=id, user_id=user.user_id).first()
+            post_id=post.post_id, user_id=user.user_id).first()
 
         if not like:
-            like = LIKES(user_id=user.user_id, post_id=id, like_type=False)
+            like = LIKES(user_id=user.user_id, post_id=post.post_id, like_type=False)
             session.add(like)
         else:
             like.like_type = False
 
         like.update_date()
         like_count = session.query(LIKES).filter(
-            and_(LIKES.post_id == id, LIKES.like_type == True)).count()
-        post = session.query(POSTS).filter_by(post_id=id).first()
+            and_(LIKES.post_id == post.post_id, LIKES.like_type == True)).count()
+        post = session.query(POSTS).filter_by(post_id=post.post_id).first()
         post.likes = like_count
 
         session.commit()

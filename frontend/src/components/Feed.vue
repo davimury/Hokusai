@@ -243,7 +243,7 @@ export default {
     },
   },
   mounted() {
-    axios.get("/v1/post/following").then((response) => {
+    axios.get("/posts/connections").then((response) => {
       this.followPosts  = response["data"].sort(function(a, b) {
         if (a['created_at'] > b['created_at']) return 1;
         if (a['created_at'] < b['created_at']) return -1;
@@ -251,7 +251,6 @@ export default {
     });
     axios.get("/posts/recommended").then((response) => {
       this.recPosts  = response["data"]
-      console.log(this.recPosts)
     });
   },
   methods: {

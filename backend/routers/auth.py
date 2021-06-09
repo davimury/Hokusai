@@ -1,16 +1,15 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi_login import LoginManager
 from starlette.responses import Response, JSONResponse, HTMLResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from sqlalchemy import exc
 from db.db_main import Session, USERS
 from datetime import timedelta
-from models import Login, Registro
+from sqlalchemy import exc
+from models import User
 
 SECRET = "434d502035aa8243868e3e5767afb5943c75fb5f0a18e013"
 
 router = APIRouter()
-manager = LoginManager(SECRET, "/token", use_cookie=True)
+manager = LoginManager(SECRET, "/login", use_cookie=True)
 manager.cookie_name = "hokusai_cookie"
 
 
@@ -30,8 +29,8 @@ async def load_user(email: str):
         raise e
 
 
-@router.post("/v1/register")
-def auth_register(formData: Registro):
+@router.post("/register")
+def auth_register(formData: User):
     try:
         flag = True
         session = Session()
@@ -52,8 +51,8 @@ def auth_register(formData: Registro):
         return Response(status_code=200)
 
 
-@router.post("/v1/login")
-async def auth_login(formData: Login):
+@router.post("/login")
+async def auth_login(formData: User):
     """
     EndPoint para envio de form com dados de login e senha do usuário
     """
@@ -78,26 +77,8 @@ async def auth_login(formData: Login):
     if flag:
         return response
 
-@router.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    session = Session()
-    user_obj = session.query(USERS).filter_by(username = form_data.username).first()
-    user = await load_user(user_obj.email)
-
-    if not user:
-        raise HTTPException(status_code=401, detail="email não cadastrado")
-    elif not user.verify_password(form_data.password):
-        raise HTTPException(status_code=401, detail="senha incorreta")
-
-    token = manager.create_access_token(
-        data=dict(sub=user.username)
-    )
-
-    return {"access_token": token, "token_type": "bearer"}
-
-
-@router.delete("/v1/logout", response_class=HTMLResponse)
-async def auth_logout(res: Response):
+@router.delete("/logout", response_class=HTMLResponse)
+async def auth_logout(res: Response, user=Depends(manager)):
     try:
         res.delete_cookie("hokusai_cookie")
 
