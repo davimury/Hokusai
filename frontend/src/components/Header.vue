@@ -125,9 +125,11 @@ export default {
   },
   computed: {
     getProfilePic() {
-      return require("@/assets/img/profile/" +
-        this.$store.getters.UserId +
-        ".jpg");
+      try {
+        return require(`@/assets/img/profile/${this.$store.getters.UserId}.jpg`);
+      } catch {
+        return require("@/assets/img/profile/default.jpg");
+      }
     },
     openModal() {
       this.modalState = true;

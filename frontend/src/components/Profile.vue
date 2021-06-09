@@ -632,7 +632,6 @@ export default {
     };
   },
   mounted: async function () {
-    let posts;
     await axios.get(`/user/${this.$route.params.username}`)
     .then(async response => {
       await this.generateThumbs(response["data"]["posts"])
