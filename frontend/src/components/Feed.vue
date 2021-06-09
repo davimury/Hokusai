@@ -282,7 +282,7 @@ export default {
       this.feedType = type;
     },
     select: async function (tag, e) {
-      this.selectedTags.push({tag_id: tag.id});
+      this.selectedTags.push({tag_id: tag['tag_id']});
       e.target.classList.add("bg-purple-500");
     },
     awayModalPost: function () {
@@ -332,8 +332,6 @@ export default {
     },
     onComplete: async function () {
       axios.post("/user/image", {base: this.croppieImage});
-
-      console.log(this.selectedTags)
       axios.post("/tags/add", this.selectedTags);
       await this.setFirstLogin(false);
     },

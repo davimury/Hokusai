@@ -8,8 +8,35 @@ from routers.auth import manager
 router = APIRouter()
 
 
-@router.get("/tags/recommended")
+@router.get("/tags/all")
 async def get_all_tags(user=Depends(manager)):
+    try:
+        flag = True
+        tags_arr = []
+        session = Session()
+
+        tags = session.query(TAGS).all()
+
+        for tag in tags:
+            tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
+
+        
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        if len(tags_arr) == 0:
+            tags_arr.append({'tag_id': None, 'name': 'Nenhuma tag encontrada!'})
+
+        return JSONResponse(status_code=200, content=tags_arr)
+
+
+@router.get("/tags/recommended")
+async def get_recommended_tags(user=Depends(manager)):
     try:
         flag = True
         tags_arr = []
@@ -87,7 +114,7 @@ async def new_tag(tag: Tag, user=Depends(manager)):
     if flag:
         return JSONResponse(content={'id': new_tag.tag_id, "name": new_tag.tag_name}, status_code=200)
     else:
-        return JSONResponse(content={'status': e}, status_code=500)
+        return JSONResponse(status_code=500)
         
 
 @router.post("/tags/remove")
@@ -103,6 +130,7 @@ async def remove_tag(tags: List[Tag], user=Depends(manager)):
         session.commit()
 
     except Exception as e:
+        print(e)
         flag = False
     
     finally:
@@ -111,23 +139,30 @@ async def remove_tag(tags: List[Tag], user=Depends(manager)):
     if flag:
         return True
     else:
-        return JSONResponse(content={'status': e}, status_code=500)
+        return JSONResponse(status_code=500)
 
 
 @router.post("/tags/add")
 async def add_tag(tags: List[Tag], user=Depends(manager)):
     try:
-        print(tags)
         flag = True
         session = Session()
-
-        for tag in tags:
-            user.tags.append(tag.tag_id)
+        
+        if user.tags:
+            for tag in tags:
+                user.tags.append(tag.tag_id)
+        else:
+            tags_ids = []
+            for tag in tags:
+                tags_ids.append(tag.tag_id)
+        
+            user.tags = tags_ids
 
         session.merge(user)
         session.commit()
 
     except Exception as e:
+        print(e)
         flag = False
 
     finally:
@@ -136,5 +171,5 @@ async def add_tag(tags: List[Tag], user=Depends(manager)):
     if flag:
         return True
     else:
-        return JSONResponse(content={'status': e}, status_code=500)
+        return JSONResponse(status_code=500)
 

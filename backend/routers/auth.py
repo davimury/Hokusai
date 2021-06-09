@@ -78,7 +78,7 @@ async def auth_login(formData: User):
         return response
 
 @router.delete("/logout", response_class=HTMLResponse)
-async def auth_logout(res: Response, user=Depends(manager)):
+async def auth_logout(res: Response):
     try:
         res.delete_cookie("hokusai_cookie")
 

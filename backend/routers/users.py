@@ -22,7 +22,6 @@ async def get_suggested_users(user=Depends(manager)):
         connected_array = []
         users_arr = []
 
-        print(user.tags)
         for user_id in connections_arr:
             user_ = session.query(USERS).filter_by(user_id= user_id[0]).first()
             connected_array.append(user_)
@@ -64,21 +63,22 @@ async def get_user_notifications(user=Depends(manager)):
         notify_arr = []
         notifications = session.query(NOTIFICATIONS).filter_by(
             target_id=user.user_id).all()
-
-        for notification in notifications:
-            recipient = session.query(USERS).filter_by(
-                user_id=notification.recipient_id).first()
-            notify_arr.append(
-                {
-                    'id': notification.id,
-                    'type': 1,
-                    'name': recipient.name,
-                    'user_id': recipient.user_id,
-                    'status': notification.status,
-                    'username': recipient.username,
-                    'last_updated': notification.last_updated.isoformat()
-                }
-            )
+        
+        if notifications:
+            for notification in notifications:
+                recipient = session.query(USERS).filter_by(
+                    user_id=notification.recipient_id).first()
+                notify_arr.append(
+                    {
+                        'id': notification.id,
+                        'type': 1,
+                        'name': recipient.name,
+                        'user_id': recipient.user_id,
+                        'status': notification.status,
+                        'username': recipient.username,
+                        'last_updated': notification.last_updated.isoformat()
+                    }
+                )
 
     except Exception as e:
         print(e)
@@ -102,7 +102,10 @@ async def get_user_info(username: str, user=Depends(manager)):
         
         this_user = session.query(USERS).filter_by(username=username).first()
         posts = session.query(POSTS).filter_by(post_author=this_user.user_id).order_by(POSTS.post_id.desc()).all()
-        tags = session.query(TAGS).filter(TAGS.tag_id.in_(this_user.tags)).all()
+        if this_user.tags:
+            tags = session.query(TAGS).filter(TAGS.tag_id.in_(this_user.tags)).all()
+        else:
+            tags = []
 
         connections_arr = [
             *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = user.user_id).all(),

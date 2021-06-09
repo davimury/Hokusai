@@ -634,7 +634,8 @@ export default {
   mounted: async function () {
     await axios.get(`/user/${this.$route.params.username}`)
     .then(async response => {
-      await this.generateThumbs(response["data"]["posts"])
+      if(response["data"]["posts"].length > 0)
+        await this.generateThumbs(response["data"]["posts"])
 
       this.posts = response["data"]["posts"];
       this.userTags = response["data"]["tags"];
