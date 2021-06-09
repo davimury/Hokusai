@@ -18,10 +18,14 @@ async def get_all_tags(user=Depends(manager)):
         tags = session.query(TAGS).all()
 
         for tag in tags:
-            if tag.tag_id not in user.tags:
+            if user.tags:
+                if tag.tag_id not in user.tags:
+                    tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
+            else:
                 tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
-
-    except:
+        
+    except Exception as e:
+        print(e)
         flag = False
 
     finally:
@@ -113,6 +117,7 @@ async def remove_tag(tags: List[Tag], user=Depends(manager)):
 @router.post("/tags/add")
 async def add_tag(tags: List[Tag], user=Depends(manager)):
     try:
+        print(tags)
         flag = True
         session = Session()
 

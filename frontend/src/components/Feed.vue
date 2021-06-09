@@ -282,7 +282,7 @@ export default {
       this.feedType = type;
     },
     select: async function (tag, e) {
-      this.selectedTags.push(tag.id);
+      this.selectedTags.push({tag_id: tag.id});
       e.target.classList.add("bg-purple-500");
     },
     awayModalPost: function () {
@@ -322,7 +322,7 @@ export default {
           )
             resolve(false);
           else {
-            axios.get("/v1/tags/").then((response) => {
+            axios.get("/tags/recommended").then((response) => {
               this.recomendedTags = response["data"];
               resolve(true);
             });
@@ -331,25 +331,10 @@ export default {
       });
     },
     onComplete: async function () {
-      console.log(this.selectedTags);
-      axios({
-        method: "post",
-        url: "/profile/image",
-        data: {
-          base: this.croppieImage,
-        },
-      });
-      this.selectedTags.forEach((element) => {
-        console.log(element);
-        axios({
-          method: "post",
-          url: "/profile/add/tag",
-          data: {
-            id: element,
-          },
-        });
-      });
+      axios.post("/user/image", {base: this.croppieImage});
 
+      console.log(this.selectedTags)
+      axios.post("/tags/add", this.selectedTags);
       await this.setFirstLogin(false);
     },
     mouseMove: function (event) {

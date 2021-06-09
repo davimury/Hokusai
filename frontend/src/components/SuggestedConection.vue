@@ -1,7 +1,7 @@
 <template>
   <div class="bg-lightgray border border-lightgray rounded-lg block w-full text-white lg:float-left max-w-xs">
         <div class="flex items-center px-4 py-3">
-            <img class="h-12 w-12 rounded-full" :src="require(`@/assets/img/profile/${this.user_id}.jpg`)" @error="$event.target.src = require(`@/assets/img/profile/default.jpg`)"/>
+            <img class="h-12 w-12 rounded-full" :src="getProfilePic"/>
             <div class="ml-3">
               <span class="text-sm font-semibold antialiased block leading-tight">{{this.username}}</span>
               <h2>{{this.name}}</h2>
@@ -62,6 +62,15 @@ export default {
     axios.get("/user/suggested").then((response) => {
       this.suggestedConection = response["data"];
     });
+  },
+  computed: {
+    getProfilePic() {
+      try {
+        return require(`@/assets/img/profile/${this.$store.getters.UserId}.jpg`);
+      } catch {
+        return require("@/assets/img/profile/default.jpg");
+      }
+    }
   },
   methods: {
     updateConnections: async function (){

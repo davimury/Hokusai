@@ -22,24 +22,26 @@ async def get_suggested_users(user=Depends(manager)):
         connected_array = []
         users_arr = []
 
+        print(user.tags)
         for user_id in connections_arr:
             user_ = session.query(USERS).filter_by(user_id= user_id[0]).first()
             connected_array.append(user_)
 
-        for tag in user.tags:
-            rec_user = session.query(USERS).filter(USERS.tags.contains([tag])).all()
-            sugested_array.extend(rec_user)
+        if user.tags:
+            for tag in user.tags:
+                rec_user = session.query(USERS).filter(USERS.tags.contains([tag])).all()
+                sugested_array.extend(rec_user)
 
-        s1 = set(sugested_array)
-        dif = s1.difference(connected_array)
-        
-        for user_ in dif:
-            if user_.user_id != user.user_id:
-                users_arr.append({
-                    'user_id': user_.user_id,
-                    'username': user_.username,
-                    'name': user_.name,
-                })
+            s1 = set(sugested_array)
+            dif = s1.difference(connected_array)
+            
+            for user_ in dif:
+                if user_.user_id != user.user_id:
+                    users_arr.append({
+                        'user_id': user_.user_id,
+                        'username': user_.username,
+                        'name': user_.name,
+                    })
 
     except Exception as e:
         print(e)
@@ -51,7 +53,7 @@ async def get_suggested_users(user=Depends(manager)):
     if flag:
         return users_arr
     else:
-        return Response(status_code=500)
+        return Response(status_code=404)
 
 
 @router.get("/user/notifications")

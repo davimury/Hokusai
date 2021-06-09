@@ -109,7 +109,6 @@ export default {
     currentPage: 0,
   }),
   mounted(){
-    console.log(this.postData)
     if(this.postData.like)
       this.vote = 0
     else if (this.postData.dislike)
