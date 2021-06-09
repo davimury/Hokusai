@@ -24,8 +24,8 @@ export default {
       loading: true,
     };
   },
-  async mounted() {
-    await new Promise((r) => setTimeout(r, 2500));
+  mounted() {
+    
     this.loading = false;
   },
 };

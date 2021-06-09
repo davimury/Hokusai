@@ -145,7 +145,30 @@
                   :boundary="{ width: 300, height: 300 }"
                   :viewport="{ width: 250, height: 250, type: 'circle' }"
                 ></vue-croppie>
-                <input type="file" @change="croppie" />
+                <div>
+                <label
+                  for="croppieProfile"
+                  class="
+                    border border-purple-500
+                    hover:border-purple-600
+                    focus:outline-none
+                    text-white
+                    p-2
+                    rounded-lg
+                    text-base
+                    cursor-pointer
+                  "
+                  >Escolher imagem</label
+                >
+                <input
+                  class="hidden"
+                  type="file"
+                  id="croppieProfile"
+                  name="croppieProfile"
+                  @change="croppie"
+                />
+              </div>
+                
               </tab-content>
               <tab-content>
                 <div class="flex flex-wrap content-center justify-center">
