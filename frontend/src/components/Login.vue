@@ -184,63 +184,22 @@ export default {
                     }
                 ));
                 await this.setFirstLogin(true);
-
                 this.$router.push('/');
-                this.showError = false
+
+
             } catch (error) {
-                this.showError = true
+
             }
         },
         login: async function () {
             try {
                 await this.LogIn(JSON.stringify({email: this.emailLogIn, password: this.passwordLogIn}));
                 this.$router.push('/');
-                this.showError = false
+
             } catch (error) {
-                this.showError = true
+
             }
         },
-        logout: async function (){
-            await this.$store.dispatch('LogOut')
-            this.$router.push('/login')
-        },
-        /* login: async function() {
-            fetch('http://localhost:8000/v1/login',
-            {
-                 method: 'post',
-                 credentials: 'include',
-                 body: JSON.stringify({
-                   email: this.emailLogIn,
-                   password: this.passwordLogIn
-                 }),
-                 headers: {"Content-type": "application/json"}
-            }).then(response => {
-                if (response.status == 200)
-                    this.$router.push('/')
-
-                else if (response.status == 401)
-                    alert('Error username ou email duplicado')
-            })
-        }, */
-        /* register: async function() {
-            fetch('http://localhost:8000/v1/register',
-            {
-                method: 'post',
-                body: JSON.stringify({
-                    name: this.nameSignUp,
-                    email: this.emailSignUp,
-                    username: this.usernameSignUp,
-                    password: this.passwordSignUp
-                }),
-                headers: {"Content-type": "application/json"}
-            }).then(response => {
-                if (response.status == 200)
-                    this.swapLoginRegister('login');
-
-                else if (response.status == 409)
-                    alert('Error username ou email duplicado')
-            })
-        }, */
         swapLoginRegister: function(content) {
            if (content == 'login'){
                this.registerDiv = false

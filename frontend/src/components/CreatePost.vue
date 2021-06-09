@@ -322,7 +322,7 @@ export default {
   },
   mounted() {
     axios
-      .get("/tags/recommended")
+      .get("/tags/all")
       .then((response) => (this.recomendedTags = response["data"]));
   },
   methods: {
@@ -341,7 +341,7 @@ export default {
         axios.post(
           "/post/new",
           JSON.stringify({
-            desc: e.target.elements.description.value,
+            description: e.target.elements.description.value,
             postType: this.postType,
             slides: this.imageArray,
             tags: this.selectedTags,
@@ -349,28 +349,22 @@ export default {
         .then(() => this.$router.go(this.$router.currentRoute));
       }
     },
-    publishText: function () {
+    publishText: function (e) {
       axios.post(
         "/post/new",
         JSON.stringify({
-          desc: '',
           body: this.editorData,
-          desc: e.target.elements.description.value,
+          description: e.target.elements.description.value,
           postType: this.postType,
           tags: this.selectedTags,
       }))
       .then(() => this.$router.go(this.$router.currentRoute));
     },
-    addTag(e) {
-      axios({
-        method: "post",
-        url: "/v1/add_tag",
-        data: {
-          name: e["name"],
-        },
-      }).then((res) => {
-        e["id"] = res["data"]["id"];
-      });
+    addTag: async function(e) {
+      await axios.post("/tag/new", {name: e["name"]})
+      .then((res) => e["tag_id"] = res["data"]["id"]);
+
+      console.log(e)
     },
     appendTag(e) {
       this.selectedTags = e;

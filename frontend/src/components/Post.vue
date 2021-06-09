@@ -83,9 +83,10 @@ chevron_left
         >{{ postData.username }}
       </span>
       <span
-        ><span class="text-sm antialiased leading-tight">{{
-          postData.description
-        }}</span></span
+        ><span class="text-sm antialiased leading-tight">
+          {{ postData.description }}
+        </span>
+      </span
       >
     </div>
   </div>
@@ -109,6 +110,7 @@ export default {
     currentPage: 0,
   }),
   mounted(){
+    console.log(this.postData)
     if(this.postData.like)
       this.vote = 0
     else if (this.postData.dislike)

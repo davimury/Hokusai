@@ -174,9 +174,10 @@ def new_post(post: Post, user=Depends(manager)):
         session = Session()
         
         tags = []
+
         for tag in post.tags:
             tags.append(session.query(TAGS).filter_by(tag_id=tag.tag_id).first())
-
+        
         if post.postType == 0:
             files = []
 
@@ -191,7 +192,7 @@ def new_post(post: Post, user=Depends(manager)):
             new_post = POSTS(
                 author=user,
                 post_author=user.user_id,
-                post_desc=post.desc,
+                post_desc=post.description,
                 post_img=files,
                 post_type=post.postType,
                 created_at=datetime.now(),
@@ -207,7 +208,7 @@ def new_post(post: Post, user=Depends(manager)):
                 author=user,
                 post_author=user.user_id,
                 post_body=post.body,
-                post_desc=post.desc,
+                post_desc=post.description,
                 post_type=post.postType,
                 created_at=datetime.now(),
                 tags=tags,
