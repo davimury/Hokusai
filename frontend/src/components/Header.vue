@@ -28,9 +28,7 @@
             ><span class="material-icons"> question_answer </span></a
           >
         </div>
-        <div class="mr-5 hover:text-purple-600 text-3xl">
-          <a href="/saved"><span class="material-icons"> bookmark </span></a>
-        </div>
+        
 
         <transition
           mode="out-in"

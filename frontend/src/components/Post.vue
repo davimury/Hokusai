@@ -114,13 +114,7 @@ chevron_left
           >{{ currentPage + 1 }}/{{ postData.slides.length }}</span
         >
       </div>
-      <div class="relative flex">
-        <button class="focus:outline-none" @click="isSaved()">
-          <span  class="material-icons text-3xl" >
-            <!-- {{bookmarkType}} -->
-          </span>
-        </button>
-      </div>
+      
     </div>
 
     <div class="mx-4 mb-4 text-left">
@@ -164,11 +158,7 @@ export default {
     pageChange(i) {
       this.currentPage = i;
     },
-    isSaved: function () {
-      this.bookmarkType == "bookmark_border"
-        ? (this.bookmarkType = "bookmark")
-        : (this.bookmarkType = "bookmark_border");
-    },
+
     chooseVote: function(voteType){
       this.vote = voteType
       if (voteType == 0){

@@ -55,18 +55,18 @@
                             
                         <div class="pb-2 pt-4 relative">
                             <span @click="swapVisibility" class="material-icons md-18 text-gray-400 cursor-pointer select-none absolute inset-y-0 right-3 mt-2 flex items-center">{{passwordIcon}}</span>
-                            <input v-model.trim="passwordLogIn" @input="delayTouch($v.passwordLogIn)" :class="validateStyle($v.passwordLogIn.$invalid, $v.passwordLogIn.$dirty)" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-indigo-500" :type="passwordType" placeholder="Senha">
+                            <input v-model.trim="passwordLogIn" @input="delayTouch($v.passwordLogIn)" :class="validateStyle($v.passwordLogIn.$invalid, $v.passwordLogIn.$dirty)" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-purple-500" :type="passwordType" placeholder="Senha">
                         </div>
                         <div v-if="$v.passwordLogIn.$invalid && $v.passwordLogIn.$dirty" class="text-red-700 text-left -mt-1.5"><small>Senha é obrigatoria</small></div>
                         <div @click="swapLoginRegister('sendLink')" class="text-right text-amber-400 hover:text-amber-100 font-medium">
                             <a href="#">Esqueceu a senha?</a>
                         </div>
                         <div class=" pb-2 pt-4">
-                            <button class="block w-full p-2 text-lg rounded-lg bg-indigo-800 hover:bg-indigo-700 focus:outline-none">Log In</button>
+                            <button class="block w-full p-2 text-lg rounded-lg bg-purple-500 hover:bg-purple-500 focus:outline-none">Log In</button>
                         </div>
                         <div class="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden"></div>
                         <div v-on:click="swapLoginRegister('register')" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
-                            <a href="#">Ainda não tem uma conta? <span class="text-indigo-800 hover:text-indigo-700">Cadastre-se</span></a>
+                            <a href="#">Ainda não tem uma conta? <span class="text-purple-500 hover:text-purple-600">Cadastre-se</span></a>
                         </div>
                     </form>
                 </transition>
@@ -77,28 +77,28 @@
                 >
                     <form v-if="registerDiv" @submit.prevent="register" class="sm:w-2/3 w-full px-4 lg:px-0 mx-auto">
                         <div class="pb-2 pt-4">
-                            <input v-model.trim="nameSignUp" @input="delayTouch($v.nameSignUp)" :class="validateStyle($v.nameSignUp.$invalid, $v.nameSignUp.$dirty)" type="text" placeholder="Nome" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-indigo-500">
+                            <input v-model.trim="nameSignUp" @input="delayTouch($v.nameSignUp)" :class="validateStyle($v.nameSignUp.$invalid, $v.nameSignUp.$dirty)" type="text" placeholder="Nome" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-purple-500">
                             <div v-if="$v.nameSignUp.$invalid && $v.nameSignUp.$dirty" class="text-red-700 text-left "><small>Qual o seu nome?</small></div>
                         </div>
                         <div class="pb-2 pt-4">
-                            <input v-model.trim="usernameSignUp" @input="delayTouch($v.usernameSignUp)" :class="validateStyle($v.usernameSignUp.$invalid, $v.usernameSignUp.$dirty)" type="text" placeholder="Username" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-indigo-500">
+                            <input v-model.trim="usernameSignUp" @input="delayTouch($v.usernameSignUp)" :class="validateStyle($v.usernameSignUp.$invalid, $v.usernameSignUp.$dirty)" type="text" placeholder="Username" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-purple-500">
                             <div v-if="$v.usernameSignUp.$invalid && $v.usernameSignUp.$dirty" class="text-red-700 text-left "><small>Username é obrigatório e deve ser único</small></div>
                         </div>
                         <div class="pb-2 pt-4">
-                            <input v-model.trim="emailSignUp" @input="delayTouch($v.emailSignUp)" :class="validateStyle($v.emailSignUp.$invalid, $v.emailSignUp.$dirty)" type="email" placeholder="Email" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-indigo-500">
+                            <input v-model.trim="emailSignUp" @input="delayTouch($v.emailSignUp)" :class="validateStyle($v.emailSignUp.$invalid, $v.emailSignUp.$dirty)" type="email" placeholder="Email" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-purple-500">
                             <div v-if="$v.emailSignUp.$invalid && $v.emailSignUp.$dirty" class="text-red-700 text-left "><small>Insira um email válido</small></div>
                         </div>
                         <div class="pb-2 pt-4 relative">
                             <span @click="swapVisibility" class="material-icons md-18 text-gray-400 cursor-pointer select-none absolute inset-y-0 right-3 mt-2 flex items-center">{{passwordIcon}}</span>
-                            <input v-model.trim="passwordSignUp" @input="delayTouch($v.passwordSignUp)" :class="validateStyle($v.passwordSignUp.$invalid, $v.passwordSignUp.$dirty)" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-indigo-500" :type="passwordType" placeholder="Senha">
+                            <input v-model.trim="passwordSignUp" @input="delayTouch($v.passwordSignUp)" :class="validateStyle($v.passwordSignUp.$invalid, $v.passwordSignUp.$dirty)" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-purple-500" :type="passwordType" placeholder="Senha">
                         </div>
                         <div v-if="$v.passwordSignUp.$invalid && $v.passwordSignUp.$dirty" class="text-red-700 text-left -mt-1.5"><small>Senha é obrigatoria</small></div>
                         <div class=" pb-2 pt-4">
-                            <button class="block w-full p-2 text-lg rounded-lg bg-indigo-800 hover:bg-indigo-700 focus:outline-none">Cadastrar</button>
+                            <button class="block w-full p-2 text-lg rounded-lg bg-purple-500 hover:bg-purple-500 focus:outline-none">Cadastrar</button>
                         </div>
                         <div class="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden"></div>
                         <div v-on:click="swapLoginRegister('login')" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
-                            <a href="#">Já tem uma conta? <span class="text-indigo-800 hover:text-indigo-700">Log In</span></a>
+                            <a href="#">Já tem uma conta? <span class="text-purple-500 hover:text-purple-600">Log In</span></a>
                         </div>
                     </form>
                 </transition>
@@ -112,12 +112,12 @@
                     <h1 class="text-2xl font-semibold m-4">Problemas para logar?</h1>
                     <h2 class="text-base">Insira seu e-mail abaixo e enviaremos um link para você voltar a ter acesso a sua conta.</h2>
                         <div class="pb-2 pt-4">
-                            <input v-model.trim="emailLink" @input="delayTouch($v.emailLink)" :class="validateStyle($v.emailLink.$invalid, $v.emailLink.$dirty)" type="email" placeholder="Email" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-indigo-500">
+                            <input v-model.trim="emailLink" @input="delayTouch($v.emailLink)" :class="validateStyle($v.emailLink.$invalid, $v.emailLink.$dirty)" type="email" placeholder="Email" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-purple-500">
                             <div v-if="$v.emailLink.$invalid && $v.emailLink.$dirty" class="text-red-700 text-left "><small>Insira um email válido</small></div>
                         </div>
                         <div class="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden"></div>
                         <div class=" pb-2 pt-4">
-                            <button class="block w-full p-2 text-lg rounded-lg bg-indigo-500 hover:bg-indigo-600 focus:outline-none">Enviar Link</button>
+                            <button class="block w-full p-2 text-lg rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none">Enviar Link</button>
                         </div>
                     </form>
                     
@@ -125,7 +125,7 @@
                         <a href="#">Criar Nova Conta</a>
                     </div>
                     <div v-on:click="swapLoginRegister('login')" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
-                        <a href="#">Voltar Para <span class="text-indigo-500 hover:text-indigo-400">Log In</span></a>
+                        <a href="#">Voltar Para <span class="text-purple-500 hover:text-purple-600">Log In</span></a>
                     </div>
                 </div>
                 </transition>
@@ -271,7 +271,7 @@ export default {
             touchMap.set($v, setTimeout($v.$touch, 500))
         },
         validateStyle: function(isInvalid, isDirty){
-            return isInvalid && isDirty ? 'ring-1 ring-red-700 focus:ring-red-700' : 'focus:ring-indigo-500'
+            return isInvalid && isDirty ? 'ring-1 ring-red-700 focus:ring-red-700' : 'focus:ring-purple-500'
         }
     },
     validations: {

@@ -11,6 +11,11 @@ import CKEditor from '@ckeditor/ckeditor5-vue2';
 import 'animate.css'
 import './assets/css/main.css'
 
+Vue.use( CKEditor );
+Vue.use(Vuelidate)
+Vue.use(VueCarousel)
+Vue.use(VueCroppie);
+Vue.config.productionTip = false
 
 axios.defaults.withCredentials = true
 axios.defaults.baseURL = 'http://localhost:8000/';
@@ -27,11 +32,7 @@ axios.interceptors.response.use(undefined, function (error) {
   }
 })
 
-Vue.use( CKEditor );
-Vue.use(Vuelidate)
-Vue.use(VueCarousel)
-Vue.use(VueCroppie);
-Vue.config.productionTip = false
+
 
 new Vue({
   router,

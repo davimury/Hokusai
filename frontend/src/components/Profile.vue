@@ -2,7 +2,19 @@
   <main class="h-screen" @mousemove="mouseMove">
     <Header></Header>
     <div
-      class="bg-lightgray text-white pb-6 w-full justify-center items-center overflow-visible md:max-w-4xl rounded-lg shadow-sm mx-auto"
+      class="
+        bg-lightgray
+        text-white
+        pb-6
+        w-full
+        justify-center
+        items-center
+        overflow-visible
+        md:max-w-4xl
+        rounded-lg
+        shadow-sm
+        mx-auto
+      "
     >
       <div class="relative h-40">
         <img class="absolute h-full w-full object-cover" :src="getHeader" />
@@ -12,14 +24,33 @@
           v-on:click="modalHeader = !modalHeader"
         >
           <span
-            class="material-icons z-10 absolute bottom-2 right-3 text-purple-500 hover:text-purple-600"
+            class="
+              material-icons
+              z-10
+              absolute
+              bottom-2
+              right-3
+              text-purple-500
+              hover:text-purple-600
+            "
           >
             photo_camera
           </span>
         </button>
       </div>
       <div
-        class="relative shadow mx-auto h-24 w-24 -my-12 border-lightgray rounded-full overflow-hidden border-4"
+        class="
+          relative
+          shadow
+          mx-auto
+          h-24
+          w-24
+          -my-12
+          border-lightgray
+          rounded-full
+          overflow-hidden
+          border-4
+        "
       >
         <img class="object-cover w-full h-full" :src="getProfilePic" />
       </div>
@@ -39,17 +70,14 @@
           <h1 class="text-lg text-center font-semibold inline-block">
             {{ this.name }}
           </h1>
-          <button
-            class="ml-1 -mt-1 absolute text-purple-500 hover:text-purple-600"
-          >
-            <span class="material-icons text-lg"> edit </span>
-          </button>
         </div>
         <div class="flex justify-center text-gray-500">
           <p class="mx-1">
             <span class="font-medium">{{ this.postsCounter }}</span> Posts
           </p>
-          <p class="mx-1"><span class="font-medium">{{con_count}}</span> Conexões</p>
+          <p class="mx-1">
+            <span class="font-medium">{{ con_count }}</span> Conexões
+          </p>
         </div>
         <div
           v-if="this.username != this.$store.getters.Username"
@@ -57,12 +85,30 @@
         >
           <button
             @click="requestConnection"
-            class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2"
+            class="
+              rounded-lg
+              bg-purple-500
+              hover:bg-purple-600
+              focus:outline-none
+              text-white
+              p-2
+              mx-1
+              mt-2
+            "
           >
             Conectar
           </button>
           <button
-            class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-2"
+            class="
+              rounded-lg
+              bg-purple-500
+              hover:bg-purple-600
+              focus:outline-none
+              text-white
+              p-2
+              mx-1
+              mt-2
+            "
           >
             Mensagem
           </button>
@@ -72,7 +118,20 @@
         class="mt-6 pt-3 flex flex-wrap mx-6 border-t border-lightergray w-100"
       >
         <div
-          class="text-xs mr-2 my-1 uppercase tracking-wider border px-2 text-purple-500 border-purple-500 hover:text-purple-600 hover:border-purple-600 cursor-pointer"
+          class="
+            text-xs
+            mr-2
+            my-1
+            uppercase
+            tracking-wider
+            border
+            px-2
+            text-purple-500
+            border-purple-500
+            hover:text-purple-600
+            hover:border-purple-600
+            cursor-pointer
+          "
           v-for="userTag in userTags"
           :key="userTag"
         >
@@ -104,12 +163,34 @@
           <div class="flex justify-end mt-2">
             <button
               @click="editTags(false)"
-              class="rounded-lg border border-purple-500 hover:border-purple-600 focus:outline-none text-white p-1 px-3 mx-1 mt-2"
+              class="
+                rounded-lg
+                border border-purple-500
+                hover:border-purple-600
+                focus:outline-none
+                text-white
+                p-1
+                px-3
+                mx-1
+                mt-2
+              "
             >
               Cancelar
             </button>
             <button
-              class="rounded-lg border border-purple-500 hover:border-purple-600 bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-1 px-3 mx-1 mt-2"
+              class="
+                rounded-lg
+                border border-purple-500
+                hover:border-purple-600
+                bg-purple-500
+                hover:bg-purple-600
+                focus:outline-none
+                text-white
+                p-1
+                px-3
+                mx-1
+                mt-2
+              "
               @click="editTags(false)"
             >
               Salvar
@@ -119,11 +200,21 @@
       </transition>
     </div>
     <div
-      class="pb-6 mt-6 w-full justify-center items-center overflow-hidden md:max-w-4xl mx-auto grid grid-cols-3 gap-1"
+      class="
+        pb-6
+        mt-6
+        w-full
+        justify-center
+        items-center
+        overflow-hidden
+        md:max-w-4xl
+        mx-auto
+        grid grid-cols-3
+        gap-1
+      "
       v-if="posts.length > 0"
     >
       <div
-        
         v-for="post in posts"
         :key="post.post_id"
         class="bg-lightgray post-card cursor-pointer"
@@ -137,8 +228,20 @@
       </div>
     </div>
     <div
-    class="pb-6 mt-6 w-full justify-center items-center overflow-hidden mx-auto text-white text-center md:max-w-4xl mx-auto"
-    v-else>
+      class="
+        pb-6
+        mt-6
+        w-full
+        justify-center
+        items-center
+        overflow-hidden
+        mx-auto
+        text-white text-center
+        md:max-w-4xl
+        mx-auto
+      "
+      v-else
+    >
       <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
     </div>
     <transition
@@ -154,7 +257,18 @@
         v-if="modalPost"
       >
         <div
-          class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+          class="
+            flex
+            items-end
+            justify-center
+            min-h-screen
+            pt-4
+            px-4
+            pb-20
+            text-center
+            sm:block
+            sm:p-0
+          "
         >
           <div
             class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
@@ -167,7 +281,17 @@
             >&#8203;</span
           >
           <div
-            class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+            class="
+              inline-block
+              align-bottom
+              overflow-hidden
+              transform
+              transition-all
+              sm:my-8
+              sm:align-middle
+              sm:max-w-lg
+              sm:w-full
+            "
             v-on-clickaway="awayModalPost"
           >
             <Post :postData="this.postData"></Post>
@@ -188,7 +312,18 @@
         v-if="modalHeader"
       >
         <div
-          class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+          class="
+            flex
+            items-end
+            justify-center
+            min-h-screen
+            pt-4
+            px-4
+            pb-20
+            text-center
+            sm:block
+            sm:p-0
+          "
         >
           <div
             class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
@@ -201,23 +336,71 @@
             >&#8203;</span
           >
           <div
-            class="inline-block align-bottom overflow-hidden transform transition-all  sm:align-middle "
+            class="
+              inline-block
+              align-bottom
+              overflow-hidden
+              transform
+              transition-all
+              sm:align-middle
+            "
           >
             <div
-              class="bg-lightgray border border-lightgray rounded-lg block w-full text-white py-10"
+              class="
+                bg-lightgray
+                border border-lightgray
+                rounded-lg
+                block
+                w-full
+                text-white
+                py-10
+              "
               v-on-clickaway="awayModalHeader"
             >
-              
               <vue-croppie
                 ref="croppieRef"
                 :enableExif="true"
                 :enableOrientation="true"
-                :boundary="{ width: 896, height: 360 }"
-                :viewport="{ width: 896, height: 360, type: 'rectangle' }"
-                
+                :boundary="{ width: windowWidth - 34, height: (windowWidth - 34) * 0.42 }"
+                :viewport="{ width: windowWidth - 34, height: (windowWidth - 34) * 0.42, type: 'rectangle' }"
               ></vue-croppie>
+              <div>
+                <label
+                  for="croppieProfile"
+                  class="
+                  border
+                    border-purple-500
+                    hover:border-purple-600
+                    focus:outline-none
+                    text-white
+                    p-2
+                    rounded-lg
+                    text-base
+                    cursor-pointer
+                  "
+                  >Escolher
+                  imagem</label
+                >
+                <input
+                  class="hidden"
+                  type="file"
+                  id="croppieProfile"
+                  name="croppieProfile"
+                  @change="croppieProfile"
+                />
+              </div>
               <button
-                class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mx-1 mt-4 self-start"
+                class="
+                  rounded-lg
+                  bg-purple-500
+                  hover:bg-purple-600
+                  focus:outline-none
+                  text-white
+                  p-2
+                  mx-1
+                  mt-4
+                  self-start
+                "
                 @click="changeHeader"
               >
                 Atualizar
@@ -238,10 +421,20 @@
         role="dialog"
         aria-modal="true"
         v-if="modalProfile"
-        
       >
         <div
-          class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+          class="
+            flex
+            items-end
+            justify-center
+            min-h-screen
+            pt-4
+            px-4
+            pb-20
+            text-center
+            sm:block
+            sm:p-0
+          "
         >
           <div
             class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
@@ -254,10 +447,25 @@
             >&#8203;</span
           >
           <div
-            class="inline-block align-bottom overflow-hidden transform transition-all  sm:align-middle "
+            class="
+              inline-block
+              align-bottom
+              overflow-hidden
+              transform
+              transition-all
+              sm:align-middle
+            "
           >
             <div
-              class="bg-lightgray border border-lightgray rounded-lg block w-full text-white py-8"
+              class="
+                bg-lightgray
+                border border-lightgray
+                rounded-lg
+                block
+                w-full
+                text-white
+                py-8
+              "
               v-on-clickaway="awayModalProfile"
             >
               <vue-croppie
@@ -266,15 +474,49 @@
                 :enableOrientation="true"
                 :boundary="{ width: 300, height: 300 }"
                 :viewport="{ width: 250, height: 250, type: 'circle' }"
-                
               ></vue-croppie>
-              <input type="file" @change="croppieProfile" />
-              <button
-                class="rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none text-white p-2 mt-4 self-start"
-                @click="changeProfile"
-              >
-                Atualizar
-              </button>
+              <div>
+                <label
+                  for="croppieProfile"
+                  class="
+                  border
+                    border-purple-500
+                    hover:border-purple-600
+                    focus:outline-none
+                    text-white
+                    p-2
+                    rounded-lg
+                    text-base
+                    cursor-pointer
+                  "
+                  >Escolher
+                  imagem</label
+                >
+                <input
+                  class="hidden"
+                  type="file"
+                  id="croppieProfile"
+                  name="croppieProfile"
+                  @change="croppieProfile"
+                />
+              </div>
+              <div>
+                <button
+                  class="
+                    rounded-lg
+                    bg-purple-500
+                    hover:bg-purple-600
+                    focus:outline-none
+                    text-white
+                    p-2
+                    mt-4
+                    self-start
+                  "
+                  @click="changeProfile"
+                >
+                  Atualizar
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -310,7 +552,6 @@ export default {
     onClickaway: onClickaway,
   },
   data() {
-    
     return {
       dropzoneOptions: {
         url: "https://httpbin.org/post",
@@ -354,8 +595,9 @@ export default {
     };
   },
   mounted() {
+    console.log(window.innerWidth)
     axios.get(`/profile/${this.$route.params.username}/`).then((response) => {
-      console.log(response)
+      console.log(response);
       this.posts = response["data"]["posts"];
       this.postsCounter = response["data"]["posts_count"];
       this.name = response["data"]["name"];
@@ -363,13 +605,13 @@ export default {
       this.con_count = response["data"]["con_count"];
     });
 
-    axios.get('/v1/tags/').then( response => {
-      this.recomendedTags = response['data']
-    })
-    
-    axios.get(`/v1/${this.username}/tags`).then( response => {
+    axios.get("/v1/tags/").then((response) => {
+      this.recomendedTags = response["data"];
+    });
+
+    axios.get(`/v1/${this.username}/tags`).then((response) => {
       this.userTags = response["data"];
-    })
+    });
   },
   computed: {
     getProfilePic() {
@@ -391,22 +633,22 @@ export default {
     editTags: function (isEditing) {
       this.isEditingTags = isEditing;
     },
-    addTag: function (e){
+    addTag: function (e) {
       axios({
-        method: 'post',
-        url: '/v1/add_tag',
+        method: "post",
+        url: "/v1/add_tag",
         data: {
-          "name": e['name'],
-        }
-      }).then(res => {
-        e['id'] = res['data']['id']
+          name: e["name"],
+        },
+      }).then((res) => {
+        e["id"] = res["data"]["id"];
       });
     },
     awayModalPost: function () {
       this.modalPost = false;
     },
     awayModalHeader: function () {
-      console.log('t')
+      console.log("t");
       this.modalHeader = false;
       this.croppieHeaderState = true;
     },
@@ -478,14 +720,14 @@ export default {
       });
     },
     mouseMove: function (event) {
-      var pageX = this.windowWidth;
-      var pageY = this.windowHeight ;
-      var mouseY=0;
-      var mouseX=0;
+      let pageX = this.windowWidth;
+      let pageY = this.windowHeight;
+      let mouseY = 0;
+      let mouseX = 0;
 
       //verticalAxis
       mouseY = event.clientY;
-      this.yAxis = (pageY-mouseY)/pageY*100; 
+      this.yAxis = ((pageY - mouseY) / pageY) * 100;
       //horizontalAxis
       mouseX = event.clientX / -pageX;
       this.xAxis = -mouseX * 50 - 50;
