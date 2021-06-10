@@ -739,19 +739,30 @@ export default {
       this.modalPost = true;
     },
     croppieHeader(e) {
-      this.$refs.croppieRef.bind({
-        url: e.dataURL,
-      });
+      let file = e.target.files[0]
+      let reader = new FileReader();
+      reader.readAsDataURL(file)
+      reader.onload = (e) => {
+        this.$refs.croppieRef.bind({
+          url: e.target.result,
+        });
+      };
 
       this.croppieHeaderState = true;
     },
     croppieProfile(e) {
-      this.$refs.croppieRef.bind({
-        url: e.dataURL,
-      });
-
+      let file = e.target.files[0]
+      let reader = new FileReader();
+      reader.readAsDataURL(file)
+      reader.onload = (e) => {
+        this.$refs.croppieRef.bind({
+          url: e.target.result,
+        });
+      };
+      
       this.croppieProfileState = true;
     },
+    
     changeProfile: async function () {
       let options = {
         type: "base64",
@@ -759,17 +770,19 @@ export default {
         format: "jpeg",
       };
       await this.$refs.croppieRef.result(options, (output) => {
+        
         this.cropped = this.croppieImage = output;
       });
-
+      
       await axios({
         method: "post",
-        url: "/profile/image",
+        url: "user/image",
         data: {
           base: this.croppieImage,
         },
       });
     },
+
     changeHeader: async function () {
       let options = {
         type: "base64",
@@ -788,6 +801,7 @@ export default {
         },
       });
     },
+
     requestConnection: function () {
       axios.post('/connection/new', {username: this.username})
       .then(() => {
@@ -798,6 +812,7 @@ export default {
         });
       });
     },
+
     mouseMove: function (event) {
       let pageX = this.windowWidth;
       let pageY = this.windowHeight;
