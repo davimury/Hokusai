@@ -110,14 +110,12 @@ import { directive as onClickaway } from "vue-clickaway";
 import CreatePost from "./CreatePost.vue";
 import SearchBar from "./SearchBar.vue";
 import { mapActions } from "vuex";
-import vSelect from 'vue-select'
 
 export default {
   name: "Header",
   components: {
     CreatePost,
     Notification,
-    vSelect,
     SearchBar
   },
   directives: {

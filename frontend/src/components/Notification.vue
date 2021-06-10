@@ -16,8 +16,9 @@
           >
     <div
       v-if="isActive"
-      class="flex justify-center fixed"
-      style="right: 185px; top: -100px;"
+      class="max-h-full sm:right-28 sm:h-auto flex justify-center fixed"
+      style=" top: -100px;"
+      
       v-on-clickaway="away"
     >
       <div class="bg-lightgray mt-40 px-4 py-4 rounded-lg shadow-md max-w-xs">

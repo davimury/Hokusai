@@ -778,7 +778,7 @@ export default {
       
       await axios({
         method: "post",
-        url: "user/image",
+        url: "/user/image",
         data: {
           base: this.croppieImage,
         },
@@ -797,7 +797,7 @@ export default {
 
       await axios({
         method: "post",
-        url: "/profile/header",
+        url: "/user/header",
         data: {
           base: this.croppieImage,
         },
