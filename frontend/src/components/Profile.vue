@@ -153,7 +153,9 @@
           :key="userTag['tag_id']"
           :tag_id="userTag['tag_id']"
         >
-          {{ userTag["name"] }}
+            <a :href="`/tag/${userTag['name']}`">
+              {{ userTag["name"] }}
+            </a>
           <span
             v-if="isEditingTags"
             @click="removeTag"
@@ -680,11 +682,9 @@ export default {
           div.innerHTML = posts[i]['body'].trim();
           
           const img = await htmlToImage.toJpeg(div, {width: 300, height: 300})
-          console.log(posts[i]['post_id'])
           this.thumbsData[posts[i]['post_id']] = img
         }
       }
-
     },
     /* Tags */
     editTags: function (isEditing) {
@@ -811,7 +811,6 @@ export default {
         .then((response) => {
           this.isConnected = response['data']['is_connected']
           this.conStatus = response['data']['con_status']
-          console.log(this.conStatus)
         });
       });
     },

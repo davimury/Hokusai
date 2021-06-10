@@ -92,6 +92,8 @@ class TAGS(Base):
     tag_name = Column(String, unique=True)
     created_at = Column(DateTime)
 
+    posts = relationship("POSTS", secondary=posts_tags, viewonly=True)
+
     def update_date(self):
         self.created_at = datetime.now() if self.created_at == None else None
 

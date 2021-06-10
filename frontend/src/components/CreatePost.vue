@@ -363,8 +363,6 @@ export default {
     addTag: async function(e) {
       await axios.post("/tag/new", {name: e["name"]})
       .then((res) => e["tag_id"] = res["data"]["id"]);
-
-      console.log(e)
     },
     appendTag(e) {
       this.selectedTags = e;

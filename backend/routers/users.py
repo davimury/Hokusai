@@ -122,7 +122,7 @@ async def get_user_info(username: str, user=Depends(manager)):
     if flag:
         try:
             for tag in tags:
-                tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
+                tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name})
 
             for post in posts:
                 like_obj = session.query(LIKES).filter_by(
