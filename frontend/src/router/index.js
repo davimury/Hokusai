@@ -33,9 +33,9 @@ const router = new Router({
       meta: { requiresAuth: true },
     },
     {
-      path: '/search',
-      name: 'SearchConnection',
-      component: () => import(/*webpackChunkName: "SearchConnection"*/ "../components/SearchConnection.vue"),
+      path: '/tag/:tag',
+      name: 'SearchTag',
+      component: () => import(/*webpackChunkName: "SearchConnection"*/ "../components/SearchTag.vue"),
       meta: { requiresAuth: true },
     },
     {

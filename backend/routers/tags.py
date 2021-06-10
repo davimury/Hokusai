@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends
 from starlette.responses import JSONResponse
-from db.db_main import Session, TAGS, USERS
+from db.db_main import Session, TAGS, USERS, POSTS
+from datetime import datetime, timedelta
+from collections import Counter
 from typing import List
 from models import Tag
 from routers.auth import manager
@@ -33,6 +35,42 @@ async def get_all_tags(user=Depends(manager)):
             tags_arr.append({'tag_id': None, 'name': 'Nenhuma tag encontrada!'})
 
         return JSONResponse(status_code=200, content=tags_arr)
+
+
+@router.get("/tags/trending")
+async def get_trending_tags(user=Depends(manager)): #user=Depends(manager)
+    try:
+        flag = True
+        tags_arr = []
+        session = Session()
+
+        week = datetime.today() - timedelta(days=7)
+
+        posts = session.query(POSTS).filter(POSTS.created_at > week).all()
+
+        for post in posts:  
+            for tag in post.tags:
+                tags_arr.append(tag.tag_id)
+        
+        data = Counter(tags_arr)
+        most_common = data.most_common(5)
+
+        tags_arr = []
+        for tag in most_common:
+            tags_arr.append(session.query(TAGS).filter(TAGS.tag_id == tag[0]).first())
+
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        if len(tags_arr) == 0:
+            return [{'tag_id': None, 'name': 'Nenhuma tag encontrada!'}]
+
+        return tags_arr
 
 
 @router.get("/tags/recommended")

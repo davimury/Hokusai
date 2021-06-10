@@ -191,8 +191,8 @@
                       cursor-default
                     "
                     v-for="tag in recomendedTags"
-                    :key="tag.id"
-                    :id="tag.id"
+                    :key="tag.tag_id"
+                    :id="tag.tag_id"
                     @click="select(tag, $event)"
                   >
                     {{ tag.name }}
