@@ -20,7 +20,7 @@ async def get_all_tags(user=Depends(manager)):
         tags = session.query(TAGS).all()
 
         for tag in tags:
-            tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
+            tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name})
 
         
     except Exception as e:
@@ -85,9 +85,9 @@ async def get_recommended_tags(user=Depends(manager)):
         for tag in tags:
             if user.tags:
                 if tag.tag_id not in user.tags:
-                    tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
+                    tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name})
             else:
-                tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
+                tags_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name})
         
     except Exception as e:
         print(e)
@@ -114,7 +114,7 @@ async def get_tags_by_username(username: str, user=Depends(manager)):
         tags = session.query(TAGS).filter(TAGS.tag_id.in_(user_.tags)).all()
 
         for tag in tags:
-            tag_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name.title()})
+            tag_arr.append({'tag_id': tag.tag_id, 'name': tag.tag_name})
 
     except:
         flag = False

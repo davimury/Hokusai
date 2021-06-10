@@ -153,7 +153,9 @@
           :key="userTag['tag_id']"
           :tag_id="userTag['tag_id']"
         >
-          {{ userTag["name"] }}
+            <a :href="`/tag/${userTag['name']}`">
+              {{ userTag["name"] }}
+            </a>
           <span
             v-if="isEditingTags"
             @click="removeTag"
