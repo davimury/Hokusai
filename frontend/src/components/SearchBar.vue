@@ -5,7 +5,6 @@
         material-icons
         md-18
         text-gray-400
-        cursor-pointer
         select-none
         absolute
         inset-y-0
@@ -29,6 +28,7 @@
       "
       placeholder="Pesquisar"
       v-model="query"
+      @input="getUsers"
       @blur="searchResultsVisible = false"
       @focus="searchResultsVisible = true"
       @keydown.esc="searchResultsVisible = false"
@@ -39,7 +39,7 @@
       leave-active-class="animate__animated animate__fadeOut"
     >
       <div
-        v-if="query.length > 0 && searchResultsVisible"
+        v-if="query.length > 3 && searchResultsVisible"
         id="dropBodyMenu"
         class="
           z-10
@@ -58,48 +58,47 @@
           sm:block
         "
       >
-        <ul class="text-left">
-          <li
-            class="my-1 px-3 py-1 hover:bg-lightgray rounded-lg cursor-pointer"
+        <ul 
+          class="text-left"
+          v-for="user in searchResults"
+          :key="user.user_id"
           >
-            <div class="flex items-center">
-              <img
-                class="h-12 w-12 rounded-full"
-                src="https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80"
-              />
-              <div class="ml-3">
-                <a href="/">
-                  <span
-                    class="
-                      text-sm
-                      font-semibold
-                      antialiased
-                      block
-                      leading-tight
-                    "
-                    >chris_</span
-                  >
-                  <h2 class="text-base">Chris</h2>
-                </a>
+          <a :href="user.username">
+            <li
+              class="my-1 px-3 py-1 hover:bg-lightgray rounded-lg cursor-pointer"
+            >
+              <div class="flex items-center">
+                <img
+                  class="h-12 w-12 rounded-full"
+                  :src="getProfilePic(user.user_id)"
+                />
+                <div class="ml-3">
+                  <a href="/">
+                    <span
+                      class="
+                        text-sm
+                        font-semibold
+                        antialiased
+                        block
+                        leading-tight
+                      "
+                      > {{ user.username }}</span
+                    >
+                    <h2 class="text-base">{{ user.name }}</h2>
+                  </a>
+                </div>
               </div>
-            </div>
-          </li>
+            </li>
+          </a>
         </ul>
         <h2 v-if="searchResults.length === 0" class="text-center">
-          Nenhum resultado foi encontrado para '{{ query }}'
+          Nenhum usuário foi encontrado para '{{ query }}'
         </h2>
-        <div class="pt-2 mt-1">
-          <a
-            class="px-3 text-purple-500 hover:text-purple-600 font-semibold"
-            href="/search"
-            >Pesquisar em Tags</a
-          >
-        </div>
         <div class="border-t border-lightergray pt-2 mt-1">
           <a
             class="px-3 text-purple-500 hover:text-purple-600 font-semibold"
-            href="/search"
-            >Ver Mais</a
+            :href="`/tag/${query}`"
+            >Pesquisar em Tags</a
           >
         </div>
       </div>
@@ -108,15 +107,34 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "SearchBar",
   data() {
     return {
-      searchResults: "c",
+      searchResults: [],
       query: "",
       searchResultsVisible: false,
     };
   },
+  methods: {
+    getUsers: async function(){
+      if (this.query.length > 3){
+        axios.get(`/user/search/${this.query}`)
+        .then(response => {
+          this.searchResults = response['data']
+        })
+      }
+    },
+    getProfilePic(id) {
+      try {
+        return require(`@/assets/img/profile/${id}.jpg`);
+      } catch {
+        return require("@/assets/img/profile/default.jpg");
+      }
+    },
+  }
 };
 </script>
 

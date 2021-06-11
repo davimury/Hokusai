@@ -2,6 +2,7 @@ import base64
 from fastapi import APIRouter, Depends, Response, Request
 from db.db_main import Session, USERS, POSTS, TAGS, LIKES, CONNECTIONS, NOTIFICATIONS
 from routers.auth import manager
+from sqlalchemy import or_
 from models import Post
 
 router = APIRouter()
@@ -168,6 +169,27 @@ async def get_user_info(username: str, user=Depends(manager)):
     else:
         Response(status_code=500)
 
+
+@router.get("/user/search/{query}")
+async def get_user_by_query(query: str, user=Depends(manager)):
+    try:
+        session = Session()
+        users_arr = []
+        
+        users = session.query(USERS).filter(or_(USERS.username.like(f"%{query}%"), USERS.name.like(f"%{query}%"))).all()
+        
+        for user in users:
+            users_arr.append({
+                'user_id': user.user_id,
+                'username': user.username,
+                'name': user.name
+            })
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        return users_arr
 
 #Setters
 @router.post("/user/image")

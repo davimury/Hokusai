@@ -29,34 +29,40 @@
             Recomendados
           </button>
         </div>
-        <div v-if="feedType == 1" class="w-full flex flex-col posts h-100">
-          <div v-if="followPosts.length > 0">
-            <Post
-              v-for="postData in followPosts.slice().reverse()"
-              :key="postData.post_id"
-              :postData="postData"
-              class="my-4"
-            ></Post>
-          </div>
-          <div class="my-4" v-else>
-            <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
+        <div class="w-full flex flex-col posts h-100">
+          <div v-if="feedType == 1">
+              <Post
+                v-for="postData in followPosts"
+                :key="postData.post_id"
+                :postData="postData"
+                class="my-4"
+              ></Post>      
+              <infinite-loading :identifier="infiniteId" @infinite="loadMoreCon">
+                <div slot="no-more" class="pb-20 text-white">Você já viu todos os posts!</div>
+                <div slot="no-results" class="pb-20">
+                  <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
+                </div>
+              </infinite-loading>
           </div>
         </div>
-        <div v-if="feedType == 2" class="w-full flex flex-col posts h-100">
-          <div v-if="recPosts.length > 0">
-            <Post
-              v-for="postData in recPosts.slice()"
-              :key="postData.post_id"
-              :postData="postData"
-              class="my-4"
-            ></Post>
-          </div>
-          <div class="my-4" v-else>
-            <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
+          <div class="w-full flex flex-col posts h-100">
+          <div v-if="feedType == 2">
+              <Post
+                v-for="postData in recPosts.slice()"
+                :key="postData.post_id"
+                :postData="postData"
+                class="my-4"
+              ></Post>
+              <infinite-loading :identifier="infiniteId" @infinite="loadMoreRec">
+                <div slot="no-more" class="pb-20 text-white">Você já viu todos os posts!</div>
+                <div slot="no-results" class="pb-20">
+                  <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
+                </div>
+              </infinite-loading>
           </div>
         </div>
       </div>
-
+      
       <div id="right-bar" class="w-1/3 md:2/4 hidden lg:block h-screen p-3 ">
         <SuggestedConection
           
@@ -220,6 +226,7 @@ import axios from "axios";
 import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import { mapActions } from "vuex";
+import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   name: "Feed",
@@ -232,6 +239,7 @@ export default {
     FormWizard,
     TabContent,
     TrendingTags,
+    InfiniteLoading
   },
   directives: {
     onClickaway: onClickaway,
@@ -242,6 +250,7 @@ export default {
       croppieImage: "",
       cropped: null,
       show: false,
+      infiniteId: +new Date(),
       params: {
         token: "123456798",
         name: "avatar",
@@ -252,6 +261,8 @@ export default {
       imgDataUrl: "", // the datebase64 url of created image
       followPosts: [],
       recPosts: [],
+      recQuerys: 0,
+      conQuerys: 0,
       recomendedTags: [],
       selectedTags: [],
       windowWidth: window.innerWidth,
@@ -265,21 +276,21 @@ export default {
       return this.$store.getters.isFirstLogin;
     },
   },
-  mounted() {
-    axios.get("/posts/connections").then((response) => {
-      this.followPosts  = response["data"].sort(function(a, b) {
-        if (a['created_at'] > b['created_at']) return 1;
-        if (a['created_at'] < b['created_at']) return -1;
-      });
-    });
-    axios.get("/posts/recommended").then((response) => {
-      this.recPosts  = response["data"]
-    });
-  },
   methods: {
     ...mapActions(["setFirstLogin"]),
     changeFeedType: function (type) {
       this.feedType = type;
+      this.infiniteId += 1;
+      console.log(this.infiniteId)
+      /* console.log(this.busyCon)
+      console.log(this.busyRec)
+      if (type == 1){
+        this.busyCon = false
+        this.busyRec = true
+      } else {
+        this.busyRec = false
+        this.busyCon = true
+      } */
     },
     select: async function (tag, e) {
       this.selectedTags.push({tag_id: tag['tag_id']});
@@ -305,9 +316,6 @@ export default {
       reader.readAsDataURL(files[0]);
     },
     crop() {
-      // Options can be updated.
-      // Current option will return a base64 version of the uploaded image with a size of 600px X 450px.
-
       return new Promise((resolve, reject) => {
         let options = {
           type: "base64",
@@ -347,6 +355,41 @@ export default {
       //horizontalAxis
       mouseX = event.clientX / -pageX;
       this.xAxis = -mouseX * 50 - 50;
+    },
+    loadMoreRec: async function($state){
+      console.log(2)
+
+      await axios.get(`/posts/recommended/${this.recQuerys}`).then((response) => {
+        if(response['data'] != undefined){
+          this.recQuerys = this.recQuerys + 1;
+          this.recPosts  = this.recPosts.concat(response["data"])
+          
+          setTimeout(function(){ 
+            $state.loaded();
+          }, 2000); 
+        } else {
+          $state.complete();
+        }
+      });
+    },
+    loadMoreCon: async function ($state){
+      console.log(1)
+
+      await axios.get(`/posts/connections/${this.conQuerys}`).then((response) => {
+        if(response['data'] != undefined){
+          this.conQuerys = this.conQuerys + 1;
+          this.followPosts = this.followPosts.concat(
+            response["data"].sort(function(a, b) {
+              if (a['created_at'] > b['created_at']) return 1;
+              if (a['created_at'] < b['created_at']) return -1;
+            })
+          );
+          setTimeout(function(){ 
+            $state.loaded();
+          }, 2000);  
+        } else 
+          $state.complete();
+      });
     },
   },
   "pt-pt": {
