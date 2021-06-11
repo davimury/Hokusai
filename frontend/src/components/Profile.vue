@@ -75,7 +75,10 @@
           <p class="mx-1">
             <span class="font-medium">{{ this.postsCounter }}</span> Posts
           </p>
-          <p class="mx-1">
+          <p
+            class="mx-1 cursor-pointer"
+            v-on:click="modalConexoes = !modalConexoes"
+          >
             <span class="font-medium">{{ con_count }}</span> Conexões
           </p>
         </div>
@@ -84,7 +87,7 @@
           class="flex justify-center text-gray-500"
         >
           <button
-          v-if="!this.isConnected"
+            v-if="!this.isConnected"
             @click="requestConnection"
             class="
               rounded-lg
@@ -115,7 +118,7 @@
             Conexão Pendente
           </button>
           <button
-          v-if="this.isConnected && this.conStatus"
+            v-if="this.isConnected && this.conStatus"
             class="
               rounded-lg
               bg-purple-500
@@ -153,9 +156,9 @@
           :key="userTag['tag_id']"
           :tag_id="userTag['tag_id']"
         >
-            <a :href="`/tag/${userTag['name']}`">
-              {{ userTag["name"] }}
-            </a>
+          <a :href="`/tag/${userTag['name']}`">
+            {{ userTag["name"] }}
+          </a>
           <span
             v-if="isEditingTags"
             @click="removeTag"
@@ -251,10 +254,7 @@
         class="bg-lightgray post-card cursor-pointer"
         @click="showPost(post)"
       >
-        <img
-          :src="thumbsData[post['post_id']]"
-          class="media"
-        />
+        <img :src="thumbsData[post['post_id']]" class="media" />
       </div>
     </div>
     <div
@@ -555,6 +555,72 @@
         </div>
       </div>
     </transition>
+
+    <transition
+      mode="out-in"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+    >
+      <div
+        class="fixed z-10 inset-0"
+        aria-labelledby="modal-title"
+        role="dialog"
+        aria-modal="true"
+        v-if="modalConexoes"
+      >
+        <div
+          class="
+            flex
+            items-end
+            justify-center
+            min-h-screen
+            pt-4
+            px-4
+            pb-20
+            text-center
+            sm:block
+            sm:p-0
+          "
+        >
+          <div
+            class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
+            aria-hidden="true"
+          ></div>
+
+          <span
+            class="hidden sm:inline-block sm:align-middle sm:h-screen"
+            aria-hidden="true"
+            >&#8203;</span
+          >
+          <div
+            class="
+              inline-block
+              align-bottom
+              overflow-hidden
+              transform
+              transition-all
+              sm:align-middle
+              bg-lightgray
+              rounded-lg
+              p-4
+              w-full
+              sm:w-3/4
+              
+            "
+            v-on-clickaway="awayModalConexoes"
+          >
+            <h1 class="text-white font-semibold mb-4">Conexões</h1>
+            <div class="flex flex-wrap justify-center overflow-y-auto max-h-70vh">
+               <ProfileCard
+              v-for="cardData in cardsData"
+              :key="cardData.username"
+              :cardData="cardData"
+            ></ProfileCard>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
     <Footer></Footer>
   </main>
 </template>
@@ -570,8 +636,8 @@ import "../assets/css/dropzone.css";
 import axios from "axios";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
-import * as htmlToImage from 'html-to-image';
-
+import * as htmlToImage from "html-to-image";
+import ProfileCard from "./ProfileCard.vue"
 export default {
   name: "Profile",
   components: {
@@ -581,12 +647,132 @@ export default {
     Footer,
     vSelect,
     vueDropzone: vue2Dropzone,
+    ProfileCard
   },
   directives: {
     onClickaway: onClickaway,
   },
   data() {
     return {
+      cardsData: [
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+        {
+          profilePicture:
+            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
+          backgroundPicture:
+            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
+          name: "Chris",
+          userTags: "boku",
+          username: "chris_",
+        },
+      ],
       dropzoneOptions: {
         url: "https://httpbin.org/post",
         thumbnailWidth: 140,
@@ -621,6 +807,7 @@ export default {
       modalPost: false,
       modalProfile: false,
       modalHeader: false,
+      modalConexoes: false,
       croppieImage: "",
       cropped: null,
       croppieHeaderState: false,
@@ -634,25 +821,27 @@ export default {
     };
   },
   mounted: async function () {
-    await axios.get(`/user/${this.$route.params.username}`)
-    .then(async response => {
-      if(response["data"]["posts"].length > 0)
-        await this.generateThumbs(response["data"]["posts"])
+    await axios
+      .get(`/user/${this.$route.params.username}`)
+      .then(async (response) => {
+        if (response["data"]["posts"].length > 0)
+          await this.generateThumbs(response["data"]["posts"]);
 
-      this.posts = response["data"]["posts"];
-      this.userTags = response["data"]["tags"];
-      this.postsCounter = response["data"]["posts_count"];
-      this.name = response["data"]["name"];
-      this.user_id = response["data"]["user_id"];
-      this.con_count = response["data"]["con_count"];
-    })
-
-    if( this.username != this.$store.getters.Username){
-      axios.get(`/connection/${this.$route.params.username}`)
-      .then((response) => {
-        this.isConnected = response['data']['is_connected']
-        this.conStatus = response['data']['con_status']
+        this.posts = response["data"]["posts"];
+        this.userTags = response["data"]["tags"];
+        this.postsCounter = response["data"]["posts_count"];
+        this.name = response["data"]["name"];
+        this.user_id = response["data"]["user_id"];
+        this.con_count = response["data"]["con_count"];
       });
+
+    if (this.username != this.$store.getters.Username) {
+      axios
+        .get(`/connection/${this.$route.params.username}`)
+        .then((response) => {
+          this.isConnected = response["data"]["is_connected"];
+          this.conStatus = response["data"]["con_status"];
+        });
     }
   },
   computed: {
@@ -672,52 +861,63 @@ export default {
     },
   },
   methods: {
-    generateThumbs: async function(posts){
+    generateThumbs: async function (posts) {
       for (let i = 0; i < posts.length; i++) {
-        if (posts[i]['postType'] == 0){
-          this.thumbsData[posts[i]['post_id']] = require(`@/assets/img/posts/${posts[i]['slides'][0]}`);
+        if (posts[i]["postType"] == 0) {
+          this.thumbsData[
+            posts[i]["post_id"]
+          ] = require(`@/assets/img/posts/${posts[i]["slides"][0]}`);
         } else {
-          var div = document.createElement('div');
-          div.style.backgroundColor = 'white';
-          div.innerHTML = posts[i]['body'].trim();
-          
-          const img = await htmlToImage.toJpeg(div, {width: 300, height: 300})
-          this.thumbsData[posts[i]['post_id']] = img
+          var div = document.createElement("div");
+          div.style.backgroundColor = "white";
+          div.innerHTML = posts[i]["body"].trim();
+
+          const img = await htmlToImage.toJpeg(div, {
+            width: 300,
+            height: 300,
+          });
+          this.thumbsData[posts[i]["post_id"]] = img;
         }
       }
     },
     /* Tags */
     editTags: function (isEditing) {
-      axios.get("/tags/recommended").then((response) => {
-        this.recomendedTags = response["data"];
-      }).then(() => this.isEditingTags = isEditing);
+      axios
+        .get("/tags/recommended")
+        .then((response) => {
+          this.recomendedTags = response["data"];
+        })
+        .then(() => (this.isEditingTags = isEditing));
     },
 
     addTag: function (e) {
-      axios.post("/tag/new", {name: e["name"]})
-      .then((res) => e["id"] = res["data"]["id"]);
+      axios
+        .post("/tag/new", { name: e["name"] })
+        .then((res) => (e["id"] = res["data"]["id"]));
     },
 
     saveTags: function () {
-      axios.post("/tags/add", this.selectedTags)
-      .then( () => {
+      axios.post("/tags/add", this.selectedTags).then(() => {
         this.selectedTags = [];
         this.editTags(false);
-        this.updateTags()
+        this.updateTags();
       });
     },
 
     removeTag(e) {
-      axios.post("/tags/remove", [{ tag_id: e.path[1].getAttribute("tag_id") }])
-      .then(() => this.updateTags());
+      axios
+        .post("/tags/remove", [{ tag_id: e.path[1].getAttribute("tag_id") }])
+        .then(() => this.updateTags());
     },
 
     updateTags: async function () {
-      axios.get(`/tags/${this.username}`)
-      .then((response) => this.userTags = response["data"]);
+      axios
+        .get(`/tags/${this.username}`)
+        .then((response) => (this.userTags = response["data"]));
 
-      axios.get("/tags/recommended")
-      .then((response) => this.recomendedTags = response["data"]);
+      axios
+        .get("/tags/recommended")
+        .then((response) => (this.recomendedTags = response["data"]));
     },
 
     appendTag(e) {
@@ -727,6 +927,9 @@ export default {
     /* Modal */
     awayModalPost: function () {
       this.modalPost = false;
+    },
+    awayModalConexoes: function () {
+      this.modalConexoes = false;
     },
     awayModalHeader: function () {
       this.modalHeader = false;
@@ -741,9 +944,9 @@ export default {
       this.modalPost = true;
     },
     croppieHeader(e) {
-      let file = e.target.files[0]
+      let file = e.target.files[0];
       let reader = new FileReader();
-      reader.readAsDataURL(file)
+      reader.readAsDataURL(file);
       reader.onload = (e) => {
         this.$refs.croppieRef.bind({
           url: e.target.result,
@@ -753,18 +956,18 @@ export default {
       this.croppieHeaderState = true;
     },
     croppieProfile(e) {
-      let file = e.target.files[0]
+      let file = e.target.files[0];
       let reader = new FileReader();
-      reader.readAsDataURL(file)
+      reader.readAsDataURL(file);
       reader.onload = (e) => {
         this.$refs.croppieRef.bind({
           url: e.target.result,
         });
       };
-      
+
       this.croppieProfileState = true;
     },
-    
+
     changeProfile: async function () {
       let options = {
         type: "base64",
@@ -772,10 +975,9 @@ export default {
         format: "jpeg",
       };
       await this.$refs.croppieRef.result(options, (output) => {
-        
         this.cropped = this.croppieImage = output;
       });
-      
+
       await axios({
         method: "post",
         url: "/user/image",
@@ -805,13 +1007,13 @@ export default {
     },
 
     requestConnection: function () {
-      axios.post('/connection/new', {username: this.username})
-      .then(() => {
-        axios.get(`/connection/${this.$route.params.username}`)
-        .then((response) => {
-          this.isConnected = response['data']['is_connected']
-          this.conStatus = response['data']['con_status']
-        });
+      axios.post("/connection/new", { username: this.username }).then(() => {
+        axios
+          .get(`/connection/${this.$route.params.username}`)
+          .then((response) => {
+            this.isConnected = response["data"]["is_connected"];
+            this.conStatus = response["data"]["con_status"];
+          });
       });
     },
 

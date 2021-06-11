@@ -1,15 +1,6 @@
 <template>
   <div
-    class="
-      h-full
-      md:max-w-4xl
-      mx-auto
-      bg-lightgray
-      rounded-lg
-      flex
-      content-center
-      p-5
-    "
+    
   >
     <transition
       mode="out-in"
@@ -17,21 +8,7 @@
       leave-active-class="animate__animated animate__fadeOut"
     >
       <div v-if="postType == 2" class="mx-auto my-auto text-center">
-        <button
-          class="focus:outline-none self-start mb-6"
-          @click="closeModal()"
-        >
-          <span
-            class="
-              material-icons
-              text-purple-500
-              hover:text-purple-600
-              text-3xl
-            "
-          >
-            clear
-          </span>
-        </button>
+        
         <h1 class="text-white font-bold text-xl mb-5">
           Comece a criar uma nova postagem:
         </h1>
@@ -85,7 +62,7 @@
     >
       <div
         v-if="postType == 0"
-        class="mx-auto w-full flex flex-col items-center w-full md:w-4/6"
+        class="mx-auto flex flex-col items-center w-full md:w-4/6"
       >
         <button
           class="focus:outline-none self-start mb-6"
@@ -165,7 +142,7 @@
     >
       <div
         v-if="postType == 1"
-        class="mx-auto w-full flex flex-col items-center w-full md:w-9/12"
+        class="mx-auto w-full flex flex-col items-center w-full md:w-4/6"
       >
         <button
           class="focus:outline-none self-start mb-6"
@@ -375,9 +352,6 @@ export default {
 </script>
 
 <style scoped>
-main {
-  height: 90vh;
-}
 .vue-dropzone {
   color: white;
   background: none;

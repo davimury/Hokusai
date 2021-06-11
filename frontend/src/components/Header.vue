@@ -1,6 +1,6 @@
 <template>
-  <header class="sticky z-50 bg-darkgray top-0 p-2 px-2 ">
-    <nav class="flex justify-between ">
+  <header class="sticky z-50 bg-darkgray top-0 p-2 px-2">
+    <nav class="flex justify-between">
       <div>
         <a href="/">
           <img
@@ -28,7 +28,6 @@
             ><span class="material-icons"> question_answer </span></a
           >
         </div>
-        
 
         <transition
           mode="out-in"
@@ -43,10 +42,26 @@
             v-if="showModal"
           >
             <div
-              class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+              class="
+                flex
+                items-end
+                justify-center
+                min-h-screen
+                pt-4
+                px-4
+                pb-20
+                text-center
+                sm:block
+                sm:p-0
+              "
             >
               <div
-                class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"
+                class="
+                  fixed
+                  inset-0
+                  bg-gray-900 bg-opacity-75
+                  transition-opacity
+                "
                 aria-hidden="true"
               ></div>
               <span
@@ -55,12 +70,30 @@
                 >&#8203;</span
               >
               <div
-                class="inline-block align-bottom overflow-hidden transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+                class="
+                  inline-block
+                  align-bottom
+                  overflow-hidden
+                  transform
+                  transition-all
+                  sm:align-middle
+                  bg-lightgray
+                  rounded-lg
+                  p-4
+                  w-full
+                  sm:w-3/4
+                "
+                v-on-clickaway="awayModalCreatePost"
               >
                 <div
-                  class="bg-lightgray border border-lightgray rounded-lg block w-full text-white"
+                  class="
+                    
+                    text-white
+                    max-h-70vh
+                  "
+                  
                 >
-                  <CreatePost @closeModal="showModal = !showModal"></CreatePost>
+                  <CreatePost></CreatePost>
                 </div>
               </div>
             </div>
@@ -71,7 +104,13 @@
           <button
             v-on-clickaway="away"
             v-on:click="show = !show"
-            class="flex items-center outline-none focus:outline-none rounded-full"
+            class="
+              flex
+              items-center
+              outline-none
+              focus:outline-none
+              rounded-full
+            "
             :class="{ 'focus:ring-2 focus:ring-purple-500': show === true }"
           >
             <img class="h-8 w-8 rounded-full" :src="getProfilePic" />
@@ -85,7 +124,18 @@
             <div
               v-if="show"
               id="dropBodyMenu"
-              class="z-0 absolute right-0 w-40 mt-2 py-2 bg-lightgray border border-lightgray rounded-lg text-white"
+              class="
+                z-0
+                absolute
+                right-0
+                w-40
+                mt-2
+                py-2
+                bg-lightgray
+                border border-lightgray
+                rounded-lg
+                text-white
+              "
             >
               <ul class="text-left">
                 <li class="my-2 hover:text-gray-300">
@@ -105,7 +155,7 @@
 </template>
 
 <script>
-import Notification from './Notification'
+import Notification from "./Notification";
 import { directive as onClickaway } from "vue-clickaway";
 import CreatePost from "./CreatePost.vue";
 import SearchBar from "./SearchBar.vue";
@@ -116,7 +166,7 @@ export default {
   components: {
     CreatePost,
     Notification,
-    SearchBar
+    SearchBar,
   },
   directives: {
     onClickaway: onClickaway,
@@ -138,7 +188,7 @@ export default {
       show: false,
       showModal: false,
       username: this.$store.getters.Username,
-      userId: this.$store.getters.UserId
+      userId: this.$store.getters.UserId,
     };
   },
   methods: {
@@ -146,52 +196,49 @@ export default {
     away: function () {
       this.show = false;
     },
-    modalAway: function () {
+    awayModalCreatePost: function () {
       this.showModal = false;
     },
     logout: async function () {
       await this.$store.dispatch("LogOut");
       this.$router.push("/login");
     },
-
   },
 };
 </script>
 
 <style scoped>
-  
-   
 </style>
 <style>
 .animate__animated.animate__fadeIn {
-    --animate-duration: 0.3s;
-  }
-  .animate__animated.animate__fadeOut {
-    --animate-duration: 0.3s;
-  }
-.vs__selected{
-    background-color: #3b3b3b;
-    color: white;
-  }
-  .vs__deselect{
-    fill: #8B5CF6;
-  }
-  .vs__deselect:hover{
-    fill: #7C3AED;
-  }
-  .vs__dropdown-menu{
-    background-color: #3b3b3b;
-  }
-  .vs__actions{
-    cursor:pointer;
-  }
-  .vs__dropdown-option{
-    color: white;
-  }
-  .vs__dropdown-option--highlight{
-    background-color: #1e1e1e;
-  }
-  .vs__open-indicator{
-    fill: #8B5CF6;
-  }
+  --animate-duration: 0.3s;
+}
+.animate__animated.animate__fadeOut {
+  --animate-duration: 0.3s;
+}
+.vs__selected {
+  background-color: #3b3b3b;
+  color: white;
+}
+.vs__deselect {
+  fill: #8b5cf6;
+}
+.vs__deselect:hover {
+  fill: #7c3aed;
+}
+.vs__dropdown-menu {
+  background-color: #3b3b3b;
+}
+.vs__actions {
+  cursor: pointer;
+}
+.vs__dropdown-option {
+  color: white;
+}
+.vs__dropdown-option--highlight {
+  background-color: #1e1e1e;
+}
+.vs__open-indicator {
+  fill: #8b5cf6;
+}
 </style>
