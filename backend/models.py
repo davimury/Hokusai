@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import List
 
 class Tag(BaseModel):
@@ -24,7 +24,7 @@ class User(BaseModel):
     user_id     : int           = None
     name        : str           = None
     username    : str           = None
-    email       : str           = None
+    email       : EmailStr      = None
     password    : str           = None
     tags        : List[Tag]     = None
     posts       : List[Post]    = None

@@ -30,6 +30,16 @@ const actions = {
         let user = await axios.post('/login', JSON.stringify({'email': User['email'], 'password': User['password']}))
         await commit('setUser', user.data)
     },
+
+    async Recover({commit}, Recover) {
+        Recover = JSON.parse(Recover)
+        await axios.post('/recover_password', JSON.stringify({'token': Recover['token'], 'password': Recover['password']}))
+    },
+
+    async SendLink({commit}, Link) {
+        Link = JSON.parse(Link)
+        await axios.post('/send_recover', JSON.stringify({'email': Link['email']}))
+    },
     
     async LogOut({commit}){
         await axios.delete('/logout')

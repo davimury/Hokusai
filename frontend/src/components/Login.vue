@@ -128,6 +128,28 @@
                         <a href="#">Voltar Para <span class="text-purple-500 hover:text-purple-600">Log In</span></a>
                     </div>
                 </div>
+                <div v-if="recoverPasswordDiv">
+                    <form  @submit.prevent="recover" class="sm:w-2/3 w-full px-4 lg:px-0 mx-auto">
+                    <h1 class="text-2xl font-semibold m-4">Alterar senha</h1>
+                        <div class="pb-2 pt-4 relative">
+                            <span @click="swapVisibility" class="material-icons md-18 text-gray-400 cursor-pointer select-none absolute inset-y-0 right-3 mt-2 flex items-center">{{passwordIcon}}</span>
+                            <input v-model.trim="passwordSignUp" @input="delayTouch($v.passwordSignUp)" :class="validateStyle($v.passwordSignUp.$invalid, $v.passwordSignUp.$dirty)" class="block w-full p-2 text-lg rounded-lg bg-black focus:ring-1 focus:ring-purple-500" :type="passwordType" placeholder="Nova Senha">
+                        </div>
+                        <div v-if="$v.passwordSignUp.$invalid && $v.passwordSignUp.$dirty" class="text-red-700 text-left -mt-1.5"><small>Senha é obrigatoria</small></div>
+                        
+                        <div class="p-4 text-center right-0 left-0 flex justify-center space-x-4 mt-16 lg:hidden"></div>
+                        <div class=" pb-2 pt-4">
+                            <button class="block w-full p-2 text-lg rounded-lg bg-purple-500 hover:bg-purple-600 focus:outline-none">Mudar senha</button>
+                        </div>
+                    </form>
+                    
+                    <div v-on:click="swapLoginRegister('register')" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
+                        <a href="#">Criar Nova Conta</a>
+                    </div>
+                    <div v-on:click="swapLoginRegister('login')" class="mt-3 text-center text-gray-400 hover:text-gray-100 font-medium">
+                        <a href="#">Voltar Para <span class="text-purple-500 hover:text-purple-600">Log In</span></a>
+                    </div>
+                </div>
                 </transition>
             </div>
         </div>
@@ -159,11 +181,13 @@ export default {
             emailLogIn: null,
             emailSignUp: null,
             emailLink: null,
+            token: '',
             passwordLogIn: null,
             passwordSignUp: null, 
             nameSignUp: null, 
             usernameSignUp: null,
             registerDiv: false,
+            recoverPasswordDiv: false,
             loginDiv: true,
             hidePassword: true,
             passwordIcon: "visibility",
@@ -171,8 +195,18 @@ export default {
             forgotPasswordDiv: false
         }
     },
+    mounted() {
+        if (this.$route.query.recover){
+            this.loginDiv = false
+            this.registerDiv = false
+            this.forgotPasswordDiv = false
+            this.recoverPasswordDiv = true
+
+            this.token = this.$route.query.recover
+        }
+    },
     methods: {
-        ...mapActions(["Register", "LogIn", "setFirstLogin"]),
+        ...mapActions(["Register", "LogIn", "setFirstLogin", "Recover", "SendLink"]),
         register: async function () {
             try {
                 await this.Register(JSON.stringify(
@@ -199,6 +233,34 @@ export default {
             } catch (error) {
 
             }
+        },
+        recover: async function (){
+            try {
+                if( this.passwordSignUp.length >= 6 ){
+                    await this.Recover(JSON.stringify({token: this.token, password: this.passwordSignUp}))
+                    .then(() => {
+                        this.$router.push('/login');
+                        this.loginDiv = true
+                        this.recoverPasswordDiv = false
+                    })
+                }
+            } catch (error) {
+                
+            }
+        },
+        sendLink: async function(){
+            console.log(this.emailLink)
+            try {
+                if( this.emailLink.length > 0 ){
+                    await this.SendLink(JSON.stringify({email: this.emailLink}))
+                    .then(() => {
+                        console.log('enviado')
+                    })
+                }
+            } catch (error) {
+                
+            }
+            
         },
         swapLoginRegister: function(content) {
            if (content == 'login'){
