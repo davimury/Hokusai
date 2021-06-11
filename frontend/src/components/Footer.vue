@@ -1,13 +1,16 @@
 <template>
-  <div
-    class=" sm:hidden fixed bottom-0 w-screen z-20 px-4 bg-darkgray py-1"
-  >
+  <div class="sm:hidden fixed bottom-0 w-screen z-20 px-4 bg-darkgray py-1">
     <div class="flex text-center justify-between text-purple-500">
       <div class="mr-5 text-3xl relative">
         <Notification></Notification>
       </div>
       <div class="mr-5 hover:text-purple-600 text-3xl">
-        <a href="#"><span class="material-icons"> search </span></a>
+        <span
+          class="material-icons cursor-pointer"
+          v-on:click="showModalSearch = !showModalSearch"
+        >
+          search
+        </span>
       </div>
       <div class="mr-5 hover:text-purple-600 text-3xl">
         <button>
@@ -27,10 +30,7 @@
           class="flex items-center outline-none focus:outline-none rounded-full"
           :class="{ 'focus:ring-2 focus:ring-purple-500': show === true }"
         >
-          <img
-            class="h-8 w-8 rounded-full"
-            :src="getProfilePic"
-          />
+          <img class="h-8 w-8 rounded-full" :src="getProfilePic" />
         </button>
         <!-- Dropdown Body -->
         <transition
@@ -68,6 +68,79 @@
         <!-- // Dropdown Body -->
       </div>
     </div>
+
+  <transition
+          mode="out-in"
+          enter-active-class="animate__animated animate__fadeIn"
+          leave-active-class="animate__animated animate__fadeOut"
+        >
+          <div
+            class="fixed z-10 inset-0 overflow-y-auto"
+            aria-labelledby="modal-title"
+            role="dialog"
+            aria-modal="true"
+            v-if="showModalSearch"
+          >
+            <div
+              class="
+                flex
+                items-end
+                justify-center
+                min-h-screen
+                pt-4
+                px-4
+                pb-20
+                text-center
+              "
+            >
+              <div
+                class="
+                  fixed
+                  inset-0
+                  bg-gray-900 bg-opacity-75
+                  transition-opacity
+                "
+                aria-hidden="true"
+              ></div>
+              <span
+                class="hidden sm:inline-block sm:align-middle sm:h-screen"
+                aria-hidden="true"
+                >&#8203;</span
+              >
+              <div
+                class="
+                  inline-block
+                  overflow-hidden
+                  transform
+                  transition-all
+                  align-middle
+                  rounded-lg
+                  p-4
+                  w-full
+                  
+                  h-screen
+                  
+                "
+               
+                
+              >
+                <div class="" v-on-clickaway="modalsearchAway">
+                  <SearchBar></SearchBar>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
+
+    <!-- <transition
+      mode="out-in"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+    >
+      <div class=" z-20" v-if="showModalSearch" v-on-clickaway="modalsearchAway" >
+        <SearchBar></SearchBar>
+      </div>
+    </transition> -->
   </div>
 </template>
 
@@ -90,7 +163,7 @@ export default {
   data() {
     return {
       show: false,
-      showModal: true,
+      showModalSearch: false,
       username: this.$store.getters.Username,
       userId: this.$store.getters.UserId,
     };
@@ -100,8 +173,8 @@ export default {
     away: function () {
       this.show = false;
     },
-    modalAway: function () {
-      this.showModal = false;
+    modalsearchAway: function () {
+      this.showModalSearch = false;
     },
     logout: async function () {
       await this.$store.dispatch("LogOut");

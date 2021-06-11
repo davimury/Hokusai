@@ -7,8 +7,9 @@
         text-gray-400
         select-none
         absolute
-        inset-y-0
-        right-3
+        sm:inset-y-0
+        right-8
+        sm:right-3
         mt-2
         flex
         items-center
@@ -38,13 +39,15 @@
       enter-active-class="animate__animated animate__fadeIn"
       leave-active-class="animate__animated animate__fadeOut"
     >
+      
       <div
         v-if="query.length > 3 && searchResultsVisible"
         id="dropBodyMenu"
         class="
           z-10
           absolute
-          w-full
+          w-11/12
+          sm:w-full
           mt-2
           py-2
           bg-darkgray
@@ -52,10 +55,11 @@
           rounded-lg
           text-white
           overflow-y-auto
-          max-h-30vh
+          max-h-70h
+          sm:max-h-30vh
           px-3
-          hidden
-          sm:block
+          text-left
+          block
         "
       >
         <ul 
