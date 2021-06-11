@@ -29,7 +29,7 @@ const router = new Router({
     {
       path: '/create-post',
       name: 'CreatePost',
-      component: () => import(/*webpackChunkName: "CreatePost"*/ "../components/CreatePost.vue"),
+      component: () => import(/*webpackChunkName: "CreatePost"*/ "../components/CreatePostPage.vue"),
       meta: { requiresAuth: true },
     },
     {

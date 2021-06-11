@@ -1,26 +1,26 @@
 <template>
   <div
-    class="block sm:hidden fixed bottom-0 w-screen z-20 px-4 bg-darkgray py-1"
+    class=" sm:hidden fixed bottom-0 w-screen z-20 px-4 bg-darkgray py-1"
   >
     <div class="flex text-center justify-between text-purple-500">
-      <!-- <div class="mr-5 text-3xl relative">
+      <div class="mr-5 text-3xl relative">
         <Notification></Notification>
       </div>
       <div class="mr-5 hover:text-purple-600 text-3xl">
         <a href="#"><span class="material-icons"> search </span></a>
-      </div> -->
+      </div>
       <div class="mr-5 hover:text-purple-600 text-3xl">
-        <button v-on:click="showModal = !showModal">
-          <a href="#"><span class="material-icons"> queue </span></a>
+        <button>
+          <a href="/create-post"><span class="material-icons"> queue </span></a>
         </button>
       </div>
-      <!-- <div class="mr-5 hover:text-purple-600 text-3xl">
+      <div class="mr-5 hover:text-purple-600 text-3xl">
         <a href="/chat"
           ><span class="material-icons"> question_answer </span></a
         >
-      </div> -->
+      </div>
 
-      <!-- <div class="relative">
+      <div class="relative">
         <button
           v-on-clickaway="away"
           v-on:click="show = !show"
@@ -29,11 +29,11 @@
         >
           <img
             class="h-8 w-8 rounded-full"
-            src="https://picsum.photos/id/1027/150/150"
+            :src="getProfilePic"
           />
-        </button> -->
+        </button>
         <!-- Dropdown Body -->
-        <!-- <transition
+        <transition
           mode="out-in"
           enter-active-class="animate__animated animate__fadeInUp"
           leave-active-class="animate__animated animate__fadeOutDown"
@@ -64,81 +64,9 @@
               </li>
             </ul>
           </div>
-        </transition> -->
-        <!-- // Dropdown Body -->
-
-        
-
-      <!-- </div> -->
-      <transition
-          mode="out-in"
-          enter-active-class="animate__animated animate__fadeIn"
-          leave-active-class="animate__animated animate__fadeOut"
-        >
-          <div
-            class="fixed z-10 inset-0 overflow-y-auto"
-            aria-labelledby="modal-title"
-            role="dialog"
-            aria-modal="true"
-            v-if="showModal"
-          >
-            <div
-              class="
-                flex
-                items-end
-                justify-center
-                min-h-screen
-                pt-4
-                px-4
-                pb-20
-                text-center
-                sm:block
-                sm:p-0
-              "
-            >
-              <div
-                class="
-                  fixed
-                  inset-0
-                  bg-gray-900 bg-opacity-75
-                  transition-opacity
-                "
-                aria-hidden="true"
-              ></div>
-              <span
-                class="hidden sm:inline-block sm:align-middle sm:h-screen"
-                aria-hidden="true"
-                >&#8203;</span
-              >
-              <div
-                class="
-                  inline-block
-                  align-bottom
-                  overflow-hidden
-                  transform
-                  transition-all
-                  sm:my-8
-                  sm:align-middle
-                  sm:max-w-lg
-                  sm:w-full
-                "
-              >
-                <div
-                  class="
-                    bg-lightgray
-                    border border-lightgray
-                    rounded-lg
-                    block
-                    w-full
-                    text-white
-                  "
-                >
-                  <create-post @closeModal="showModal = !showModal"></create-post>
-                </div>
-              </div>
-            </div>
-          </div>
         </transition>
+        <!-- // Dropdown Body -->
+      </div>
     </div>
   </div>
 </template>
@@ -152,7 +80,7 @@ import { mapActions } from "vuex";
 export default {
   name: "Footer",
   components: {
-    "cpost":CreatePost,
+    CreatePost,
     Notification,
     SearchBar,
   },

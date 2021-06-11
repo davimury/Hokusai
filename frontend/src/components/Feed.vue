@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="h-screen">
     <Header></Header>
-    <main class="flex justify-center mx-auto h-screen w-full md:max-w-4xl" @mousemove="mouseMove">
+    <main class="flex justify-center mx-auto h-screen w-full md:max-w-4xl pb-96" @mousemove="mouseMove">
       <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
