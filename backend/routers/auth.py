@@ -1,10 +1,14 @@
+from typing import Dict
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi_login import LoginManager
 from starlette.responses import Response, JSONResponse, HTMLResponse
+from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 from db.db_main import Session, USERS
 from datetime import timedelta
 from sqlalchemy import exc
 from models import User
+from datetime import datetime, timedelta
+import jwt
 
 SECRET = "434d502035aa8243868e3e5767afb5943c75fb5f0a18e013"
 
@@ -76,6 +80,73 @@ async def auth_login(formData: User):
 
     if flag:
         return response
+
+
+@router.post("/send_recover")
+async def send_email_token(formData: User):
+    """
+    EndPoint para envio de form com dados de login e senha do usuário
+    """
+    flag = True
+
+    print(formData)
+    try:
+        conf = ConnectionConfig(
+            MAIL_USERNAME = "app.hokusai@gmail.com",
+            MAIL_PASSWORD = "Pr0t3g1d0@",
+            MAIL_FROM = "app.hokusai@gmail.com",
+            MAIL_PORT = 587,
+            MAIL_SERVER = "smtp.gmail.com",
+            MAIL_TLS = True,
+            MAIL_SSL = False,
+            USE_CREDENTIALS = True,
+            TEMPLATE_FOLDER='./email'
+        )
+
+        encoded_jwt = jwt.encode({'email': formData.email, "exp": datetime.now() + timedelta(hours=1)}, SECRET, algorithm='HS256')
+
+        message = MessageSchema(
+            subject="Hokusai - Recuperar senha",
+            recipients=[formData.email],
+            body={'url': f'http://localhost:8080/login?recover={encoded_jwt}'},
+            subtype="html"
+        )
+
+    except Exception as e:
+        flag = False
+        print(e)
+
+    if flag:
+        try:
+            fm = FastMail(conf)
+            await fm.send_message(message, template_name="recover.html") 
+        except Exception as e:
+            print(e)
+    else:
+        print('er')
+
+
+@router.post("/recover_password/")
+async def get_email_token(recover: Dict[str, str]):
+    """
+    EndPoint para envio de form com dados de login e senha do usuário
+    """
+    try:
+        decode_jwt = jwt.decode(recover['token'], SECRET, algorithms='HS256')
+
+        session = Session()
+        user = session.query(USERS).filter_by(email=decode_jwt['email']).first()
+
+        user.password = recover['password']
+
+        session.merge(user)
+        
+    except Exception as e:
+        print(e)
+
+    finally:
+        session.commit()
+
 
 @router.delete("/logout", response_class=HTMLResponse)
 async def auth_logout(res: Response):
