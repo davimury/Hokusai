@@ -64,15 +64,15 @@ def get_posts_by_tag(tag: str, user=Depends(manager)):
 
 
 
-@router.get("/posts/recommended")
-def get_recommended_posts(user=Depends(manager)):
+@router.get("/posts/recommended/{query}")
+def get_recommended_posts(query: int, user=Depends(manager)):
     """ Retorna todos posts do user logado user """
     try:
         flag = True
         session = Session()
         week = datetime.today() - timedelta(days=7)
 
-        posts = session.query(POSTS).filter(POSTS.created_at > week).order_by(POSTS.likes.desc()).limit(50).all()
+        posts = session.query(POSTS).filter(POSTS.created_at > week).order_by(POSTS.likes.desc()).all()
     
     except Exception as e:
         print(e)
@@ -113,12 +113,15 @@ def get_recommended_posts(user=Depends(manager)):
             print(e)
             flag = False
 
-        finally:
-            return posts_arr
+        try:
+            output = [posts_arr[i:i + 3] for i in range(0, len(posts_arr), 3)]
+            return output[query]
+        except:
+            return None
 
 
-@router.get("/posts/connections")
-def get_connections_posts(user=Depends(manager)):
+@router.get("/posts/connections/{query}")
+def get_connections_posts(query: int, user=Depends(manager)):
     """ Retorna um post especifico """
     try:
         flag = True
@@ -168,7 +171,11 @@ def get_connections_posts(user=Depends(manager)):
         session.close()
 
     if flag:
-        return posts_arr
+        try:
+            output = [posts_arr[i:i + 3] for i in range(0, len(posts_arr), 3)]
+            return output[query]
+        except:
+            return None
 
 
 #Setters
