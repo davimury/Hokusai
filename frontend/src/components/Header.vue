@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky z-50 bg-darkgray top-0 p-2 px-2">
+  <header class="sticky z-20 bg-darkgray top-0 p-2 px-2">
     <nav class="flex justify-between">
       <div>
         <a href="/">
@@ -81,18 +81,14 @@
                   rounded-lg
                   p-4
                   w-full
-                  sm:w-3/4
+                  sm:w-2/4
+                  overflow-y-auto
+                  max-h-70vh
                 "
+                style="height: 60vh"
                 v-on-clickaway="awayModalCreatePost"
               >
-                <div
-                  class="
-                    
-                    text-white
-                    max-h-70vh
-                  "
-                  
-                >
+                <div class="text-white flex justify-center h-full items-center">
                   <CreatePost></CreatePost>
                 </div>
               </div>
@@ -138,11 +134,14 @@
               "
             >
               <ul class="text-left">
-                <li class="my-2 hover:text-gray-300">
+                <li class="my-2 hover:text-gray-300 cursor-pointer">
                   <a :href="this.username" class="px-4 py-2"> Perfil </a>
                 </li>
-                <li class="my-2 hover:text-gray-300">
-                  <a @click="logout" class="px-4 py-2"> Logout </a>
+                <li
+                  class="my-2 hover:text-gray-300 cursor-pointer"
+                  @click="logout"
+                >
+                  <a class="px-4 py-2"> Logout </a>
                 </li>
               </ul>
             </div>

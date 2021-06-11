@@ -1,13 +1,13 @@
 <template>
   <div
-    
+    class="w-full"
   >
     <transition
       mode="out-in"
       enter-active-class="animate__animated animate__fadeIn"
       leave-active-class="animate__animated animate__fadeOut"
     >
-      <div v-if="postType == 2" class="mx-auto my-auto text-center">
+      <div v-if="postType == 2" class="mx-auto my-auto text-center w-full">
         
         <h1 class="text-white font-bold text-xl mb-5">
           Comece a criar uma nova postagem:
