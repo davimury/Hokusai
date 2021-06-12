@@ -135,7 +135,7 @@
             >
               <ul class="text-left">
                 <li class="my-2 hover:text-gray-300 cursor-pointer">
-                  <a :href="this.username" class="px-4 py-2"> Perfil </a>
+                  <a :href="`/${this.username}`" class="px-4 py-2"> Perfil </a>
                 </li>
                 <li
                   class="my-2 hover:text-gray-300 cursor-pointer"

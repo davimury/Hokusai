@@ -143,4 +143,26 @@ class NOTIFICATIONS(Base):
         self.last_updated = datetime.now()
 
 
+class ROOMS(Base):
+    __tablename__ = "rooms"
+    room_id = Column(Integer, primary_key=True, autoincrement=True)
+    users = Column(ARRAY(Integer)) 
+
+
+class MESSAGES(Base):
+    __tablename__ = "messages"
+    message_id = Column(Integer, primary_key=True, autoincrement=True)
+    room_id = Column(Integer, ForeignKey('rooms.room_id'))
+    sender_id = Column(Integer, ForeignKey('users.user_id'))
+    content = Column(String)
+    created_at = Column(DateTime)
+    seen = Column(Boolean)
+
+    def update_date(self):
+        self.created_at = datetime.now() if self.created_at == None else None
+        self.last_updated = datetime.now()
+
+    def seen_message(self):
+        self.seen = True
+
 Base.metadata.create_all(db_engine)

@@ -373,8 +373,6 @@ export default {
       });
     },
     loadMoreCon: async function ($state){
-      console.log(1)
-
       await axios.get(`/posts/connections/${this.conQuerys}`).then((response) => {
         if(response['data'] != undefined){
           this.conQuerys = this.conQuerys + 1;

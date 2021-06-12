@@ -241,6 +241,8 @@ export default {
                     .then(() => {
                         this.$router.push('/login');
                         this.loginDiv = true
+                        this.registerDiv = false
+                        this.forgotPasswordDiv = false
                         this.recoverPasswordDiv = false
                     })
                 }
