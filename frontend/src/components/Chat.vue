@@ -10,6 +10,7 @@
         :show-files='false'
         :show-audio="false"
         :text-formatting="false"
+        :show-add-room="false"
         theme="dark"
         :styles="styles"
       />

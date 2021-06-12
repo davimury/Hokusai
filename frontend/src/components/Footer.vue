@@ -57,7 +57,7 @@
           >
             <ul class="text-left">
               <li class="my-2 hover:text-gray-300">
-                <a :href="username" class="px-4 py-2"> Perfil </a>
+                <a :href="'/'+username" class="px-4 py-2"> Perfil </a>
               </li>
               <li class="my-2 hover:text-gray-300">
                 <a @click="logout" class="px-4 py-2"> Logout </a>
@@ -75,7 +75,7 @@
           leave-active-class="animate__animated animate__fadeOut"
         >
           <div
-            class="fixed z-10 inset-0 overflow-y-auto"
+            class="fixed z-10 inset-0 overflow-hidden"
             aria-labelledby="modal-title"
             role="dialog"
             aria-modal="true"
@@ -110,7 +110,7 @@
               <div
                 class="
                   inline-block
-                  overflow-hidden
+                  
                   transform
                   transition-all
                   align-middle
@@ -132,15 +132,6 @@
           </div>
         </transition>
 
-    <!-- <transition
-      mode="out-in"
-      enter-active-class="animate__animated animate__fadeIn"
-      leave-active-class="animate__animated animate__fadeOut"
-    >
-      <div class=" z-20" v-if="showModalSearch" v-on-clickaway="modalsearchAway" >
-        <SearchBar></SearchBar>
-      </div>
-    </transition> -->
   </div>
 </template>
 
