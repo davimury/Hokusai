@@ -1,7 +1,10 @@
 <template>
   <div class="h-screen">
     <Header></Header>
-    <main class="flex justify-center mx-auto h-screen w-full md:max-w-4xl pb-96" @mousemove="mouseMove">
+    <main
+      class="flex justify-center mx-auto h-screen w-full md:max-w-4xl pb-96"
+      @mousemove="mouseMove"
+    >
       <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
@@ -31,47 +34,53 @@
         </div>
         <div class="w-full flex flex-col posts h-100">
           <div v-if="feedType == 1">
-              <Post
-                v-for="postData in followPosts"
-                :key="postData.post_id"
-                :postData="postData"
-                class="my-4"
-              ></Post>      
-              <infinite-loading :identifier="infiniteId" @infinite="loadMoreCon">
-                <div slot="no-more" class="pb-20 text-white">Você já viu todos os posts!</div>
-                <div slot="no-results" class="pb-20">
-                  <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
-                </div>
-              </infinite-loading>
+            <Post
+              v-for="postData in followPosts"
+              :key="postData.post_id"
+              :postData="postData"
+              class="my-4"
+            ></Post>
+            <infinite-loading :identifier="infiniteId" @infinite="loadMoreCon">
+              <div slot="no-more" class="pb-20 text-white">
+                Você já viu todos os posts!
+              </div>
+              <div slot="no-results" class="pb-20">
+                <NotFoundGhost
+                  :xAxis="this.xAxis"
+                  :yAxis="this.yAxis"
+                ></NotFoundGhost>
+              </div>
+            </infinite-loading>
           </div>
         </div>
-          <div class="w-full flex flex-col posts h-100">
+        <div class="w-full flex flex-col posts h-100">
           <div v-if="feedType == 2">
-              <Post
-                v-for="postData in recPosts.slice()"
-                :key="postData.post_id"
-                :postData="postData"
-                class="my-4"
-              ></Post>
-              <infinite-loading :identifier="infiniteId" @infinite="loadMoreRec">
-                <div slot="no-more" class="pb-20 text-white">Você já viu todos os posts!</div>
-                <div slot="no-results" class="pb-20">
-                  <NotFoundGhost :xAxis="this.xAxis" :yAxis="this.yAxis"></NotFoundGhost>
-                </div>
-              </infinite-loading>
+            <Post
+              v-for="postData in recPosts.slice()"
+              :key="postData.post_id"
+              :postData="postData"
+              class="my-4"
+            ></Post>
+            <infinite-loading :identifier="infiniteId" @infinite="loadMoreRec">
+              <div slot="no-more" class="pb-20 text-white">
+                Você já viu todos os posts!
+              </div>
+              <div slot="no-results" class="pb-20">
+                <NotFoundGhost
+                  :xAxis="this.xAxis"
+                  :yAxis="this.yAxis"
+                ></NotFoundGhost>
+              </div>
+            </infinite-loading>
           </div>
         </div>
       </div>
-      
-      <div id="right-bar" class="w-1/3 md:2/4 hidden lg:block h-screen p-3 ">
-        <SuggestedConection
-          
-          class="mb-4"
-        ></SuggestedConection>
+
+      <div id="right-bar" class="w-1/3 md:2/4 hidden lg:block h-screen p-3">
+        <SuggestedConection class="mb-4"></SuggestedConection>
 
         <TrendingTags></TrendingTags>
       </div>
-
     </main>
     <img :src="imgDataUrl" />
     <div
@@ -152,33 +161,32 @@
                   :viewport="{ width: 250, height: 250, type: 'circle' }"
                 ></vue-croppie>
                 <div>
-                <label
-                  for="croppieProfile"
-                  class="
-                    border border-purple-500
-                    hover:border-purple-600
-                    focus:outline-none
-                    text-white
-                    p-2
-                    rounded-lg
-                    text-base
-                    cursor-pointer
-                  "
-                  >Escolher imagem</label
-                >
-                <input
-                  class="hidden"
-                  type="file"
-                  id="croppieProfile"
-                  name="croppieProfile"
-                  @change="croppie"
-                />
-              </div>
-                
+                  <label
+                    for="croppieProfile"
+                    class="
+                      border border-purple-500
+                      hover:border-purple-600
+                      focus:outline-none
+                      text-white
+                      p-2
+                      rounded-lg
+                      text-base
+                      cursor-pointer
+                    "
+                    >Escolher imagem</label
+                  >
+                  <input
+                    class="hidden"
+                    type="file"
+                    id="croppieProfile"
+                    name="croppieProfile"
+                    @change="croppie"
+                  />
+                </div>
               </tab-content>
               <tab-content>
                 <div class="flex flex-wrap content-center justify-center">
-                  <h2 class="text-center mb-4 font-semibold">
+                  <h2 class="text-center mb-4 font-semibold w-full">
                     Escolha categorias que você tem interesse
                   </h2>
                   <div
@@ -226,7 +234,7 @@ import axios from "axios";
 import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import { mapActions } from "vuex";
-import InfiniteLoading from 'vue-infinite-loading';
+import InfiniteLoading from "vue-infinite-loading";
 
 export default {
   name: "Feed",
@@ -239,7 +247,7 @@ export default {
     FormWizard,
     TabContent,
     TrendingTags,
-    InfiniteLoading
+    InfiniteLoading,
   },
   directives: {
     onClickaway: onClickaway,
@@ -281,7 +289,7 @@ export default {
     changeFeedType: function (type) {
       this.feedType = type;
       this.infiniteId += 1;
-      console.log(this.infiniteId)
+      console.log(this.infiniteId);
       /* console.log(this.busyCon)
       console.log(this.busyRec)
       if (type == 1){
@@ -293,7 +301,7 @@ export default {
       } */
     },
     select: async function (tag, e) {
-      this.selectedTags.push({tag_id: tag['tag_id']});
+      this.selectedTags.push({ tag_id: tag["tag_id"] });
       e.target.classList.add("bg-purple-500");
     },
     awayModalPost: function () {
@@ -339,55 +347,60 @@ export default {
       });
     },
     onComplete: async function () {
-      axios.post("/user/image", {base: this.croppieImage});
+      axios.post("/user/image", { base: this.croppieImage });
       axios.post("/tags/add", this.selectedTags);
       await this.setFirstLogin(false);
     },
     mouseMove: function (event) {
       var pageX = this.windowWidth;
       var pageY = this.windowHeight;
-      var mouseY=0;
-      var mouseX=0;
+      var mouseY = 0;
+      var mouseX = 0;
 
       //verticalAxis
       mouseY = event.clientY;
-      this.yAxis = (pageY-mouseY)/pageY*100; 
+      this.yAxis = ((pageY - mouseY) / pageY) * 100;
       //horizontalAxis
       mouseX = event.clientX / -pageX;
       this.xAxis = -mouseX * 50 - 50;
     },
-    loadMoreRec: async function($state){
-      console.log(2)
+    loadMoreRec: async function ($state) {
+      console.log(2);
 
-      await axios.get(`/posts/recommended/${this.recQuerys}`).then((response) => {
-        if(response['data'] != undefined){
-          this.recQuerys = this.recQuerys + 1;
-          this.recPosts  = this.recPosts.concat(response["data"])
-          
-          setTimeout(function(){ 
-            $state.loaded();
-          }, 2000); 
-        } else {
-          $state.complete();
-        }
-      });
+      await axios
+        .get(`/posts/recommended/${this.recQuerys}`)
+        .then((response) => {
+          if (response["data"] != undefined) {
+            this.recQuerys = this.recQuerys + 1;
+            this.recPosts = this.recPosts.concat(response["data"]);
+
+            setTimeout(function () {
+              $state.loaded();
+            }, 2000);
+          } else {
+            $state.complete();
+          }
+        });
     },
-    loadMoreCon: async function ($state){
-      await axios.get(`/posts/connections/${this.conQuerys}`).then((response) => {
-        if(response['data'] != undefined){
-          this.conQuerys = this.conQuerys + 1;
-          this.followPosts = this.followPosts.concat(
-            response["data"].sort(function(a, b) {
-              if (a['created_at'] > b['created_at']) return 1;
-              if (a['created_at'] < b['created_at']) return -1;
-            })
-          );
-          setTimeout(function(){ 
-            $state.loaded();
-          }, 2000);  
-        } else 
-          $state.complete();
-      });
+    loadMoreCon: async function ($state) {
+      console.log(1);
+
+      await axios
+        .get(`/posts/connections/${this.conQuerys}`)
+        .then((response) => {
+          if (response["data"] != undefined) {
+            this.conQuerys = this.conQuerys + 1;
+            this.followPosts = this.followPosts.concat(
+              response["data"].sort(function (a, b) {
+                if (a["created_at"] > b["created_at"]) return 1;
+                if (a["created_at"] < b["created_at"]) return -1;
+              })
+            );
+            setTimeout(function () {
+              $state.loaded();
+            }, 2000);
+          } else $state.complete();
+        });
     },
   },
   "pt-pt": {

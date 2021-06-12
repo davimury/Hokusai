@@ -54,7 +54,7 @@
           border border-lightergray
           rounded-lg
           text-white
-          overflow-y-auto
+          overflow-y-visible
           max-h-70h
           sm:max-h-30vh
           px-3

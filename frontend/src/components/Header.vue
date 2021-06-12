@@ -19,8 +19,10 @@
           <Notification></Notification>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
-          <button v-on:click="showModal = !showModal">
-            <span class="material-icons"> queue </span>
+          <button>
+            <a href="/create-post"
+              ><span class="material-icons"> queue </span></a
+            >
           </button>
         </div>
         <div class="mr-5 hover:text-purple-600 text-3xl">
@@ -28,73 +30,6 @@
             ><span class="material-icons"> question_answer </span></a
           >
         </div>
-
-        <transition
-          mode="out-in"
-          enter-active-class="animate__animated animate__fadeIn"
-          leave-active-class="animate__animated animate__fadeOut"
-        >
-          <div
-            class="fixed z-10 inset-0 overflow-y-auto"
-            aria-labelledby="modal-title"
-            role="dialog"
-            aria-modal="true"
-            v-if="showModal"
-          >
-            <div
-              class="
-                flex
-                items-end
-                justify-center
-                min-h-screen
-                pt-4
-                px-4
-                pb-20
-                text-center
-                sm:block
-                sm:p-0
-              "
-            >
-              <div
-                class="
-                  fixed
-                  inset-0
-                  bg-gray-900 bg-opacity-75
-                  transition-opacity
-                "
-                aria-hidden="true"
-              ></div>
-              <span
-                class="hidden sm:inline-block sm:align-middle sm:h-screen"
-                aria-hidden="true"
-                >&#8203;</span
-              >
-              <div
-                class="
-                  inline-block
-                  align-bottom
-                  overflow-hidden
-                  transform
-                  transition-all
-                  sm:align-middle
-                  bg-lightgray
-                  rounded-lg
-                  p-4
-                  w-full
-                  sm:w-2/4
-                  overflow-y-auto
-                  max-h-70vh
-                "
-                style="height: 60vh"
-                v-on-clickaway="awayModalCreatePost"
-              >
-                <div class="text-white flex justify-center h-full items-center">
-                  <CreatePost></CreatePost>
-                </div>
-              </div>
-            </div>
-          </div>
-        </transition>
 
         <div class="relative">
           <button
