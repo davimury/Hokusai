@@ -3,8 +3,11 @@
     <Header></Header>
     <main class="">
       <chat-window
-        :current-user-id="currentUserId"
+        :current-user-id="user_id"
         :rooms="rooms"
+        :loading-rooms="loading_rooms"
+        :rooms-loaded="rooms_loaded"
+        :messages-loaded="messages_loaded"
         :messages="messages"
         :height="height"
         :show-files='false'
@@ -13,6 +16,8 @@
         :show-add-room="false"
         theme="dark"
         :styles="styles"
+        @fetch-messages="fetchMessages"
+        @send-message="sendMessage"
       />
     </main>
     <Footer></Footer>
@@ -33,109 +38,13 @@ export default {
   },
   data() {
     return {
-      rooms: [
-        {
-          roomId: 2,
-          roomName: "Room 2",
-          avatar: "assets/imgs/people.png",
-          unreadCount: 4,
-          index: 3,
-          lastMessage: {
-            content: "Last message received",
-            senderId: 1234,
-            username: "John Doe",
-            timestamp: "10:20",
-            saved: true,
-            distributed: false,
-            seen: false,
-            new: true,
-          },
-          users: [
-            {
-              _id: 1234,
-              username: "John Doe",
-              avatar: "assets/imgs/doe.png",
-              status: {
-                state: "online",
-                lastChanged: "today, 14:30",
-              },
-            },
-            {
-              _id: 4321,
-              username: "John Snow",
-              avatar: "assets/imgs/snow.png",
-              status: {
-                state: "offline",
-                lastChanged: "14 July, 20:00",
-              },
-            },
-          ],
-          typingUsers: [4321],
-        },
-        {
-          roomId: 1,
-          roomName: "Room 1",
-          avatar: "assets/imgs/people.png",
-          unreadCount: 4,
-          index: 3,
-          lastMessage: {
-            content: "Last message received",
-            senderId: 1234,
-            username: "John Doe",
-            timestamp: "10:20",
-            saved: true,
-            distributed: false,
-            seen: false,
-            new: true,
-          },
-          users: [
-            {
-              _id: 1234,
-              username: "John Doe",
-              avatar: "assets/imgs/doe.png",
-              status: {
-                state: "online",
-                lastChanged: "today, 14:30",
-              },
-            },
-            {
-              _id: 4321,
-              username: "John Snow",
-              avatar: "assets/imgs/snow.png",
-              status: {
-                state: "offline",
-                lastChanged: "14 July, 20:00",
-              },
-            },
-          ],
-          typingUsers: [4321],
-        },
-      ],
-      messages: [
-        {
-          _id: 1,
-          content: "message 1",
-          senderId: 1234,
-          username: "John Doe",
-          avatar: "assets/imgs/doe.png",
-          date: "13 November",
-          timestamp: "10:20",
-          system: false,
-          saved: true,
-          distributed: true,
-          seen: true,
-          disableActions: false,
-          disableReactions: false,
-          
-          reactions: {
-            wink: [
-              1234, // USER_ID
-              4321,
-            ],
-            laughing: [1234],
-          },
-        },
-      ],
+      user_id: this.$store.getters.UserId,
+      connection: null,
+      loading_rooms: true,
+      rooms_loaded: false,
+      messages_loaded: false,
+      rooms: [],
+      messages: [],
       styles: {
         icons: {
           add: '#8B5CF6',
@@ -149,6 +58,46 @@ export default {
       currentUserId: 1234,
       height: "calc(100vh - 60.8px)",
     };
+  },
+   created: function() {
+    console.log("Starting connection to WebSocket Server")
+    this.connection = new WebSocket(`ws://localhost:8000/ws/${this.user_id}`)
+
+    var vm = this;
+    this.connection.onmessage = function(event) {
+      let data = JSON.parse(event['data'])
+
+      if(data['rooms'] != undefined){
+        vm.rooms = data['rooms']
+        vm.loading_rooms = false
+        vm.rooms_loaded = true
+      } 
+      
+      else if (data['messages'] != undefined){
+        vm.messages = data['messages']
+        vm.messages_loaded = true
+      }
+
+      else if (data['new_message'] != undefined){
+        let messages = vm.messages
+        messages.push(data['new_message'])
+        vm.messages = messages
+      }
+    }
+
+    this.connection.onopen = function(event) {
+      console.log(event)
+      console.log("Successfully connected to the echo websocket server...")
+    }
+
+  },
+  methods: {
+    sendMessage ({ content, roomId, file, replyMessage }) {
+      this.connection.send(JSON.stringify({'send_message': {'content': content, 'room_id': roomId, 'sender_id': this.user_id}}))
+    },
+    fetchMessages(	{ room, options }) {
+      this.connection.send(JSON.stringify({'get_messages': room['roomId']}))
+    }
   },
 };
 </script>
