@@ -16,7 +16,7 @@
           >
     <div
       v-if="isActive"
-      class="max-h-full right-0 left-0 sm:left-auto sm:w-auto sm:right-32 sm:max-h-30vh flex justify-center fixed"
+      class="max-h-full right-0 left-0 sm:left-auto sm:w-auto sm:right-32 sm:max-h-70vh flex justify-center fixed overflow-y-auto"
       style=" top: -100px;"
       
       v-on-clickaway="away"
