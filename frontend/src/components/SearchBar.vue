@@ -41,7 +41,7 @@
     >
       
       <div
-        v-if="query.length > 3 && searchResultsVisible"
+        v-if="query.length > 1 && searchResultsVisible"
         id="dropBodyMenu"
         class="
           z-10
@@ -54,46 +54,40 @@
           border border-lightergray
           rounded-lg
           text-white
-          overflow-y-visible
-          max-h-70h
           sm:max-h-30vh
           px-3
           text-left
           block
         "
+        style="overflow-y: scroll !important; max-height: 70vh"
       >
-        <ul 
-          class="text-left"
-          v-for="user in searchResults"
-          :key="user.user_id"
+        <ul class="text-left" v-for="user in searchResults" :key="user.user_id">
+          <li
+            class="my-1 px-3 py-1 hover:bg-lightgray rounded-lg cursor-pointer"
           >
-          <a :href="user.username">
-            <li
-              class="my-1 px-3 py-1 hover:bg-lightgray rounded-lg cursor-pointer"
-            >
+            <a :href="'/' + user.username">
               <div class="flex items-center">
                 <img
                   class="h-12 w-12 rounded-full"
                   :src="getProfilePic(user.user_id)"
                 />
                 <div class="ml-3">
-                  <a href="/">
-                    <span
-                      class="
-                        text-sm
-                        font-semibold
-                        antialiased
-                        block
-                        leading-tight
-                      "
-                      > {{ user.username }}</span
-                    >
-                    <h2 class="text-base">{{ user.name }}</h2>
-                  </a>
+                  <span
+                    class="
+                      text-sm
+                      font-semibold
+                      antialiased
+                      block
+                      leading-tight
+                    "
+                  >
+                    {{ user.username }}</span
+                  >
+                  <h2 class="text-base">{{ user.name }}</h2>
                 </div>
               </div>
-            </li>
-          </a>
+            </a>
+          </li>
         </ul>
         <h2 v-if="searchResults.length === 0" class="text-center">
           Nenhum usuário foi encontrado para '{{ query }}'
@@ -123,12 +117,11 @@ export default {
     };
   },
   methods: {
-    getUsers: async function(){
-      if (this.query.length > 3){
-        axios.get(`/user/search/${this.query}`)
-        .then(response => {
-          this.searchResults = response['data']
-        })
+    getUsers: async function () {
+      if (this.query.length > 3) {
+        axios.get(`/user/search/${this.query}`).then((response) => {
+          this.searchResults = response["data"];
+        });
       }
     },
     getProfilePic(id) {
@@ -138,7 +131,7 @@ export default {
         return require("@/assets/img/profile/default.jpg");
       }
     },
-  }
+  },
 };
 </script>
 

@@ -4,12 +4,14 @@
     class="bg-lightgray border border-lightgray rounded-lg block w-full text-white"
   >
     <div class="flex items-center px-4 py-3">
+      <a class="flex items-center" :href="'/'+postData.username">
       <img class="h-8 w-8 rounded-full" :src="require(`@/assets/img/profile/${postData.author_id}.jpg`)"  @error="$event.target.src = '@/src/assets/img/profile/default.jpg'" />
       <div class="ml-3">
         <span class="text-sm font-semibold antialiased block leading-tight">{{
           postData.username
         }}</span>
       </div>
+      </a>
     </div>
 
     <div class="carousel-div bg-black bg-opacity-50">

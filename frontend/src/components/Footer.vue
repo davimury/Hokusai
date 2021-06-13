@@ -117,9 +117,7 @@
                   rounded-lg
                   p-4
                   w-full
-                  
                   h-screen
-                  
                 "
                
                 

@@ -65,7 +65,7 @@
           </span>
         </button>
       </div>
-      <div>
+      <div class="mt-6">
         <div class="text-center">
           <h1 class="text-lg text-center font-semibold inline-block">
             {{ this.name }}
@@ -814,13 +814,13 @@ export default {
       croppieProfileState: false,
       imgDataUrl: "", // the datebase64 url of created image
       isEditingTags: false,
-      windowWidth: window.innerWidth,
-      windowHeight: window.innerHeight,
+      windowWidth: window.innerWidth > 1000? 1000: window.innerWidth,
       xAxis: 0,
       yAxis: 0,
     };
   },
   mounted: async function () {
+    console.log(this.$store.getters.Username)
     await axios
       .get(`/user/${this.$route.params.username}`)
       .then(async (response) => {
@@ -836,9 +836,11 @@ export default {
       });
 
     if (this.username != this.$store.getters.Username) {
+      
       axios
         .get(`/connection/${this.$route.params.username}`)
         .then((response) => {
+          
           this.isConnected = response["data"]["is_connected"];
           this.conStatus = response["data"]["con_status"];
         });
