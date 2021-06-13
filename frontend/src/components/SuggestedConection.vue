@@ -79,10 +79,8 @@ export default {
       });
     },
     requestConnection: async function (username) {
-      await axios({
-        method: "post",
-        url: `/profile/${username}/connect`,
-      }).then(() => this.updateConnections());
+      axios.post("/connection/new", { username: username })
+      .then(() => this.updateConnections());
     },
   },
 };

@@ -6,7 +6,7 @@ from sqlalchemy import (
     DateTime,
     String,
     ForeignKey,
-    UniqueConstraint
+    event
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
@@ -117,7 +117,6 @@ class LIKES(Base):
 
 class CONNECTIONS(Base):
     __tablename__ = "connections"
-    """ __table_args__ = (UniqueConstraint('user_1_id', 'user_2_id'),) """
     con_id = Column(Integer, primary_key=True, autoincrement=True)
     con_status = Column(Boolean)  # Se a conexão foi aceita ou recusada
 
@@ -125,6 +124,24 @@ class CONNECTIONS(Base):
     user_1_id = Column(Integer, ForeignKey('users.user_id'))
     # O user que recebeu a requisição de conexão
     user_2_id = Column(Integer, ForeignKey('users.user_id'))
+
+    messages = relationship("MESSAGES", lazy='subquery')
+
+    def in_con(self, user_id):
+        if user_id == self.user_1_id:
+            return True
+        elif user_id == self.user_2_id:
+            return True
+        else:
+            return False
+
+    def get_connected_user(self, user_id):
+        if user_id == self.user_1_id:
+            return self.user_2_id
+        elif user_id == self.user_2_id:
+            return self.user_1_id
+        else:
+            return None
 
 
 class NOTIFICATIONS(Base):
@@ -143,26 +160,22 @@ class NOTIFICATIONS(Base):
         self.last_updated = datetime.now()
 
 
-class ROOMS(Base):
-    __tablename__ = "rooms"
-    room_id = Column(Integer, primary_key=True, autoincrement=True)
-    users = Column(ARRAY(Integer)) 
-
-
 class MESSAGES(Base):
     __tablename__ = "messages"
     message_id = Column(Integer, primary_key=True, autoincrement=True)
-    room_id = Column(Integer, ForeignKey('rooms.room_id'))
+    con_id = Column(Integer, ForeignKey('connections.con_id'))
     sender_id = Column(Integer, ForeignKey('users.user_id'))
     content = Column(String)
     created_at = Column(DateTime)
     seen = Column(Boolean)
-
+    
     def update_date(self):
         self.created_at = datetime.now() if self.created_at == None else None
         self.last_updated = datetime.now()
 
     def seen_message(self):
         self.seen = True
+
+
 
 Base.metadata.create_all(db_engine)

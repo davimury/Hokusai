@@ -74,7 +74,9 @@ async def connection_request(target: User, user=Depends(manager)):
                     recipient_id=user.user_id,
                     con_id=connection.con_id
                 )
+
                 notification.update_date()
+                
                 session.add(notification)
                 session.commit()
 
@@ -122,7 +124,7 @@ async def accept_connection(con: Connection, user=Depends(manager)):
         session = Session()
         notification = session.query(NOTIFICATIONS).filter_by(id=con.con_id).first()
         connection = session.query(CONNECTIONS).filter_by(con_id=notification.con_id).first()
-        
+                
         connection.con_status = True
         notification.status = True
         session.commit()
