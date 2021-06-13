@@ -15,6 +15,12 @@ const router = new Router({
       meta: {requiresAuth: true},
     },
     {
+      path: '/not-found',
+      name: 'NotFoundPage',
+      component: () => import(/*webpackChunkName: "NotFoundPage"*/ "../components/NotFoundPage.vue"),
+      meta: {requiresAuth: true},
+    },
+    {
       path: '/login',
       name: 'Login',
       component: () => import(/*webpackChunkName: "Login"*/ "../components/Login.vue"),

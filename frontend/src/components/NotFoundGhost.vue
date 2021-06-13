@@ -27,7 +27,8 @@
         <div class="box__description">
             <div class="box__description-container">
             <div class="box__description-title">Whoops!</div>
-            <div class="box__description-text">Nenhum post foi encontrado!!</div>
+            <div class="box__description-text" v-if="location == '/not-found'">Página não encontrada!!</div>
+            <div class="box__description-text" v-else>Nenhum post foi encontrado!!</div>
             </div>
         </div>
     </div>
@@ -39,7 +40,9 @@ export default {
     props: ['xAxis', 'yAxis'],
     
     data() {
-        return {}
+        return {
+          location: window.location.pathname
+        }
     },
     computed: {
         style() {

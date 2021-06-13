@@ -1,5 +1,5 @@
-<template>
-  <main class="h-screen" @mousemove="mouseMove">
+<template >
+  <main class="h-screen" @mousemove="mouseMove" v-if="this.name">
     <Header></Header>
     <div
       class="
@@ -116,6 +116,21 @@
             "
           >
             Conexão Pendente
+          </button>
+          <button
+            v-if="this.isConnected && this.conStatus"
+            class="
+              rounded-lg
+              bg-purple-500
+              hover:bg-purple-600
+              focus:outline-none
+              text-white
+              p-2
+              mx-1
+              mt-2
+            "
+          >
+            Remover Conexão
           </button>
           <button
             v-if="this.isConnected && this.conStatus"
@@ -793,7 +808,7 @@ export default {
       recomendedTags: [],
       isConnected: false,
       conStatus: false,
-      name: "",
+      name: false,
       image: "",
       user_id: "",
       con_count: 0,
@@ -824,15 +839,21 @@ export default {
     await axios
       .get(`/user/${this.$route.params.username}`)
       .then(async (response) => {
-        if (response["data"]["posts"].length > 0)
-          await this.generateThumbs(response["data"]["posts"]);
+        if(!response["data"]){
+          window.location = "/"
+        }else{
 
-        this.posts = response["data"]["posts"];
-        this.userTags = response["data"]["tags"];
-        this.postsCounter = response["data"]["posts_count"];
-        this.name = response["data"]["name"];
-        this.user_id = response["data"]["user_id"];
-        this.con_count = response["data"]["con_count"];
+          if (response["data"]["posts"].length > 0)
+            await this.generateThumbs(response["data"]["posts"]);
+  
+          this.posts = response["data"]["posts"];
+          this.userTags = response["data"]["tags"];
+          this.postsCounter = response["data"]["posts_count"];
+          this.name = response["data"]["name"];
+          this.user_id = response["data"]["user_id"];
+          this.con_count = response["data"]["con_count"];
+        }
+        
       });
 
     if (this.username != this.$store.getters.Username) {
