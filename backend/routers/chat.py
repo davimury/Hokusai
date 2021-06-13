@@ -2,6 +2,7 @@ import json
 from sqlalchemy import event
 from typing import List, Dict, Optional
 from fastapi import APIRouter, WebSocket
+from starlette.websockets import WebSocketDisconnect
 from models import User
 from db.db_main import db_engine, Session, USERS, CONNECTIONS, MESSAGES
 
@@ -197,6 +198,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     await broadcaster.register_connection(websocket, client_id)
     await manager.load_user(websocket, client_id, broadcaster)
 
-    while True:
-        data = await manager.connection.receive_text()
-        await manager.request_handler(data)
+    try:
+        while True:
+            data = await manager.connection.receive_text()
+            await manager.request_handler(data)
+            
+    except WebSocketDisconnect:
+        await manager.connection.disconnect(websocket, user)
