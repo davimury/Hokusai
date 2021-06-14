@@ -42,6 +42,7 @@ async def is_connected(username: str, user=Depends(manager)):
         session.close()
         return {'is_connected': is_connected, 'con_status': con_status}
 
+
 @router.post("/connection/new")
 async def connection_request(target: User, user=Depends(manager)):
     """ Request connection with other user """

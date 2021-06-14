@@ -112,7 +112,6 @@ async def get_user_info(username: str, user=Depends(manager)):
             *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = user.user_id).all(),
             *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = user.user_id).all()
         ]
-
         posts_arr = []
         tags_arr = []
 
@@ -168,6 +167,51 @@ async def get_user_info(username: str, user=Depends(manager)):
         }
     else:
         Response(status_code=500)
+
+
+@router.get('/user/details/{username}')
+async def get_users_info(username: str, user=Depends(manager)):
+    flag = True
+
+    try:
+        session = Session()
+
+        user_id = session.query(USERS.user_id).filter_by(username = username)
+        connections_arr = [
+            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = user_id).all(),
+            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = user_id).all()
+        ]
+
+        
+
+    except Exception as e:
+        print(e)
+        flag = False
+
+    if flag:
+        try:
+            connections_details = []
+            for connection in connections_arr:
+                names = session.query(USERS.name, USERS.username).filter_by(user_id = connection[0]).first()
+                print(names)
+                
+                connections_details.append(names)
+            print(connections_details)
+        except Exception as e:
+            print(e)
+            flag = False
+
+        finally:
+            session.close()
+
+    if flag:
+        return {
+            'users_details': connections_details,
+            
+        }
+    else:
+        Response(status_code=500)
+
 
 
 @router.get("/user/search/{query}")

@@ -77,7 +77,8 @@
           </p>
           <p
             class="mx-1 cursor-pointer"
-            v-on:click="modalConexoes = !modalConexoes"
+            v-on:click="modalConexoes = !modalConexoes; getProfileCards();"
+            
           >
             <span class="font-medium">{{ con_count }}</span> Conexões
           </p>
@@ -620,17 +621,18 @@
               p-4
               w-full
               sm:w-3/4
-              
             "
             v-on-clickaway="awayModalConexoes"
           >
             <h1 class="text-white font-semibold mb-4">Conexões</h1>
-            <div class="flex flex-wrap justify-center overflow-y-auto max-h-70vh">
-               <ProfileCard
-              v-for="cardData in cardsData"
-              :key="cardData.username"
-              :cardData="cardData"
-            ></ProfileCard>
+            <div
+              class="flex flex-wrap justify-center overflow-y-auto max-h-70vh"
+            >
+              <ProfileCard
+                v-for="cardData in cardsData"
+                :key="cardData.username"
+                :cardData="cardData"
+              ></ProfileCard>
             </div>
           </div>
         </div>
@@ -652,7 +654,7 @@ import axios from "axios";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import * as htmlToImage from "html-to-image";
-import ProfileCard from "./ProfileCard.vue"
+import ProfileCard from "./ProfileCard.vue";
 export default {
   name: "Profile",
   components: {
@@ -662,132 +664,14 @@ export default {
     Footer,
     vSelect,
     vueDropzone: vue2Dropzone,
-    ProfileCard
+    ProfileCard,
   },
   directives: {
     onClickaway: onClickaway,
   },
   data() {
     return {
-      cardsData: [
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-        {
-          profilePicture:
-            "https://images.unsplash.com/photo-1552058544-f2b08422138a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=644&q=80",
-          backgroundPicture:
-            "https://images.unsplash.com/photo-1464802686167-b939a6910659?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1033&q=80",
-          name: "Chris",
-          userTags: "boku",
-          username: "chris_",
-        },
-      ],
+      cardsData: [],
       dropzoneOptions: {
         url: "https://httpbin.org/post",
         thumbnailWidth: 140,
@@ -829,23 +713,21 @@ export default {
       croppieProfileState: false,
       imgDataUrl: "", // the datebase64 url of created image
       isEditingTags: false,
-      windowWidth: window.innerWidth > 1000? 1000: window.innerWidth,
+      windowWidth: window.innerWidth > 1000 ? 1000 : window.innerWidth,
       xAxis: 0,
       yAxis: 0,
     };
   },
   mounted: async function () {
-    console.log(this.$store.getters.Username)
     await axios
       .get(`/user/${this.$route.params.username}`)
       .then(async (response) => {
-        if(!response["data"]){
-          window.location = "/"
-        }else{
-
+        if (!response["data"]) {
+          window.location = "/not-found";
+        } else {
           if (response["data"]["posts"].length > 0)
             await this.generateThumbs(response["data"]["posts"]);
-  
+
           this.posts = response["data"]["posts"];
           this.userTags = response["data"]["tags"];
           this.postsCounter = response["data"]["posts_count"];
@@ -853,15 +735,12 @@ export default {
           this.user_id = response["data"]["user_id"];
           this.con_count = response["data"]["con_count"];
         }
-        
       });
 
     if (this.username != this.$store.getters.Username) {
-      
       axios
         .get(`/connection/${this.$route.params.username}`)
         .then((response) => {
-          
           this.isConnected = response["data"]["is_connected"];
           this.conStatus = response["data"]["con_status"];
         });
@@ -875,7 +754,7 @@ export default {
         return require("@/assets/img/profile/default.jpg");
       }
     },
-    getHeader() {
+    getHeader(user_id) {
       try {
         return require("@/assets/img/header/" + this.user_id + ".jpg");
       } catch {
@@ -884,6 +763,36 @@ export default {
     },
   },
   methods: {
+    getProfileCards: async function () {
+      await axios
+        .get(`/user/details/${this.$route.params.username}`)
+        .then(async (response) => {
+          let usersDetails = response["data"]["users_details"];
+          console.log(usersDetails);
+          usersDetails.forEach((userDetails) => {
+            let profilePic;
+            try {
+              profilePic = require(`@/assets/img/profile/${userDetails.user_id}.jpg`);
+            } catch {
+              profilePic = require("@/assets/img/profile/default.jpg");
+            }
+            let headerImg;
+            try {
+              headerImg = require("@/assets/img/header/" +
+                userDetails.user_id +
+                ".jpg");
+            } catch {
+              headerImg = require("@/assets/img/header/default.jpg");
+            }
+            this.cardsData.push({
+              profilePicture: profilePic,
+              backgroundPicture: headerImg,
+              name: userDetails.name,
+              username: userDetails.username,
+            });
+          });
+        });
+    },
     generateThumbs: async function (posts) {
       for (let i = 0; i < posts.length; i++) {
         if (posts[i]["postType"] == 0) {
