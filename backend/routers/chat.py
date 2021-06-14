@@ -1,17 +1,17 @@
 import json
-from sqlalchemy import event
-from typing import List, Dict, Optional
-from fastapi import APIRouter, WebSocket
-from starlette.websockets import WebSocketDisconnect
-from models import User
-from db.db_main import db_engine, Session, USERS, CONNECTIONS, MESSAGES
+import locale
+from datetime import datetime
+from typing import List, Dict
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from db.db_main import Session, USERS, CONNECTIONS, MESSAGES
 
 router = APIRouter()
+locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
 
 class UserManager:
     def __init__(self):
-        self.connection = None
-        self.broadcaster = None
+        self.connection: WebSocket = None
+        self.broadcaster: ChatBroadcaster = None
         self.user = None
         self.rooms = []
         self.messages = []
@@ -26,8 +26,9 @@ class UserManager:
             session = Session()
             self.user = session.query(USERS).filter_by(user_id=user_id).first().__dict__
             session.close()
-        except:
-            pass
+        
+        except Exception as e:
+            print(e)
         
         finally:
             await self.get_user_rooms()
@@ -36,110 +37,180 @@ class UserManager:
         if data:
             parsed_data = json.loads(data)
             if 'get_messages' in parsed_data:
-                await self.get_room_msg(parsed_data['get_messages'])
+                await self.get_room_msg(parsed_data['get_messages'], parsed_data['query'])
             
             elif 'send_message' in parsed_data:
                 await self.send_message(parsed_data['send_message'])
+            
+            elif 'edit_message' in parsed_data:
+                await self.edit_message(parsed_data['edit_message'])
+    
+            elif 'delete_message' in parsed_data:
+                await self.delete_message(parsed_data['delete_message'])
     
     async def get_user_rooms(self):
         try:
             session = Session()
+
             connections_arr = [
-                *session.query(CONNECTIONS).filter_by(user_2_id=self.user['user_id']).all(),
-                *session.query(CONNECTIONS).filter_by(user_1_id=self.user['user_id']).all()
+                *session.query(CONNECTIONS).filter_by(user_2_id=self.user['user_id'], con_status=True).all(),
+                *session.query(CONNECTIONS).filter_by(user_1_id=self.user['user_id'], con_status=True).all()
             ]
 
             for con in connections_arr:
                 sender = session.query(USERS).filter_by(user_id=self.user['user_id']).first()
                 target = session.query(USERS).filter_by(user_id=con.get_connected_user(self.user['user_id'])).first()
+                last_message = session.query(MESSAGES).filter_by(con_id=con.con_id).order_by(MESSAGES.message_id.desc()).first()
 
                 self.rooms.append({
                     'roomId': con.con_id,
                     'roomName': target.name,
-                    'avatar': f"assets/img/profile/{target.user_id}.jpg",
+                    'avatar': f"{target.user_id}.jpg",
                     'unreadCount': 0,
-                    'index': 3,
+                    'index': datetime.timestamp(last_message.created_at) if last_message else 0,
                     'lastMessage': {
-                        'content': "Last message received",
-                        'senderId': 1234,
-                        'username': "John Doe",
-                        'timestamp': "10:20",
+                        'content': last_message.content,
+                        'senderId': last_message.sender_id,
+                        'username': last_message.user.username,
+                        'timestamp': "{:d}:{:02d}".format(last_message.created_at.hour, last_message.created_at.minute),
                         'saved': True,
-                        'distributed': False,
-                        'seen': False,
+                        'distributed': True,
+                        'seen': last_message.seen,
                         'new': True,
+                    } if last_message else {
+                        'content': '',
+                        'senderId': '',
+                        'username': '',
+                        'timestamp': '',
+                        'saved': False,
+                        'distributed': False,
+                        'seen': '',
+                        'new': False,
                     },
                     'users': [
                         {
                             '_id': sender.user_id,
                             'username': sender.name,
-                            'avatar': f"assets/img/profile/{sender.user_id}.jpg",
+                            'avatar': f"{sender.user_id}.jpg",
                             'status': {
-                                'state': "online",
-                                'lastChanged': "today, 14:30",
+                                'state': "online" if sender.user_id in self.broadcaster.online_users else "offline",
+                                'lastChanged': "",
                             },
                         },
                         {
                             '_id': target.user_id,
                             'username': target.name,
-                            'avatar': f"assets/img/profile/{target.user_id}.jpg",
+                            'avatar': f"{target.user_id}.jpg",
                             'status': {
-                                'state': "offline",
-                                'lastChanged': "14 July, 20:00",
+                                'state': "online" if target.user_id in self.broadcaster.online_users else "offline",
+                                'lastChanged': "",
                             },
                         },
                     ],
-                    'typingUsers': [target.user_id],
+                    'typingUsers': [],
                 })
+
+            session.close()
+
+        except Exception as e:
+            print('aqui')
+            print(e)
+
+        finally:
+            await self.connection.send_text(json.dumps({'rooms': self.rooms}))
+
+    async def get_room_msg(self, con_id, query):
+        try:
+            session = Session()
+            self.messages = []
+            self.current_room = session.query(CONNECTIONS).filter_by(con_id=con_id).first()
+
+        except Exception as e:
+            print(e)
+            session.rollback()
+            
+        finally:
+            session.close()
+
+        try:
+            session = Session()
+
+            messages_arr = session.query(MESSAGES).filter_by(con_id=self.current_room.con_id).order_by(MESSAGES.created_at.asc()).all()
+            output = list(reversed([messages_arr[i:i + 15] for i in range(0, len(messages_arr), 15)]))
+
+        except:
+            session.rollback()
+        
+        finally:
+            session.close()
+
+        if len(output) > query:
+            for msg in output[query]:
+                try:
+                    session = Session()
+
+                    user = session.query(USERS).filter_by(
+                        user_id=msg.sender_id).first()
+
+                    if msg.sender_id != self.user['user_id']:
+                        msg.seen_message()
+                        session.merge(msg)
+                        session.commit()
+                        
+                        if msg.seen == False:
+                            await self.broadcaster.broadcast_seen_msg(self.user['user_id'], msg.message_id)
+
+                    if msg.reply_id:
+                        reply_message = session.query(MESSAGES).filter_by(message_id=msg.reply_id).first()
+                    
+                    
+                    self.messages.append({
+                        '_id': msg.message_id,
+                        'content': msg.content,
+                        'index': datetime.timestamp(msg.created_at) if msg else 0,
+                        'senderId': msg.sender_id,
+                        'username': user.username,
+                        'avatar': f"{user.user_id}.jpg",
+                        'date': "%s %s" % (msg.created_at.day, msg.created_at.strftime("%B")),
+                        'timestamp': "{:d}:{:02d}".format(msg.created_at.hour, msg.created_at.minute),
+                        'system': False,
+                        'saved': True,
+                        'distributed': True,
+                        'seen': msg.seen,
+                        'disableActions': False,
+                        'disableReactions': False,
+                        'reactions': {},
+                        'replyMessage': {
+                            '_id': reply_message.message_id,
+                            'content': reply_message.content,
+                            'sender_id': reply_message.sender_id
+                        } if msg.reply_id else None,
+                    })
+
+                except Exception as e:
+                    session.rollback()
+
+                finally:
+                    session.close()
+        else:
+            self.messages = []
+        
+        try:
+            await self.connection.send_text(json.dumps({'messages': self.messages}))
 
         except Exception as e:
             print(e)
 
-        finally:
-            session.close()
-            await self.connection.send_text(json.dumps({'rooms': self.rooms}))
-
-    async def get_room_msg(self, con_id):
-        try:
-            session = Session()
-            self.current_room = session.query(CONNECTIONS).filter_by(con_id=con_id).first()
-
-            for msg in self.current_room.messages:
-                user = session.query(USERS).filter_by(
-                    user_id=msg.sender_id).first()
-
-                self.messages.append({
-                    '_id': msg.message_id,
-                    'content': msg.content,
-                    'senderId': msg.sender_id,
-                    'username': user.username,
-                    'avatar': f"assets/img/profile/{user.user_id}.jpg",
-                    'date': "13 November",
-                    'timestamp': "10:20",
-                    'system': False,
-                    'saved': True,
-                    'distributed': True,
-                    'seen': True,
-                    'disableActions': False,
-                    'disableReactions': False,
-                    'reactions': {},
-                })
-
-        except:
-            pass
-
-        finally:
-            session.close()
-            await self.connection.send_text(json.dumps({'messages': self.messages})) 
-
     async def send_message(self, message):
         try:
             session = Session()
+
             new_message = MESSAGES(
                 con_id = message['room_id'],
                 sender_id = message['sender_id'],
                 content = message['content'],
-                seen = False
+                seen = False,
+                reply_id = message['reply_message']['_id'] if message['reply_message'] else None,
             )
 
             new_message.update_date()
@@ -147,47 +218,197 @@ class UserManager:
             session.commit()
 
             session.refresh(new_message)
-            final_message = json.dumps({
-                        'new_message': {
-                            '_id': new_message.message_id,
-                            'content': new_message.content,
-                            'senderId': new_message.sender_id,
-                            'username': self.user['username'],
-                            'avatar': f"assets/img/profile/{self.user['user_id']}.jpg",
-                            'date': "13 November",
-                            'timestamp': "10:20",
-                            'system': False,
-                            'saved': True,
-                            'distributed': True,
-                            'seen': True,
-                            'disableActions': False,
-                            'disableReactions': False,
-                            'reactions': {},
-                        }
-                    }
-                )
+            session.close()
+
+            final_message = {
+                'new_message': {
+                    '_id': new_message.message_id,
+                    'content': new_message.content,
+                    'senderId': new_message.sender_id,
+                    'username': self.user['username'],
+                    'avatar': f"{self.user['user_id']}.jpg",
+                    'date': "%s %s" % (new_message.created_at.day, new_message.created_at.strftime("%B")),
+                    'timestamp': "{:d}:{:02d}".format(new_message.created_at.hour, new_message.created_at.minute),
+                    'system': False,
+                    'saved': True,
+                    'distributed': True,
+                    'seen': new_message.seen,
+                    'disableActions': False,
+                    'disableReactions': False,
+                    'reactions': {},
+                    'replyMessage': { 
+                        '_id': message['reply_message']['_id'], 
+                        'content':message['reply_message']['content'], 
+                        'sender_id': message['reply_message']['senderId'] 
+                    } if message['reply_message'] else None
+                }
+            }
 
             await self.broadcaster.broadcast_to_user(self.current_room.get_connected_user(new_message.sender_id), final_message)
-            await self.connection.send_text(final_message)
+            await self.connection.send_text(json.dumps(final_message))
 
         except Exception as e:
             print(e)
-            
+
+    async def edit_message(self, message):
+        try:
+            session = Session()
+            message_obj = session.query(MESSAGES).filter_by(message_id=message['messageId']).first()
+
+            message_obj.content = message['new_content']
+            if message['reply_message']:
+                message_obj.reply_id = message['reply_message']['_id']
+
+            session.merge(message_obj)
+            session.commit()
+
+            await self.broadcaster.broadcast_edit_msg(self.user['user_id'], message_obj)
+
+        except Exception as e:
+            print(e)
+        
         finally:
             session.close()
 
+    async def delete_message(self, message):
+        try:
+            session = Session()
+            message_obj = session.query(MESSAGES).filter_by(message_id=message['_id']).first()
+
+            session.delete(message_obj)
+            session.commit()
+
+            await self.broadcaster.broadcast_delete_msg(self.user['user_id'], message_obj)
+
+        except Exception as e:
+            print(e)
+        
+        finally:
+            session.close()
 
 class ChatBroadcaster:
     def __init__(self):
         self.connections: List[Dict(int, WebSocket)] = []
+        self.online_users: List[int] = []
 
     async def register_connection(self, ws, client_id):
         self.connections.append({client_id: ws})
-    
+        self.online_users.append(client_id)
+        await self.broadcast_status(client_id, True)
+
+    async def remove_connection(self, client_id):
+        for idx, con in enumerate(self.connections):
+            if client_id in con:
+                self.online_users.remove(client_id)
+                self.connections.remove(self.connections[idx])
+        
+        await self.broadcast_status(client_id, False)
+
     async def broadcast_to_user(self, user_id, message):
         for con in self.connections:
             if user_id in con:
-                await con[user_id].send_text(message)
+                await con[user_id].send_text(json.dumps(message))
+
+                if "new_message" in message:
+                    await self.seen_handler(message, user_id)
+                
+    async def seen_handler(self, message, user_id):
+        try:
+            session = Session()
+            message_obj = session.query(MESSAGES).filter_by(message_id= message['new_message']['_id']).first()
+            message_obj.seen_message()
+            session.merge(message_obj)
+            session.commit()
+
+        except:
+            session.rollback()
+
+        finally:
+            session.close()
+
+        await self.broadcast_seen_msg(user_id, message['new_message']['_id'])
+
+    async def broadcast_status(self, client_id, status):
+        try:
+            session = Session()
+            connections_arr = [
+                    *session.query(CONNECTIONS).filter_by(user_2_id=client_id).all(),
+                    *session.query(CONNECTIONS).filter_by(user_1_id=client_id).all()
+                ]
+            
+            for con in connections_arr:
+                await self.broadcast_to_user(
+                    con.get_connected_user(client_id), 
+                        {
+                            'user_status': 
+                            {
+                                'id': client_id, 
+                                'status': status
+                            }
+                        }
+                )
+            
+        except:
+            session.rollback()
+        
+        finally:
+            session.close()
+
+    async def broadcast_seen_msg(self, client_id, message_id):
+        try:
+            session = Session()
+            connections_arr = [
+                    *session.query(CONNECTIONS).filter_by(user_2_id=client_id).all(),
+                    *session.query(CONNECTIONS).filter_by(user_1_id=client_id).all()
+                ]
+            
+            for con in connections_arr:
+                await self.broadcast_to_user(con.get_connected_user(client_id), {'seen_msg': {'id': message_id}})
+            
+        except Exception as e:
+            print(e)
+            session.rollback()
+        
+        finally:
+            session.close()
+
+    async def broadcast_edit_msg(self, client_id, new_message):
+        try:
+            session = Session()
+            connections_arr = [
+                    *session.query(CONNECTIONS).filter_by(user_2_id=client_id).all(),
+                    *session.query(CONNECTIONS).filter_by(user_1_id=client_id).all()
+                ]
+
+            for con in connections_arr:
+                await self.broadcast_to_user(con.get_connected_user(client_id), {'edit_msg': {'_id': new_message.message_id, 'content': new_message.content}})
+            
+            await self.broadcast_to_user(client_id, {'edit_msg': {'_id': new_message.message_id, 'content': new_message.content}})
+
+        except:
+            pass
+
+        finally:
+            session.close()
+
+    async def broadcast_delete_msg(self, client_id, deleted_message):
+        try:
+            session = Session()
+            connections_arr = [
+                    *session.query(CONNECTIONS).filter_by(user_2_id=client_id).all(),
+                    *session.query(CONNECTIONS).filter_by(user_1_id=client_id).all()
+                ]
+
+            for con in connections_arr:
+                await self.broadcast_to_user(con.get_connected_user(client_id), {'delete_msg': {'_id': deleted_message.message_id}})
+            
+            await self.broadcast_to_user(client_id, {'delete_msg': {'_id': deleted_message.message_id}})
+
+        except:
+            pass
+
+        finally:
+            session.close()
 
 broadcaster = ChatBroadcaster()
 
@@ -202,6 +423,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
         while True:
             data = await manager.connection.receive_text()
             await manager.request_handler(data)
-            
+
     except WebSocketDisconnect:
-        await manager.connection.disconnect(websocket, user)
+        print('Close')
+        await broadcaster.remove_connection(client_id)
+        del manager
+        
+        

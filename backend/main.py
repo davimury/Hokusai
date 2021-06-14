@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import auth, posts, tags, users, chat, connections
-
+from db.db_main import db_engine
 app = FastAPI()
 
 app.include_router(auth.router)
@@ -28,3 +28,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("shutdown")
+def shutdown_session():
+    db_engine.dispose()

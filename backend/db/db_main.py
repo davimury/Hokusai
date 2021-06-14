@@ -23,7 +23,6 @@ db_engine = create_engine(db_string)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 Session = sessionmaker(db_engine)
-session = Session()
 
 Base = declarative_base()
 
@@ -42,7 +41,8 @@ class USERS(Base):
     password_hash = Column(String)
     tags = Column(ARRAY(Integer))  # tags que o user tem interesse
 
-    posts = relationship("POSTS", back_populates="author", lazy='subquery')
+    posts = relationship("POSTS", back_populates="author", lazy='joined')
+    messages = relationship("MESSAGES", back_populates="user", lazy='joined')
 
     @property
     def password(self):
@@ -82,7 +82,7 @@ class POSTS(Base):
     created_at = Column(DateTime)
 
     # Objeto do sqlalchemy que representa o autor do post
-    author = relationship("USERS", back_populates="posts", lazy='subquery')
+    author = relationship("USERS", back_populates="posts", lazy='joined')
     tags = relationship("TAGS", secondary=posts_tags)
 
 
@@ -125,7 +125,7 @@ class CONNECTIONS(Base):
     # O user que recebeu a requisição de conexão
     user_2_id = Column(Integer, ForeignKey('users.user_id'))
 
-    messages = relationship("MESSAGES", lazy='subquery')
+    messages = relationship("MESSAGES", lazy='joined')
 
     def in_con(self, user_id):
         if user_id == self.user_1_id:
@@ -165,10 +165,13 @@ class MESSAGES(Base):
     message_id = Column(Integer, primary_key=True, autoincrement=True)
     con_id = Column(Integer, ForeignKey('connections.con_id'))
     sender_id = Column(Integer, ForeignKey('users.user_id'))
+    reply_id = Column(Integer)
     content = Column(String)
     created_at = Column(DateTime)
     seen = Column(Boolean)
     
+    user = relationship("USERS", back_populates="messages", lazy='joined')
+
     def update_date(self):
         self.created_at = datetime.now() if self.created_at == None else None
         self.last_updated = datetime.now()
