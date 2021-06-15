@@ -775,9 +775,7 @@ export default {
   },
   methods: {
     removeConnection: function () {
-      let username = window.location.pathname.replace(/\//g, "");
-
-      axios.post('/connection/remove', {username: username})
+      axios.post('/connection/remove', {user_id: this.user_id})
       .then(() => window.location.reload());
     },
     getProfileCards: async function () {
