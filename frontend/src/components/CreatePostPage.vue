@@ -335,7 +335,12 @@ export default {
               tags: this.selectedTags,
             })
           )
-          .then(() => this.$router.replace('/'));
+          .then((data) => {
+            var vm = this
+            setTimeout(function(){ 
+              window.location = `/${vm.$store.getters.Username}?post=${data['data']['post_id']}`;
+            }, 2000);
+          });
       }
     },
     publishText: function (e) {
@@ -349,7 +354,12 @@ export default {
             tags: this.selectedTags,
           })
         )
-        .then(() => this.$router.replace('/'));
+        .then((data) => {
+          var vm = this
+          setTimeout(function(){ 
+              window.location = `/${vm.$store.getters.Username}?post=${data['data']['post_id']}`;
+          }, 2000);
+        });
     },
     addTag: async function (e) {
       await axios

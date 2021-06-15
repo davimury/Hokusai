@@ -3,7 +3,7 @@ import string
 import random
 from db.db_main import Session, POSTS, TAGS, LIKES, CONNECTIONS
 from datetime import datetime, timedelta
-from starlette.responses import Response
+from starlette.responses import JSONResponse, Response
 from fastapi import APIRouter, Depends
 from routers.auth import manager
 from models import Post
@@ -235,6 +235,8 @@ def new_post(post: Post, user=Depends(manager)):
             session.add(new_post)
             session.commit()
 
+        session.refresh(new_post)
+
     except Exception as e:
         print(e)
         flag = False
@@ -245,7 +247,7 @@ def new_post(post: Post, user=Depends(manager)):
         session.close()
 
     if flag:
-        return Response(status_code=200)
+        return JSONResponse(content={'post_id': new_post.post_id})
 
 
 @router.post("/post/like")

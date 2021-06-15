@@ -752,6 +752,10 @@ export default {
           this.conStatus = response["data"]["con_status"];
         });
     }
+
+    if(this.$route.query.post != undefined){
+      this.showPostById(this.$route.query.post)
+    }
   },
   computed: {
     getProfilePic() {
@@ -797,9 +801,16 @@ export default {
     generateThumbs: async function (posts) {
       for (let i = 0; i < posts.length; i++) {
         if (posts[i]["postType"] == 0) {
+          try {
+            var thumb = require(`@/assets/img/posts/${posts[i]["slides"][0]}`)
+          }
+          catch {
+            var thumb = require(`@/assets/img/posts/default.jpg`)
+          }
+          
           this.thumbsData[
             posts[i]["post_id"]
-          ] = require(`@/assets/img/posts/${posts[i]["slides"][0]}`);
+          ] = thumb;
         } else {
           var div = document.createElement("div");
           div.style.backgroundColor = "white";
@@ -875,6 +886,14 @@ export default {
     showPost: function (post) {
       this.postData = post;
       this.modalPost = true;
+    },
+    showPostById: function (post_id) {
+      this.posts.forEach((element) => {
+        if(element['post_id'] == post_id){
+          this.postData = element;
+          this.modalPost = true;
+        }
+      });
     },
     croppieHeader(e) {
       let file = e.target.files[0];

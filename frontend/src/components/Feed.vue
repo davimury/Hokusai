@@ -69,10 +69,10 @@
                 Você já viu todos os posts!
               </div>
               <div slot="no-results" class="pb-20">
-                <!-- <NotFoundGhost
+                <NotFoundGhost
                   :xAxis="this.xAxis"
                   :yAxis="this.yAxis"
-                ></NotFoundGhost> -->
+                ></NotFoundGhost>
               </div>
             </infinite-loading>
           </div>
