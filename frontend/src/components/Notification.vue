@@ -149,21 +149,27 @@ export default {
     channel.bind(
       this.$store.getters.Username,
       function (data) {
-        console.log(this.dataArr[this.dataArr.findIndex(x => x.id === data['id'])])
+        
+        console.log(data)
+        var arrayIndex = this.dataArr.findIndex(x => x.id === data['id'])
+
+        console.log(arrayIndex)
         if (data['type'] == 1){
           this.dataArr.push(data);
           this.count = this.count + 1
         }
-        else if (data['type'] == 0 && this.dataArr[this.dataArr.findIndex(x => x.id === data['id'])] != undefined){
-          console.log(data)
+        else if(data['type'] == 0 && this.dataArr[arrayIndex] == undefined){
+          this.count = this.count + 1
+          this.dataArr[arrayIndex] = data;
+          console.log(this.dataArr[arrayIndex])
+        }
+        else if (data['type'] == 0 && this.dataArr[arrayIndex] != undefined){
           if(data['status'] == false)
             this.count = this.count + 1
-
-          this.dataArr[this.dataArr.findIndex(x => x.id === data['id'])] = data;
-        }
-        else if(data['type'] == 0 && this.dataArr[this.dataArr.findIndex(x => x.id === data['id'])] == undefined){
-          this.count = this.count + 1
-          this.dataArr.push(data);
+          else
+            this.count = this.count - 1
+            
+          this.dataArr[arrayIndex] = data;
         }
       },
       this

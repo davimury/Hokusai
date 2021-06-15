@@ -1,6 +1,7 @@
 import json
 import locale
 import pusher
+import asyncio
 from datetime import datetime
 from typing import List, Dict
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -132,6 +133,7 @@ class UserManager:
             session = Session()
             self.messages = []
             self.current_room = session.query(CONNECTIONS).filter_by(con_id=con_id).first()
+            self.second_user = session.query(USERS).filter_by(user_id=self.current_room.get_connected_user(self.user['user_id'])).first()
             notification = session.query(NOTIFICATIONS).filter_by(con_id=con_id, type=0, status = False).first()
 
         except Exception as e:
@@ -155,7 +157,6 @@ class UserManager:
 
         if len(output) > query:
             for msg in output[query]:
-                
                 try:
                     session = Session()
 
@@ -171,27 +172,31 @@ class UserManager:
                             count = notification.content['count']
                             notification.status = False
 
-                            if count > 0:
+                            if count > 1:
                                 count = count - 1     
                             
-                            if count == 0:
+                            if count == 0 or count == 1:
+                                count = 0
                                 notification.status = True
-                                print(self.user['username'])
-                                pusher_client.trigger(
-                                    'hokusai-notify',
-                                    self.user['username'],
-                                    {
-                                        'id': notification.id,
-                                        'type': notification.type,
-                                        'status': notification.status,
-                                        'name': self.user['name'],
-                                        'user_id': self.user['user_id'],
-                                        'username': self.user['username'],
-                                        'content': {'count': count},
-                                        'last_updated': notification.last_updated.isoformat()
-                                    }
-                                )
 
+                                try:
+                                    await asyncio.sleep(2)
+                                    pusher_client.trigger(
+                                        'hokusai-notify',
+                                        self.user['username'],
+                                        {
+                                            'id': notification.id,
+                                            'type': notification.type,
+                                            'status': notification.status,
+                                            'name': self.second_user.name,
+                                            'user_id': self.second_user.user_id,
+                                            'username': self.second_user.username,
+                                            'content': {'count': count},
+                                            'last_updated': notification.last_updated.isoformat()
+                                        }
+                                    )
+                                except Exception as e:
+                                    print(e)
                             notification.content['count'] = count
                             session.merge(notification)
                             session.commit()
