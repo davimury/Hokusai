@@ -120,6 +120,7 @@
           </button>
           <button
             v-if="this.isConnected && this.conStatus"
+            @click="removeConnection()"
             class="
               rounded-lg
               bg-purple-500
@@ -133,8 +134,11 @@
           >
             Remover Conexão
           </button>
+          <a href="/chat">
+
           <button
             v-if="this.isConnected && this.conStatus"
+            
             class="
               rounded-lg
               bg-purple-500
@@ -148,6 +152,7 @@
           >
             Mensagem
           </button>
+          </a>
         </div>
       </div>
       <div
@@ -763,6 +768,12 @@ export default {
     },
   },
   methods: {
+    removeConnection: function () {
+      let username = window.location.pathname.replace(/\//g, "");
+
+      axios.post('/connection/remove', {username: username})
+      .then(() => window.location.reload());
+    },
     getProfileCards: async function () {
       await axios
         .get(`/user/details/${this.$route.params.username}`)

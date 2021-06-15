@@ -1,4 +1,5 @@
 import pusher
+from sqlalchemy.sql.expression import true
 from db.db_main import Session, USERS, CONNECTIONS, NOTIFICATIONS
 from fastapi import APIRouter, Depends, Response
 from routers.auth import manager
@@ -158,6 +159,36 @@ async def refuse_connection(con: Connection, user=Depends(manager)):
         session.delete(connection)
         session.commit()
         
+    except Exception as e:
+        print(e)
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        return Response(status_code=200)
+    else:
+        return Response(status_code=500)
+
+
+@router.post("/connection/remove")
+async def remove_connection(user_to_remove: User, user=Depends(manager)):
+    """ Remove connection with other user """
+    flag = True
+    try:
+        session = Session()
+        user_id_remove = session.query(USERS.user_id).filter_by(username = user_to_remove.username)
+        connection = session.query(CONNECTIONS).filter_by(user_1_id = user.user_id, user_2_id = user_id_remove, con_status = True).first()
+        
+        if connection:
+            session.delete(connection)
+            session.commit()
+        else:
+            connection = session.query(CONNECTIONS).filter_by(user_2_id = user.user_id, user_1_id = user_id_remove, con_status = True).first()
+            session.delete(connection)
+            session.commit()
+
     except Exception as e:
         print(e)
         flag = False
