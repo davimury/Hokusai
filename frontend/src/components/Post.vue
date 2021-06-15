@@ -126,10 +126,16 @@ export default {
       this.vote = voteType
       if (voteType == 0){
         axios.post('/post/like', {post_id: this.postData.post_id})
-        .then(res => { this.postData.likes = res['data'] });
+        .then(res => {
+          this.postData.likes = res['data'];
+          this.vote = 0
+        });
       } else {
         axios.post('/post/dislike', {post_id: this.postData.post_id})
-        .then(res => { this.postData.likes = res['data'] });
+        .then(res => {
+          this.postData.likes = res['data'];
+          this.vote = 1
+        });
       }
     }
   },
