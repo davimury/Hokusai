@@ -33,7 +33,7 @@
         </div>
           <div v-if="dataArr.length > 0">
             
-            <div v-for="data in dataArr.slice(0, 3).reverse()" :key="data['id']">
+            <div v-for="data in dataArr.slice().reverse().slice(0,4)" :key="data['id']">
               <div v-if="data['type'] == 0">
                 <a href="/chat">
                   <div
@@ -151,8 +151,6 @@ export default {
     channel.bind(
       this.$store.getters.Username,
       function (data) {
-        
-        console.log(data)
         var arrayIndex = this.dataArr.findIndex(x => x.id === data['id'])
 
         console.log(arrayIndex)
@@ -161,9 +159,9 @@ export default {
           this.count = this.count + 1
         }
         else if(data['type'] == 0 && this.dataArr[arrayIndex] == undefined){
+          console.log(data)
           this.count = this.count + 1
-          this.dataArr[arrayIndex] = data;
-          console.log(this.dataArr[arrayIndex])
+          this.dataArr.push(data) ;
         }
         else if (data['type'] == 0 && this.dataArr[arrayIndex] != undefined){
           if(data['status'] == false)
@@ -180,6 +178,7 @@ export default {
   mounted() {
     axios.get("/user/notifications").then((response) => {
       this.dataArr = response["data"];
+      console.log(this.dataArr.slice().reverse().slice(0,4))
       this.dataArr.forEach(element => {
         if(element['status'] != true)
           this.count = this.count + 1

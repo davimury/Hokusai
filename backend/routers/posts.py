@@ -255,9 +255,7 @@ def like_post(post: Post, user=Depends(manager)):
     flag = True
 
     try:
-        
         session = Session()
-
         like = session.query(LIKES).filter_by(
             post_id=post.post_id, user_id=user.user_id).first()
 

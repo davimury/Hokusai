@@ -63,10 +63,12 @@ async def get_user_notifications(user=Depends(manager)):
         session = Session()
         notify_arr = []
         notifications = session.query(NOTIFICATIONS).filter_by(
-            target_id=user.user_id).all()
+            target_id=user.user_id).order_by(NOTIFICATIONS.id).all()
         
+        print(notifications)
         if notifications:
             for notification in notifications:
+                print(notification.id)
                 recipient = session.query(USERS).filter_by(
                     user_id=notification.recipient_id).first()
                 notify_arr.append(
