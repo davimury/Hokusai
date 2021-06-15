@@ -339,7 +339,7 @@ export default {
             var vm = this
             setTimeout(function(){ 
               window.location = `/${vm.$store.getters.Username}?post=${data['data']['post_id']}`;
-            }, 2000);
+            }, 500);
           });
       }
     },
@@ -358,7 +358,7 @@ export default {
           var vm = this
           setTimeout(function(){ 
               window.location = `/${vm.$store.getters.Username}?post=${data['data']['post_id']}`;
-          }, 2000);
+          }, 500);
         });
     },
     addTag: async function (e) {
