@@ -794,12 +794,14 @@ export default {
             } catch {
               headerImg = require("@/assets/img/header/default.jpg");
             }
-            this.cardsData.push({
+            let cards = []
+            cards.push({
               profilePicture: profilePic,
               backgroundPicture: headerImg,
               name: userDetails.name,
               username: userDetails.username,
             });
+            this.cardsData = cards
           });
         });
     },
