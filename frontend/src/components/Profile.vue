@@ -754,7 +754,7 @@ export default {
         return require("@/assets/img/profile/default.jpg");
       }
     },
-    getHeader(user_id) {
+    getHeader() {
       try {
         return require("@/assets/img/header/" + this.user_id + ".jpg");
       } catch {
@@ -768,7 +768,6 @@ export default {
         .get(`/user/details/${this.$route.params.username}`)
         .then(async (response) => {
           let usersDetails = response["data"]["users_details"];
-          console.log(usersDetails);
           usersDetails.forEach((userDetails) => {
             let profilePic;
             try {

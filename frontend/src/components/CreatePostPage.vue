@@ -128,6 +128,7 @@
                 @option:created="addTag"
                 @input="appendTag"
                 :options="recomendedTags"
+                :selectable="() => selectedTags.length < 5"
               ></v-select>
               <button
                 class="
@@ -205,6 +206,7 @@
                 @option:created="addTag"
                 @input="appendTag"
                 :options="recomendedTags"
+                :selectable="() => selectedTags.length < 5"
               ></v-select>
               <button
                 class="
@@ -355,7 +357,18 @@ export default {
         .then((res) => (e["tag_id"] = res["data"]["id"]));
     },
     appendTag(e) {
-      this.selectedTags = e;
+      let lastTag = e[e.length - 1];
+
+      let duplicatedTag = this.recomendedTags.find(
+        (tag) => tag.name == lastTag.name
+      );
+
+      if (duplicatedTag) {
+        this.selectedTags.push(duplicatedTag);
+      } else {
+        this.selectedTags.push(lastTag);
+      }
+
     },
   },
 };

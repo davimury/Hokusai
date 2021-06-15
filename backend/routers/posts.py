@@ -188,8 +188,12 @@ def new_post(post: Post, user=Depends(manager)):
         
         tags = []
 
-        for tag in post.tags:
-            tags.append(session.query(TAGS).filter_by(tag_id=tag.tag_id).first())
+        try:
+
+            for tag in post.tags:
+                tags.append(session.query(TAGS).filter_by(tag_id=tag.tag_id).first())
+        except Exception as e:
+            print(e)
         
         if post.postType == 0:
             files = []
