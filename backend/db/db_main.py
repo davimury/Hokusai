@@ -11,7 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy.sql.sqltypes import Boolean
+from sqlalchemy.sql.sqltypes import Boolean, JSON
 from passlib.context import CryptContext
 from datetime import datetime
 
@@ -119,7 +119,7 @@ class CONNECTIONS(Base):
     __tablename__ = "connections"
     con_id = Column(Integer, primary_key=True, autoincrement=True)
     con_status = Column(Boolean)  # Se a conexão foi aceita ou recusada
-
+    
     # O user que pediu a conexão
     user_1_id = Column(Integer, ForeignKey('users.user_id'))
     # O user que recebeu a requisição de conexão
@@ -151,6 +151,7 @@ class NOTIFICATIONS(Base):
     recipient_id = Column(Integer, ForeignKey('users.user_id'))
     con_id =  Column(Integer, ForeignKey('connections.con_id',  ondelete='CASCADE'))
     type = Column(Integer)  # 0 - Mensagem, 1 - Conexão recebida, 2 - Conexão efetuada
+    content = Column(JSON)
     status = Column(Boolean)
     created_at = Column(DateTime)
     last_updated = Column(DateTime)
@@ -158,7 +159,6 @@ class NOTIFICATIONS(Base):
     def update_date(self):
         self.created_at = datetime.now() if self.created_at == None else None
         self.last_updated = datetime.now()
-
 
 class MESSAGES(Base):
     __tablename__ = "messages"

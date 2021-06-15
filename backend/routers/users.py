@@ -72,12 +72,13 @@ async def get_user_notifications(user=Depends(manager)):
                 notify_arr.append(
                     {
                         'id': notification.id,
-                        'type': 1,
+                        'type': notification.type,
                         'name': recipient.name,
+                        'content': notification.content,
                         'user_id': recipient.user_id,
                         'status': notification.status,
                         'username': recipient.username,
-                        'last_updated': notification.last_updated.isoformat()
+                        'last_updated': notification.last_updated.isoformat(),
                     }
                 )
 

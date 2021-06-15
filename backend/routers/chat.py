@@ -1,13 +1,21 @@
 import json
 import locale
+import pusher
 from datetime import datetime
 from typing import List, Dict
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from db.db_main import Session, USERS, CONNECTIONS, MESSAGES
+from sqlalchemy.engine.base import Connection
+from db.db_main import Session, NOTIFICATIONS, USERS, CONNECTIONS, MESSAGES
 
 router = APIRouter()
 locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
 
+pusher_client = pusher.Pusher(
+    app_id="1211691",
+    key="ad8252dd0a9b80dd351f",
+    secret="1e0679cf8406844cf2f4",
+    cluster="us2",
+)
 class UserManager:
     def __init__(self):
         self.connection: WebSocket = None
@@ -124,6 +132,7 @@ class UserManager:
             session = Session()
             self.messages = []
             self.current_room = session.query(CONNECTIONS).filter_by(con_id=con_id).first()
+            notification = session.query(NOTIFICATIONS).filter_by(con_id=con_id, type=0, status = False).first()
 
         except Exception as e:
             print(e)
@@ -146,18 +155,48 @@ class UserManager:
 
         if len(output) > query:
             for msg in output[query]:
+                
                 try:
                     session = Session()
 
                     user = session.query(USERS).filter_by(
                         user_id=msg.sender_id).first()
-
-                    if msg.sender_id != self.user['user_id']:
+                    
+                    if msg.sender_id != self.user['user_id'] and msg.seen == False:
                         msg.seen_message()
                         session.merge(msg)
                         session.commit()
                         
-                        if msg.seen == False:
+                        if notification:
+                            count = notification.content['count']
+                            notification.status = False
+
+                            if count > 0:
+                                count = count - 1     
+                            
+                            if count == 0:
+                                notification.status = True
+                                print(self.user['username'])
+                                pusher_client.trigger(
+                                    'hokusai-notify',
+                                    self.user['username'],
+                                    {
+                                        'id': notification.id,
+                                        'type': notification.type,
+                                        'status': notification.status,
+                                        'name': self.user['name'],
+                                        'user_id': self.user['user_id'],
+                                        'username': self.user['username'],
+                                        'content': {'count': count},
+                                        'last_updated': notification.last_updated.isoformat()
+                                    }
+                                )
+
+                            notification.content['count'] = count
+                            session.merge(notification)
+                            session.commit()
+
+                        if msg.seen == False: # Verificar 
                             await self.broadcaster.broadcast_seen_msg(self.user['user_id'], msg.message_id)
 
                     if msg.reply_id:
@@ -188,6 +227,7 @@ class UserManager:
                     })
 
                 except Exception as e:
+                    print(e)
                     session.rollback()
 
                 finally:
@@ -219,6 +259,8 @@ class UserManager:
 
             session.refresh(new_message)
             session.close()
+
+            await self.send_msg_notification(message['room_id'])
 
             final_message = {
                 'new_message': {
@@ -283,6 +325,56 @@ class UserManager:
         except Exception as e:
             print(e)
         
+        finally:
+            session.close()
+
+    async def send_msg_notification(self, con_id):
+        try:
+            session = Session()
+            connection = session.query(CONNECTIONS).filter_by(con_id = con_id).first() 
+
+            target_id = connection.get_connected_user(self.user['user_id'])
+            notification = session.query(NOTIFICATIONS).filter_by(target_id = target_id, recipient_id = self.user['user_id'], type = 0).first()
+            messages_count = session.query(MESSAGES).filter_by(sender_id = self.user['user_id'], con_id = con_id, seen=False).count()
+
+            if not notification:
+                notification = NOTIFICATIONS(
+                    target_id=connection.get_connected_user(self.user['user_id']),
+                    recipient_id=self.user['user_id'],
+                    con_id=con_id,
+                    type=0,
+                    status=False,
+                    content={'count': messages_count}
+                ) 
+
+                notification.update_date()
+                session.add(notification)
+                session.commit()
+
+            else:
+                notification.content = {'count': messages_count}
+                notification.status = False
+                session.merge(notification)
+                session.commit()
+
+            pusher_client.trigger(
+                'hokusai-notify',
+                session.query(USERS.username).filter_by(user_id=target_id).first()[0],
+                {
+                    'id': notification.id,
+                    'type': notification.type,
+                    'status': notification.status,
+                    'name': self.user['name'],
+                    'user_id': self.user['user_id'],
+                    'username': self.user['username'],
+                    'content': {'count': messages_count},
+                    'last_updated': notification.last_updated.isoformat()
+                }
+            )
+
+        except:
+            session.rollback()
+
         finally:
             session.close()
 

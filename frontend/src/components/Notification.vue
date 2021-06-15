@@ -32,8 +32,27 @@
           </button>
         </div>
           <div v-if="dataArr.length > 0">
-            <div v-for="data in dataArr.slice(0, 5).reverse()" :key="data['id']">
+            
+            <div v-for="data in dataArr.slice(0, 3).reverse()" :key="data['id']">
               <div v-if="data['type'] == 0">
+                <div
+                  v-if="!data['status']"
+                  class="flex items-center mt-3 rounded-lg px-1 py-1 cursor-pointer"
+                >
+                  <div class="flex flex-shrink-0">
+                    <img
+                      class="h-16 w-16 rounded-full"
+                      :src="
+                        require('@/assets/img/profile/' + data['user_id'] + '.jpg')
+                      "
+                    />
+                  </div>
+                  <div class="ml-3 text-left">
+                    <p class="text-sm mt-2 font-semibold">
+                     <b>{{ data["username"] }}</b> enviou {{data['content']['count']}} mensagens para você!</p>
+                     <vue-moments-ago :date="data['last_updated']" elementClass="text-sm text-blue"></vue-moments-ago>
+                  </div>
+                </div>
               </div>
               <div v-if="data['type'] == 1">
                 <div
@@ -120,7 +139,7 @@ export default {
     return {
       isActive: false,
       count: 0,
-      dataArr: [{ user_id: 1, username: "chris", name: "chris" }],
+      dataArr: [],
     };
   },
   created() {
@@ -130,8 +149,22 @@ export default {
     channel.bind(
       this.$store.getters.Username,
       function (data) {
-        this.count = this.count + 1
-        this.dataArr.push(data);
+        console.log(this.dataArr[this.dataArr.findIndex(x => x.id === data['id'])])
+        if (data['type'] == 1){
+          this.dataArr.push(data);
+          this.count = this.count + 1
+        }
+        else if (data['type'] == 0 && this.dataArr[this.dataArr.findIndex(x => x.id === data['id'])] != undefined){
+          console.log(data)
+          if(data['status'] == false)
+            this.count = this.count + 1
+
+          this.dataArr[this.dataArr.findIndex(x => x.id === data['id'])] = data;
+        }
+        else if(data['type'] == 0 && this.dataArr[this.dataArr.findIndex(x => x.id === data['id'])] == undefined){
+          this.count = this.count + 1
+          this.dataArr.push(data);
+        }
       },
       this
     );
