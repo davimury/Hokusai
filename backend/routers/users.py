@@ -183,8 +183,6 @@ async def get_users_info(username: str, user=Depends(manager)):
             *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = user_id).all()
         ]
 
-        
-
     except Exception as e:
         print(e)
         flag = False
@@ -193,11 +191,9 @@ async def get_users_info(username: str, user=Depends(manager)):
         try:
             connections_details = []
             for connection in connections_arr:
-                names = session.query(USERS.name, USERS.username).filter_by(user_id = connection[0]).first()
-                print(names)
-                
+                names = session.query(USERS.user_id, USERS.name, USERS.username).filter_by(user_id = connection[0]).first()
                 connections_details.append(names)
-            print(connections_details)
+
         except Exception as e:
             print(e)
             flag = False
@@ -208,12 +204,9 @@ async def get_users_info(username: str, user=Depends(manager)):
     if flag:
         return {
             'users_details': connections_details,
-            
         }
     else:
         Response(status_code=500)
-
-
 
 @router.get("/user/search/{query}")
 async def get_user_by_query(query: str, user=Depends(manager)):

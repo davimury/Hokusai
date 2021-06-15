@@ -18,7 +18,7 @@
     <div class="relative h-20">
       <img
         class="absolute h-full w-full object-cover"
-        :src="cardData.backgroundPicture"
+        :src="getHeader(cardData.userId)"
       />
     </div>
     <div
@@ -35,7 +35,7 @@
         border-4
       "
     >
-      <img class="object-cover w-full h-full" :src="cardData.profilePicture" />
+      <img class="object-cover w-full h-full" :src="getProfilePic(cardData.userId)" />
     </div>
     <div class="flex justify-center ml-11 mt-6 relative"></div>
     <div class="mt-8">
@@ -50,6 +50,24 @@
 export default {
   name: "ProfileCard",
   props: ["cardData"],
+
+  methods: {
+      getProfilePic(user_id) {
+        try {
+          console.log(user_id)
+          return require(`@/assets/img/profile/${user_id}.jpg`);
+        } catch {
+          return require("@/assets/img/profile/default.jpg");
+        }
+      },
+      getHeader(user_id) {
+        try {
+          return require(`@/assets/img/header/${user_id}.jpg`);
+        } catch {
+          return require("@/assets/img/header/default.jpg");
+        }
+      },
+  },
 };
 </script>
 

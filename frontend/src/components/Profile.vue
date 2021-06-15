@@ -779,30 +779,17 @@ export default {
         .get(`/user/details/${this.$route.params.username}`)
         .then(async (response) => {
           let usersDetails = response["data"]["users_details"];
+
+          var cards = []
           usersDetails.forEach((userDetails) => {
-            let profilePic;
-            try {
-              profilePic = require(`@/assets/img/profile/${userDetails.user_id}.jpg`);
-            } catch {
-              profilePic = require("@/assets/img/profile/default.jpg");
-            }
-            let headerImg;
-            try {
-              headerImg = require("@/assets/img/header/" +
-                userDetails.user_id +
-                ".jpg");
-            } catch {
-              headerImg = require("@/assets/img/header/default.jpg");
-            }
-            let cards = []
             cards.push({
-              profilePicture: profilePic,
-              backgroundPicture: headerImg,
+              userId: userDetails.user_id,
               name: userDetails.name,
               username: userDetails.username,
             });
-            this.cardsData = cards
           });
+
+          this.cardsData = cards
         });
     },
     generateThumbs: async function (posts) {
