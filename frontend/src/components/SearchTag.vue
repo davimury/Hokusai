@@ -1,7 +1,7 @@
 <template>
-  <div class="h-screen">
+  <div class="h-screen" @mousemove="mouseMove">
     <Header></Header>
-    <main class="h-content" @mousemove="mouseMove">
+    <main class="h-content" >
       <div class="w-full md:max-w-4xl mx-auto p-3">
         <div class="block sm:hidden relative w-full mb-4">
           <SearchBar></SearchBar>
@@ -137,6 +137,8 @@ export default {
       windowHeight: window.innerHeight,
       xAxis: 0,
       yAxis: 0,
+      globalSkipCounter: 0,
+      globalSkipRate: 5
     };
   },
   mounted: async function () {
@@ -172,17 +174,24 @@ export default {
       this.showModalPost = true;
     },
     mouseMove: function (event) {
-      var pageX = this.windowWidth;
-      var pageY = this.windowHeight;
-      var mouseY=0;
-      var mouseX=0;
+      let pageX = window.innerWidth;
+      let pageY = window.innerHeight;
+      let mouseY = 0;
+      let mouseX = 0;
 
-      //verticalAxis
-      mouseY = event.clientY;
-      this.yAxis = (pageY-mouseY)/pageY*100; 
-      //horizontalAxis
-      mouseX = event.clientX / -pageX;
-      this.xAxis = -mouseX * 50 - 50;
+      if (this.globalSkipCounter >= this.globalSkipRate){
+        //verticalAxis
+        mouseY = event.clientY;
+        this.yAxis = ((pageY - mouseY) / pageY) * 100;
+
+        //horizontalAxis
+        mouseX = event.clientX / -pageX;
+        this.xAxis = -mouseX * 50 - 50;
+
+        this.globalSkipCounter = 0;
+      } else {
+        this.globalSkipCounter += 1;
+      }
     },
   },
 };

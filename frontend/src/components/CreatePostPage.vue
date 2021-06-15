@@ -335,7 +335,7 @@ export default {
               tags: this.selectedTags,
             })
           )
-          .then(() => this.$router.go(this.$router.currentRoute));
+          .then(() => this.$router.replace('/'));
       }
     },
     publishText: function (e) {
@@ -349,7 +349,7 @@ export default {
             tags: this.selectedTags,
           })
         )
-        .then(() => this.$router.go(this.$router.currentRoute));
+        .then(() => this.$router.replace('/'));
     },
     addTag: async function (e) {
       await axios

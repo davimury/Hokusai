@@ -45,6 +45,7 @@ export default {
         }
     },
     computed: {
+      
         style() {
             return { transform: 'translate('+ this.xAxis +'%,-'+ this.yAxis +'%)'}
         },

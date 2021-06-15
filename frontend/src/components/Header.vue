@@ -91,14 +91,12 @@
 <script>
 import Notification from "./Notification";
 import { directive as onClickaway } from "vue-clickaway";
-import CreatePost from "./CreatePost.vue";
 import SearchBar from "./SearchBar.vue";
 import { mapActions } from "vuex";
 
 export default {
   name: "Header",
   components: {
-    CreatePost,
     Notification,
     SearchBar,
   },

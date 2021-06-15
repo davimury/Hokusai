@@ -1,9 +1,12 @@
 <template>
-  <div class="h-screen">
+  <div 
+  class="h-screen"
+  @mousemove="mouseMove"
+  >
     <Header></Header>
     <main
       class="flex justify-center mx-auto h-screen w-full md:max-w-4xl pb-96"
-      @mousemove="mouseMove"
+      
     >
       <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
@@ -66,10 +69,10 @@
                 Você já viu todos os posts!
               </div>
               <div slot="no-results" class="pb-20">
-                <NotFoundGhost
+                <!-- <NotFoundGhost
                   :xAxis="this.xAxis"
                   :yAxis="this.yAxis"
-                ></NotFoundGhost>
+                ></NotFoundGhost> -->
               </div>
             </infinite-loading>
           </div>
@@ -277,6 +280,8 @@ export default {
       windowHeight: window.innerHeight,
       xAxis: 0,
       yAxis: 0,
+      globalSkipCounter: 0,
+      globalSkipRate: 5
     };
   },
   computed: {
@@ -352,21 +357,26 @@ export default {
       await this.setFirstLogin(false);
     },
     mouseMove: function (event) {
-      var pageX = this.windowWidth;
-      var pageY = this.windowHeight;
-      var mouseY = 0;
-      var mouseX = 0;
+      let pageX = window.innerWidth;
+      let pageY = window.innerHeight;
+      let mouseY = 0;
+      let mouseX = 0;
 
-      //verticalAxis
-      mouseY = event.clientY;
-      this.yAxis = ((pageY - mouseY) / pageY) * 100;
-      //horizontalAxis
-      mouseX = event.clientX / -pageX;
-      this.xAxis = -mouseX * 50 - 50;
+      if (this.globalSkipCounter >= this.globalSkipRate){
+        //verticalAxis
+        mouseY = event.clientY;
+        this.yAxis = ((pageY - mouseY) / pageY) * 100;
+
+        //horizontalAxis
+        mouseX = event.clientX / -pageX;
+        this.xAxis = -mouseX * 50 - 50;
+
+        this.globalSkipCounter = 0;
+      } else {
+        this.globalSkipCounter += 1;
+      }
     },
     loadMoreRec: async function ($state) {
-      console.log(2);
-
       await axios
         .get(`/posts/recommended/${this.recQuerys}`)
         .then((response) => {
@@ -383,8 +393,6 @@ export default {
         });
     },
     loadMoreCon: async function ($state) {
-      console.log(1);
-
       await axios
         .get(`/posts/connections/${this.conQuerys}`)
         .then((response) => {

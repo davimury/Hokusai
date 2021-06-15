@@ -721,6 +721,8 @@ export default {
       windowWidth: window.innerWidth > 1000 ? 1000 : window.innerWidth,
       xAxis: 0,
       yAxis: 0,
+      globalSkipCounter: 0,
+      globalSkipRate: 5
     };
   },
   mounted: async function () {
@@ -949,17 +951,24 @@ export default {
     },
 
     mouseMove: function (event) {
-      let pageX = this.windowWidth;
-      let pageY = this.windowHeight;
+      let pageX = window.innerWidth;
+      let pageY = window.innerHeight;
       let mouseY = 0;
       let mouseX = 0;
 
-      //verticalAxis
-      mouseY = event.clientY;
-      this.yAxis = ((pageY - mouseY) / pageY) * 100;
-      //horizontalAxis
-      mouseX = event.clientX / -pageX;
-      this.xAxis = -mouseX * 50 - 50;
+      if (this.globalSkipCounter >= this.globalSkipRate){
+        //verticalAxis
+        mouseY = event.clientY;
+        this.yAxis = ((pageY - mouseY) / pageY) * 100;
+
+        //horizontalAxis
+        mouseX = event.clientX / -pageX;
+        this.xAxis = -mouseX * 50 - 50;
+
+        this.globalSkipCounter = 0;
+      } else {
+        this.globalSkipCounter += 1;
+      }
     },
   },
 };

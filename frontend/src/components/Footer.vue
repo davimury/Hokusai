@@ -135,14 +135,12 @@
 
 <script>
 import { directive as onClickaway } from "vue-clickaway";
-import CreatePost from "./CreatePost.vue";
 import Notification from "./Notification";
 import SearchBar from "./SearchBar.vue";
 import { mapActions } from "vuex";
 export default {
   name: "Footer",
   components: {
-    CreatePost,
     Notification,
     SearchBar,
   },
