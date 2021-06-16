@@ -178,14 +178,14 @@ async def remove_connection(user_to_remove: User, user=Depends(manager)):
     flag = True
     try:
         session = Session()
-        user_id_remove = session.query(USERS.user_id).filter_by(username = user_to_remove.username)
-        connection = session.query(CONNECTIONS).filter_by(user_1_id = user.user_id, user_2_id = user_id_remove, con_status = True).first()
+        
+        connection = session.query(CONNECTIONS).filter_by(user_1_id = user.user_id, user_2_id = user_to_remove.user_id, con_status = True).first()
         
         if connection:
             session.delete(connection)
             session.commit()
         else:
-            connection = session.query(CONNECTIONS).filter_by(user_2_id = user.user_id, user_1_id = user_id_remove, con_status = True).first()
+            connection = session.query(CONNECTIONS).filter_by(user_2_id = user.user_id, user_1_id = user_to_remove.user_id, con_status = True).first()
             session.delete(connection)
             session.commit()
 

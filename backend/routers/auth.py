@@ -1,6 +1,7 @@
 from typing import Dict
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi_login import LoginManager
+from sqlalchemy.sql.functions import user
 from starlette.responses import Response, JSONResponse, HTMLResponse
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 from db.db_main import Session, USERS
@@ -9,6 +10,7 @@ from sqlalchemy import exc
 from models import User
 from datetime import datetime, timedelta
 import jwt
+from fastapi.encoders import jsonable_encoder
 
 SECRET = "434d502035aa8243868e3e5767afb5943c75fb5f0a18e013"
 
@@ -155,3 +157,55 @@ async def auth_logout(res: Response):
 
     except Exception as e:
         print(f'Error: Impossivel deletar cookie do cliente:\n{e}')
+
+@router.post("/unique-username")
+async def is_unique_username(request: Request):
+    """ Check if username is unique """
+    flag = True
+    username = await request.json()
+    print(username["username"])
+    try:
+        session = Session()
+        user = session.query(USERS.username).filter_by(username = username["username"]).first()
+        if user:
+            is_unique = False
+        else:
+            is_unique = True
+        session.commit()
+    except:
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        return JSONResponse(content={'is_unique': is_unique}, status_code=200)
+    else:
+        return Response(status_code=500)
+
+@router.post("/unique-email")
+async def is_unique_email(request: Request):
+    """ Check if email is unique """
+    flag = True
+    email = await request.json()
+    
+    try:
+        session = Session()
+        user = session.query(USERS.email).filter_by(email = email["email"]).first()
+        
+        if user:
+            
+            is_unique = False
+        else:
+            is_unique = True
+        session.commit()
+    except:
+        flag = False
+
+    finally:
+        session.close()
+
+    if flag:
+        return JSONResponse(content={'is_unique': is_unique}, status_code=200)
+    else:
+        return Response(status_code=500)
