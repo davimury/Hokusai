@@ -162,6 +162,7 @@ export default {
       }
 
       else if (data['seen_msg'] != undefined){
+        console.log(data['seen_msg'])
         setTimeout(function () {
             vm.messages.forEach((element, index) => {
               if (element['_id'] == data['seen_msg']['id']){

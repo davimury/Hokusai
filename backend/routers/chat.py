@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import List, Dict
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy.engine.base import Connection
+from sqlalchemy.util.langhelpers import counter
 from db.db_main import Session, NOTIFICATIONS, USERS, CONNECTIONS, MESSAGES
 
 router = APIRouter()
@@ -17,6 +18,7 @@ pusher_client = pusher.Pusher(
     secret="1e0679cf8406844cf2f4",
     cluster="us2",
 )
+
 class UserManager:
     def __init__(self):
         self.connection: WebSocket = None
@@ -25,6 +27,8 @@ class UserManager:
         self.rooms = []
         self.messages = []
         self.current_room = None
+        self.target_id = None
+        self.counter = 0
 
     async def load_user(self, ws, user_id, broadcaster):
         try:
@@ -122,7 +126,6 @@ class UserManager:
             session.close()
 
         except Exception as e:
-            print('aqui')
             print(e)
 
         finally:
@@ -134,12 +137,11 @@ class UserManager:
             self.messages = []
             self.current_room = session.query(CONNECTIONS).filter_by(con_id=con_id).first()
             self.second_user = session.query(USERS).filter_by(user_id=self.current_room.get_connected_user(self.user['user_id'])).first()
-            notification = session.query(NOTIFICATIONS).filter_by(con_id=con_id, type=0, status = False).first()
 
         except Exception as e:
             print(e)
             session.rollback()
-            
+        
         finally:
             session.close()
 
@@ -149,7 +151,16 @@ class UserManager:
             messages_arr = session.query(MESSAGES).filter_by(con_id=self.current_room.con_id).order_by(MESSAGES.created_at.asc()).all()
             output = list(reversed([messages_arr[i:i + 15] for i in range(0, len(messages_arr), 15)]))
 
-        except:
+            flag = False
+            for message in messages_arr:
+                if message.seen == False:
+                    flag = True
+
+            if flag:
+                await self.seen_room()
+
+        except Exception as e:
+            print(e)
             session.rollback()
         
         finally:
@@ -163,51 +174,16 @@ class UserManager:
                     user = session.query(USERS).filter_by(
                         user_id=msg.sender_id).first()
                     
-                    if msg.sender_id != self.user['user_id'] and msg.seen == False:
+                    if msg.seen == False and msg.sender_id != self.user['user_id']:
                         msg.seen_message()
                         session.merge(msg)
                         session.commit()
-                        
-                        if notification:
-                            count = notification.content['count']
-                            notification.status = False
 
-                            if count > 1:
-                                count = count - 1     
-                            
-                            if count == 0 or count == 1:
-                                count = 0
-                                notification.status = True
-
-                                try:
-                                    await asyncio.sleep(2)
-                                    pusher_client.trigger(
-                                        'hokusai-notify',
-                                        self.user['username'],
-                                        {
-                                            'id': notification.id,
-                                            'type': notification.type,
-                                            'status': notification.status,
-                                            'name': self.second_user.name,
-                                            'user_id': self.second_user.user_id,
-                                            'username': self.second_user.username,
-                                            'content': {'count': count},
-                                            'last_updated': notification.last_updated.isoformat()
-                                        }
-                                    )
-                                except Exception as e:
-                                    print(e)
-                            notification.content['count'] = count
-                            session.merge(notification)
-                            session.commit()
-
-                        if msg.seen == False: # Verificar 
-                            await self.broadcaster.broadcast_seen_msg(self.user['user_id'], msg.message_id)
+                        await self.broadcaster.broadcast_to_user(self.second_user.user_id, {'seen_msg': {'id': msg.message_id}})
 
                     if msg.reply_id:
                         reply_message = session.query(MESSAGES).filter_by(message_id=msg.reply_id).first()
-                    
-                    
+
                     self.messages.append({
                         '_id': msg.message_id,
                         'content': msg.content,
@@ -237,6 +213,8 @@ class UserManager:
 
                 finally:
                     session.close()
+            
+
         else:
             self.messages = []
         
@@ -337,56 +315,101 @@ class UserManager:
         try:
             session = Session()
             connection = session.query(CONNECTIONS).filter_by(con_id = con_id).first() 
+            self.target_id = connection.get_connected_user(self.user['user_id'])
 
-            target_id = connection.get_connected_user(self.user['user_id'])
-            notification = session.query(NOTIFICATIONS).filter_by(target_id = target_id, recipient_id = self.user['user_id'], type = 0).first()
-            messages_count = session.query(MESSAGES).filter_by(sender_id = self.user['user_id'], con_id = con_id, seen=False).count()
+            if not await self.broadcaster.is_online(self.target_id):
+                notification = session.query(NOTIFICATIONS).filter_by(target_id = self.target_id, recipient_id = self.user['user_id'], type = 0).first()
+                messages_count = session.query(MESSAGES).filter_by(sender_id = self.user['user_id'], con_id = con_id, seen=False).count()
 
-            if not notification:
-                notification = NOTIFICATIONS(
-                    target_id=connection.get_connected_user(self.user['user_id']),
-                    recipient_id=self.user['user_id'],
-                    con_id=con_id,
-                    type=0,
-                    status=False,
-                    content={'count': messages_count}
-                ) 
+                if not notification:
+                    notification = NOTIFICATIONS(
+                        target_id=connection.get_connected_user(self.user['user_id']),
+                        recipient_id=self.user['user_id'],
+                        con_id=con_id,
+                        type=0,
+                        status=False,
+                        content={'count': messages_count}
+                    ) 
 
-                notification.update_date()
-                session.add(notification)
-                session.commit()
+                    notification.update_date()
+                    session.add(notification)
+                    session.commit()
 
-            else:
-                notification.content = {'count': messages_count}
-                notification.status = False
-                session.merge(notification)
-                session.commit()
+                else:
+                    notification.content = {'count': messages_count}
+                    notification.status = False
+                    session.merge(notification)
+                    session.commit()
 
-            pusher_client.trigger(
-                'hokusai-notify',
-                session.query(USERS.username).filter_by(user_id=target_id).first()[0],
-                {
-                    'id': notification.id,
-                    'type': notification.type,
-                    'status': notification.status,
-                    'name': self.user['name'],
-                    'user_id': self.user['user_id'],
-                    'username': self.user['username'],
-                    'content': {'count': messages_count},
-                    'last_updated': notification.last_updated.isoformat()
-                }
-            )
+                pusher_client.trigger(
+                    'hokusai-notify',
+                    session.query(USERS.username).filter_by(user_id=self.target_id).first()[0],
+                    {
+                        'id': notification.id,
+                        'type': notification.type,
+                        'status': notification.status,
+                        'name': self.user['name'],
+                        'user_id': self.user['user_id'],
+                        'username': self.user['username'],
+                        'content': {'count': messages_count},
+                        'last_updated': notification.last_updated.isoformat()
+                    }
+                )
 
-        except:
+        except Exception as e:
+            print(e)
             session.rollback()
 
         finally:
             session.close()
 
+    async def seen_room(self):
+        try:
+            session = Session()
+        except Exception as e:
+            print(e)
+
+        try:
+            notification = session.query(NOTIFICATIONS).filter_by(target_id=self.user['user_id'], type = 0, con_id=self.current_room.con_id).first()
+            
+            if notification:
+                notification.seen_notification()
+                notification.content = {'count': 0}
+                session.merge(notification)
+                session.commit()
+
+        except Exception as e:
+            print(e)
+        
+        try:
+            await asyncio.sleep(1)
+            pusher_client.trigger(
+                'hokusai-notify',
+                self.user['username'],
+                {
+                    'id': notification.id,
+                    'type': notification.type,
+                    'status': notification.status,
+                    'name': self.second_user.name,
+                    'user_id': self.second_user.user_id,
+                    'username': self.second_user.username,
+                    'content': notification.content,
+                    'last_updated': notification.last_updated.isoformat()
+                })
+        except Exception as e:
+            print(e)
+
 class ChatBroadcaster:
     def __init__(self):
         self.connections: List[Dict(int, WebSocket)] = []
         self.online_users: List[int] = []
+
+    async def is_online(self, user_id):
+        for con in self.connections:
+            if user_id == list(con.keys())[0]:
+                return True
+            
+        return False
 
     async def register_connection(self, ws, client_id):
         self.connections.append({client_id: ws})
@@ -407,23 +430,42 @@ class ChatBroadcaster:
                 await con[user_id].send_text(json.dumps(message))
 
                 if "new_message" in message:
-                    await self.seen_handler(message, user_id)
+                    if message["new_message"]["senderId"] != user_id:
+                        await self.broadcast_seen_msg(message, user_id)
                 
-    async def seen_handler(self, message, user_id):
+    async def broadcast_seen_msg(self, message, user_id):
         try:
             session = Session()
             message_obj = session.query(MESSAGES).filter_by(message_id= message['new_message']['_id']).first()
-            message_obj.seen_message()
-            session.merge(message_obj)
-            session.commit()
+            
+            if message_obj.seen == False:
+                message_obj.seen_message()
+                session.merge(message_obj)
+                session.commit()
 
-        except:
+        except Exception as e:
+            print(e)
             session.rollback()
 
         finally:
             session.close()
 
-        await self.broadcast_seen_msg(user_id, message['new_message']['_id'])
+        try:
+            session = Session()
+            connections_arr = [
+                    *session.query(CONNECTIONS).filter_by(user_2_id=user_id).all(),
+                    *session.query(CONNECTIONS).filter_by(user_1_id=user_id).all()
+                ]
+            
+            for con in connections_arr:
+                await self.broadcast_to_user(con.get_connected_user(user_id), {'seen_msg': {'id': message['new_message']['_id']}})
+            
+        except Exception as e:
+            print(e)
+            session.rollback()
+        
+        finally:
+            session.close()
 
     async def broadcast_status(self, client_id, status):
         try:
@@ -446,24 +488,6 @@ class ChatBroadcaster:
                 )
             
         except:
-            session.rollback()
-        
-        finally:
-            session.close()
-
-    async def broadcast_seen_msg(self, client_id, message_id):
-        try:
-            session = Session()
-            connections_arr = [
-                    *session.query(CONNECTIONS).filter_by(user_2_id=client_id).all(),
-                    *session.query(CONNECTIONS).filter_by(user_1_id=client_id).all()
-                ]
-            
-            for con in connections_arr:
-                await self.broadcast_to_user(con.get_connected_user(client_id), {'seen_msg': {'id': message_id}})
-            
-        except Exception as e:
-            print(e)
             session.rollback()
         
         finally:

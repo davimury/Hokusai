@@ -160,6 +160,9 @@ class NOTIFICATIONS(Base):
         self.created_at = datetime.now() if self.created_at == None else None
         self.last_updated = datetime.now()
 
+    def seen_notification(self):
+        self.status = True
+
 class MESSAGES(Base):
     __tablename__ = "messages"
     message_id = Column(Integer, primary_key=True, autoincrement=True)
