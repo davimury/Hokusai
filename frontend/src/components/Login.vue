@@ -364,7 +364,7 @@
                 v-if="$v.emailSignUp.$invalid && $v.emailSignUp.$dirty"
                 class="text-red-700 text-left"
               >
-                <small>Insira um email válido</small>
+                <small>Insira um email válido e único</small>
               </div>
             </div>
             <div class="pb-2 pt-4 relative">
@@ -686,7 +686,7 @@ import logo from "../assets/img/logo.svg";
 import { Carousel, Slide } from "vue-carousel";
 import { mapActions } from "vuex";
 import { required, maxLength, email } from "vuelidate/lib/validators";
-
+import axios from "axios";
 const touchMap = new WeakMap();
 export default {
   name: "Login",
@@ -835,6 +835,18 @@ export default {
     emailSignUp: {
       required,
       email,
+      isUnique(value) {
+        return axios
+          .post(
+            "/unique-email",
+            JSON.stringify({
+              email: value,
+            })
+          )
+          .then((data) => {
+            return data["data"].is_unique;
+          });
+      },
     },
     emailLink: {
       required,
@@ -847,17 +859,18 @@ export default {
     usernameSignUp: {
       required,
       maxLength: maxLength(15),
-       isUnique(value) {
-        // standalone validator ideally should not assume a field is required
-        if (value === '') return true
-
-        // simulate async call, fail for all logins with even length
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve(typeof value === 'string' && value.length % 2 !== 0)
-          }, 350 + Math.random() * 300)
-        })
-      }
+      isUnique(value) {
+        return axios
+          .post(
+            "/unique-username",
+            JSON.stringify({
+              username: value,
+            })
+          )
+          .then((data) => {
+            return data["data"].is_unique;
+          });
+      },
     },
     passwordLogIn: {
       required,
