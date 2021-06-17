@@ -1,5 +1,13 @@
 <template>
   <section class="min-h-screen flex items-stretch text-white">
+    <div v-if="loading" class="w-screen h-screen fixed flex align-middle z-50 bg-gray-900 bg-opacity-75">
+      <fingerprint-spinner
+        :animation-duration="1500"
+        :size="90"
+        color="#8B5CF6"
+        class="m-auto "
+      />
+    </div>
     <div class="lg:w-1/2 lg:block hidden h-screen">
       <carousel
         :per-page="1"
@@ -425,6 +433,7 @@
                   hover:bg-purple-500
                   focus:outline-none
                 "
+                type="submit"
               >
                 Cadastrar
               </button>
@@ -672,6 +681,37 @@
               >
             </div>
           </div>
+          <div v-if="sentEmailDiv">
+           <h1 class="mb-10">Email enviado com sucesso!</h1>
+
+            <div
+              v-on:click="swapLoginRegister('register')"
+              class="
+                mt-3
+                text-center text-gray-400
+                hover:text-gray-100
+                font-medium
+              "
+            >
+              <a href="#">Criar Nova Conta</a>
+            </div>
+            <div
+              v-on:click="swapLoginRegister('login')"
+              class="
+                mt-3
+                text-center text-gray-400
+                hover:text-gray-100
+                font-medium
+              "
+            >
+              <a href="#"
+                >Voltar Para
+                <span class="text-purple-500 hover:text-purple-600"
+                  >Log In</span
+                ></a
+              >
+            </div>
+          </div>
         </transition>
       </div>
     </div>
@@ -688,14 +728,18 @@ import { mapActions } from "vuex";
 import { required, maxLength, email } from "vuelidate/lib/validators";
 import axios from "axios";
 const touchMap = new WeakMap();
+import { FingerprintSpinner } from "epic-spinners";
 export default {
   name: "Login",
   components: {
     Carousel,
     Slide,
+    FingerprintSpinner
   },
   data() {
     return {
+      sentEmailDiv:false,
+      loading: false,
       image1: bg1,
       image2: bg3,
       image3: bg2,
@@ -736,29 +780,41 @@ export default {
       "SendLink",
     ]),
     register: async function () {
-      try {
-        await this.Register(
-          JSON.stringify({
-            name: this.nameSignUp,
-            email: this.emailSignUp,
-            username: this.usernameSignUp,
-            password: this.passwordSignUp,
-          })
-        );
-        await this.setFirstLogin(true);
-        this.$router.push("/");
-      } catch (error) {}
+      this.$v.nameSignUp.$touch();
+      this.$v.emailSignUp.$touch();
+      this.$v.usernameSignUp.$touch();
+      this.$v.passwordSignUp.$touch();
+      if (!this.$v.nameSignUp.$invalid || !this.$v.usernameSignUp.$invalid || !this.$v.emailSignUp.$invalid || !this.$v.passwordSignUp.$invalid) {
+        try {
+          await this.Register(
+            JSON.stringify({
+              name: this.nameSignUp,
+              email: this.emailSignUp,
+              username: this.usernameSignUp,
+              password: this.passwordSignUp,
+            })
+          );
+          await this.setFirstLogin(true);
+          this.$router.push("/");
+        } catch (error) {
+          console.log(error);
+        }
+      }
     },
     login: async function () {
-      try {
-        await this.LogIn(
-          JSON.stringify({
-            email: this.emailLogIn,
-            password: this.passwordLogIn,
-          })
-        );
-        this.$router.push("/");
-      } catch (error) {}
+      this.$v.emailLogIn.$touch();
+      this.$v.passwordLogIn.$touch();
+      if (!this.$v.passwordLogIn.$invalid || !this.$v.emailLogIn.$invalid) {
+        try {
+          await this.LogIn(
+            JSON.stringify({
+              email: this.emailLogIn,
+              password: this.passwordLogIn,
+            })
+          );
+          this.$router.push("/");
+        } catch (error) {}
+      }
     },
     recover: async function () {
       try {
@@ -776,19 +832,25 @@ export default {
       } catch (error) {}
     },
     sendLink: async function () {
-      console.log(this.emailLink);
-      try {
-        if (this.emailLink.length > 0) {
+      this.$v.emailLink.$touch();
+      
+      if (!this.$v.emailLink.$invalid) {
+        this.loading = true
+        try {
+          this.loading = true
           await this.SendLink(JSON.stringify({ email: this.emailLink })).then(
             () => {
-              console.log("enviado");
+              this.loading = false
+              this.forgotPasswordDiv = false;
+              this.sentEmailDiv = true
             }
           );
-        }
-      } catch (error) {}
+        } catch (error) {}
+      }
     },
     swapLoginRegister: function (content) {
       if (content == "login") {
+        this.sentEmailDiv = false
         this.registerDiv = false;
         this.forgotPasswordDiv = false;
         setTimeout(() => {
@@ -796,6 +858,7 @@ export default {
         }, 501);
       }
       if (content == "register") {
+        this.sentEmailDiv = false
         this.forgotPasswordDiv = false;
         this.loginDiv = false;
         setTimeout(() => {
@@ -803,6 +866,7 @@ export default {
         }, 501);
       }
       if (content == "sendLink") {
+        this.sentEmailDiv = false
         this.loginDiv = false;
         setTimeout(() => {
           this.forgotPasswordDiv = true;
