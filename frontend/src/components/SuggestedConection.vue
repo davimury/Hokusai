@@ -13,7 +13,7 @@
               <div v-for="user in suggestedConection" :key="user.user_id">
                 <a :href="user.username">
                   <div class="flex items-center mb-3 w-100">
-                    <img class="h-10 w-10 rounded-full " :src="require(`@/assets/img/profile/${user.user_id}.jpg`)" @error="$event.target.src = require(`@/assets/img/profile/default.jpg`)" />
+                    <img class="h-10 w-10 rounded-full " :src="`https://cdn.hokusai.codes/profile/${user.user_id}.jpg?${cacheStr}`" @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'" />
                     <div class="ml-3 w-full">
                       <span class="text-sm font-semibold antialiased block leading-tight">{{user.username}}</span>
                       <h2 class="text-base font-semibold">{{user.name}}</h2>

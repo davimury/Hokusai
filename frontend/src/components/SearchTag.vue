@@ -155,7 +155,7 @@ export default {
     generateThumbs: async function(posts){
       for (let i = 0; i < posts.length; i++) {
         if (posts[i]['postType'] == 0){
-          this.thumbsData[posts[i]['post_id']] = require(`@/assets/img/posts/${posts[i]['slides'][0]}`);
+          this.thumbsData[posts[i]['post_id']] = `https://cdn.hokusai.codes/posts/${posts[i]['slides'][0]}`;
         } else {
           var div = document.createElement('div');
           div.style.backgroundColor = 'white';
