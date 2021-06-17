@@ -10,7 +10,7 @@ from sqlalchemy.util.langhelpers import counter
 from db.db_main import Session, NOTIFICATIONS, USERS, CONNECTIONS, MESSAGES
 
 router = APIRouter()
-locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
+#locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
 
 pusher_client = pusher.Pusher(
     app_id="1211691",
@@ -414,6 +414,8 @@ class ChatBroadcaster:
     async def register_connection(self, ws, client_id):
         self.connections.append({client_id: ws})
         self.online_users.append(client_id)
+        print(client_id)
+        print(self.connections)
         await self.broadcast_status(client_id, True)
 
     async def remove_connection(self, client_id):

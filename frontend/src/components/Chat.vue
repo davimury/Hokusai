@@ -65,7 +65,7 @@ export default {
         
       },
       currentUserId: 1234,
-      height: "calc(100vh - 60.8px)",
+      height: "calc(100vh - 95.8px)",
       messageActions: [
         {
           name: 'replyMessage',
@@ -99,7 +99,7 @@ export default {
   },
    created: async function() {
     console.log("Starting connection to WebSocket Server")
-    this.connection = new WebSocket(`ws://localhost:8000/ws/${this.user_id}`)
+    this.connection = new WebSocket(`wss://api.hokusai.codes/ws/${this.user_id}`)
 
     var vm = this;
     
@@ -108,9 +108,9 @@ export default {
 
       if(data['rooms'] != undefined){
         data['rooms'].forEach((element) => {
-          element['avatar'] = require(`../assets/img/profile/${element['avatar']}`)
+          element['avatar'] = `https://cdn.hokusai.codes/profile/${element['avatar']}`
           element['users'].forEach((element) => {
-            element['avatar'] = require(`../assets/img/profile/${element['avatar']}`)
+            element['avatar'] = `https://cdn.hokusai.codes/profile/${element['avatar']}`
           });
         });
 
@@ -124,7 +124,7 @@ export default {
           vm.messages_loaded = true
         } else {
           data['messages'].forEach((element) => {
-            element['avatar'] = require(`../assets/img/profile/${element['avatar']}`)
+            element['avatar'] = `https://cdn.hokusai.codes/profile/${element['avatar']}`
           });
 
           var messages = vm.messages
@@ -134,7 +134,7 @@ export default {
       }
 
       else if (data['new_message'] != undefined){
-        data['new_message']['avatar'] = require(`../assets/img/profile/${data['new_message']['avatar']}`)
+        data['new_message']['avatar'] = `https://cdn.hokusai.codes/profile/${data['new_message']['avatar']}`
 
         let messages = vm.messages
         messages.push(data['new_message'])
@@ -169,12 +169,6 @@ export default {
                 element['seen'] = true
               }
             });
-            /* vm.rooms.forEach((element, index) => {
-              if (element['lastMessage']['seen'] == false){
-                element['lastMessage']['seen'] == true
-                console.log(element['last_message']['seen'])
-              }
-            }) */
         }, 1000);
       }
 

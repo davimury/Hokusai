@@ -69,7 +69,7 @@
               <div class="flex items-center">
                 <img
                   class="h-12 w-12 rounded-full"
-                  :src="getProfilePic(user.user_id)"
+                  :src="`https://cdn.hokusai.codes/profile/${user.user_id}.jpg?${cacheStr}`"
                 />
                 <div class="ml-3">
                   <span
@@ -114,6 +114,7 @@ export default {
       searchResults: [],
       query: "",
       searchResultsVisible: false,
+      cacheStr: Math.random().toString(36).substring(7)
     };
   },
   methods: {
@@ -122,13 +123,6 @@ export default {
         axios.get(`/user/search/${this.query}`).then((response) => {
           this.searchResults = response["data"];
         });
-      }
-    },
-    getProfilePic(id) {
-      try {
-        return require(`@/assets/img/profile/${id}.jpg`);
-      } catch {
-        return require("@/assets/img/profile/default.jpg");
       }
     },
   },

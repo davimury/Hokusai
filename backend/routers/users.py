@@ -1,4 +1,5 @@
 import base64
+import asyncio
 from fastapi import APIRouter, Depends, Response, Request
 from db.db_main import Session, USERS, POSTS, TAGS, LIKES, CONNECTIONS, NOTIFICATIONS
 from routers.auth import manager
@@ -238,13 +239,15 @@ async def change_profile(request: Request, user=Depends(manager)):
     try:
         filename = str(user.user_id) + ".jpg"
 
-        with open('../frontend/src/assets/img/profile/' + filename, "wb") as f:
+        with open('../assets/profile/' + filename, "wb") as f:
             f.write(base64.b64decode(base['base'][base['base'].find(",")+1:]))
 
-    except:
+    except Exception as e:
+        print(e)
         flag = False
 
     if flag:
+        await asyncio.sleep(3)
         return Response(status_code=200)
     else:
         return Response(status_code=500)
@@ -259,12 +262,13 @@ async def change_header(request: Request, user=Depends(manager)):
     try:
         filename = str(user.user_id) + ".jpg"
 
-        with open('../frontend/src/assets/img/header/' + filename, "wb") as f:
+        with open('../assets/header/' + filename, "wb") as f:
             f.write(base64.b64decode(base['base'][base['base'].find(",")+1:]))
     except:
         flag = False
 
     if flag:
+        await asyncio.sleep(1)
         return Response(status_code=200)
     else:
         return Response(status_code=500)

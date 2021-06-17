@@ -17,7 +17,7 @@
       "
     >
       <div class="relative h-40">
-        <img class="absolute h-full w-full object-cover" :src="getHeader" />
+        <img class="absolute h-full w-full object-cover" :src="`https://cdn.hokusai.codes/header/${this.user_id}.jpg?${cacheStr}`" @error="$event.target.src = 'https://cdn.hokusai.codes/header/default.jpg'"/>
         <button
           v-if="this.$route.params.username == this.$store.getters.Username"
           class="focus:outline-none"
@@ -52,7 +52,7 @@
           border-4
         "
       >
-        <img class="object-cover w-full h-full" :src="getProfilePic" />
+        <img class="object-cover w-full h-full" :src="`https://cdn.hokusai.codes/profile/${this.user_id}.jpg?${cacheStr}`" @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'"/>
       </div>
       <div class="flex justify-center ml-11 mt-6 relative">
         <button
@@ -310,8 +310,9 @@
         <div
           class="
             flex
-            items-end
+            items-center
             justify-center
+            md:min-w-full
             min-h-screen
             pt-4
             px-4
@@ -365,7 +366,7 @@
         <div
           class="
             flex
-            items-end
+            items-center
             justify-center
             min-h-screen
             pt-4
@@ -481,7 +482,7 @@
         <div
           class="
             flex
-            items-end
+            items-center
             justify-center
             min-h-screen
             pt-4
@@ -592,7 +593,7 @@
         <div
           class="
             flex
-            items-end
+            items-center
             justify-center
             min-h-screen
             pt-4
@@ -722,7 +723,8 @@ export default {
       xAxis: 0,
       yAxis: 0,
       globalSkipCounter: 0,
-      globalSkipRate: 5
+      globalSkipRate: 5,
+      cacheStr: Math.random().toString(36).substring(7)
     };
   },
   mounted: async function () {
@@ -757,22 +759,6 @@ export default {
       this.showPostById(this.$route.query.post)
     }
   },
-  computed: {
-    getProfilePic() {
-      try {
-        return require(`@/assets/img/profile/${this.user_id}.jpg`);
-      } catch {
-        return require("@/assets/img/profile/default.jpg");
-      }
-    },
-    getHeader() {
-      try {
-        return require("@/assets/img/header/" + this.user_id + ".jpg");
-      } catch {
-        return require("@/assets/img/header/default.jpg");
-      }
-    },
-  },
   methods: {
     removeConnection: function () {
       axios.post('/connection/remove', {user_id: this.user_id})
@@ -800,10 +786,10 @@ export default {
       for (let i = 0; i < posts.length; i++) {
         if (posts[i]["postType"] == 0) {
           try {
-            var thumb = require(`@/assets/img/posts/${posts[i]["slides"][0]}`)
+            var thumb = `https://cdn.hokusai.codes/posts/${posts[i]["slides"][0]}`
           }
           catch {
-            var thumb = require(`@/assets/img/posts/default.jpg`)
+            var thumb = `https://cdn.hokusai.codes/posts/default.jpg`
           }
           
           this.thumbsData[
@@ -934,7 +920,7 @@ export default {
         data: {
           base: this.croppieImage,
         },
-      });
+      }).then( () => this.$router.go(this.$router.currentRoute));
     },
 
     changeHeader: async function () {
@@ -953,7 +939,7 @@ export default {
         data: {
           base: this.croppieImage,
         },
-      });
+      }).then( () => this.$router.go(this.$router.currentRoute));
     },
 
     requestConnection: function () {

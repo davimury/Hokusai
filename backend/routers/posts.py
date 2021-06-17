@@ -203,7 +203,7 @@ def new_post(post: Post, user=Depends(manager)):
                     datetime.now().second * datetime.now().day) + ".jpg"
                 files.append(filename)
 
-                with open('../frontend/src/assets/img/posts/' + filename, "wb") as f:
+                with open('../assets/posts/' + filename, "wb") as f:
                     f.write(base64.b64decode(image[image.find(",")+1:]))
 
             new_post = POSTS(

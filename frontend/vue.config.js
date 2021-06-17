@@ -23,7 +23,13 @@ module.exports = {
       })
     ]
   },
-
+  pwa: {
+    name: 'Hokusai',
+    themeColor: '#121212',
+    msTileColor: '#000000',
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black',
+  },
   // Vue CLI would normally use its own loader to load .svg and .css files, however:
   //	1. The icons used by CKEditor must be loaded using raw-loader,
   //	2. The CSS used by CKEditor must be transpiled using PostCSS to load properly.

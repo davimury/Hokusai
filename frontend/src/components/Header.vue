@@ -44,7 +44,7 @@
             "
             :class="{ 'focus:ring-2 focus:ring-purple-500': show === true }"
           >
-            <img class="h-8 w-8 rounded-full" :src="getProfilePic" />
+            <img class="h-8 w-8 rounded-full" :src="`https://cdn.hokusai.codes/profile/${this.$store.getters.UserId}.jpg?${cacheStr}`" @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'"/>
           </button>
           <!-- Dropdown Body -->
           <transition
@@ -104,13 +104,6 @@ export default {
     onClickaway: onClickaway,
   },
   computed: {
-    getProfilePic() {
-      try {
-        return require(`@/assets/img/profile/${this.$store.getters.UserId}.jpg`);
-      } catch {
-        return require("@/assets/img/profile/default.jpg");
-      }
-    },
     openModal() {
       this.modalState = true;
     },
@@ -121,6 +114,7 @@ export default {
       showModal: false,
       username: this.$store.getters.Username,
       userId: this.$store.getters.UserId,
+      cacheStr: Math.random().toString(36).substring(7)
     };
   },
   methods: {

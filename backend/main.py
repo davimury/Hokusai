@@ -14,11 +14,10 @@ app.include_router(connections.router)
 auth.manager.useRequest(app)
 
 origins = [
-    "http://localhost:8080", # frontend
-    "http://localhost:8081", # frontend
-    "https://localhost:8080", # frontend
-    "https://localhost:8081", # frontend
+    "http://app.hokusai.codes", # frontend
+    "https://app.hokusai.codes", # frontend
 ]
+
 
 app.add_middleware(
     CORSMiddleware,

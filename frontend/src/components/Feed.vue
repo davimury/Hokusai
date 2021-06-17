@@ -160,8 +160,8 @@
                   ref="croppieRef"
                   :enableExif="true"
                   :enableOrientation="true"
-                  :boundary="{ width: 300, height: 300 }"
-                  :viewport="{ width: 250, height: 250, type: 'circle' }"
+                  :boundary="{ width: 240, height: 240 }"
+                  :viewport="{ width: 200, height: 200, type: 'circle' }"
                 ></vue-croppie>
                 <div>
                   <label
@@ -352,9 +352,10 @@ export default {
       });
     },
     onComplete: async function () {
-      axios.post("/user/image", { base: this.croppieImage });
-      axios.post("/tags/add", this.selectedTags);
-      await this.setFirstLogin(false);
+      await axios.post("/user/image", { base: this.croppieImage })
+      await axios.post("/tags/add", this.selectedTags);
+      await this.setFirstLogin(false)
+      .then( () => this.$router.go(this.$router.currentRoute));
     },
     mouseMove: function (event) {
       let pageX = window.innerWidth;

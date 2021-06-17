@@ -18,7 +18,8 @@
     <div class="relative h-20">
       <img
         class="absolute h-full w-full object-cover"
-        :src="getHeader(cardData.userId)"
+        :src="`https://cdn.hokusai.codes/header/${cardData.userId}.jpg?${cacheStr}`"
+        @error="$event.target.src = 'https://cdn.hokusai.codes/header/default.jpg'"
       />
     </div>
     <div
@@ -35,7 +36,7 @@
         border-4
       "
     >
-      <img class="object-cover w-full h-full" :src="getProfilePic(cardData.userId)" />
+      <img class="object-cover w-full h-full" :src="`https://cdn.hokusai.codes/profile/${cardData.userId}.jpg?${cacheStr}`" @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'"/>
     </div>
     <div class="flex justify-center ml-11 mt-6 relative"></div>
     <div class="mt-8">
@@ -51,23 +52,11 @@ export default {
   name: "ProfileCard",
   props: ["cardData"],
 
-  methods: {
-      getProfilePic(user_id) {
-        try {
-          console.log(user_id)
-          return require(`@/assets/img/profile/${user_id}.jpg`);
-        } catch {
-          return require("@/assets/img/profile/default.jpg");
-        }
-      },
-      getHeader(user_id) {
-        try {
-          return require(`@/assets/img/header/${user_id}.jpg`);
-        } catch {
-          return require("@/assets/img/header/default.jpg");
-        }
-      },
-  },
+  data(){
+    return {
+      cacheStr: Math.random().toString(36).substring(7)
+    }
+  }
 };
 </script>
 

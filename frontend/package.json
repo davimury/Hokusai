@@ -19,6 +19,7 @@
     "@ckeditor/ckeditor5-paragraph": "^27.1.0",
     "@ckeditor/ckeditor5-theme-lark": "^27.1.0",
     "@ckeditor/ckeditor5-vue2": "^1.0.5",
+    "@vue/cli-plugin-pwa": "^4.5.13",
     "animate.css": "^4.1.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",

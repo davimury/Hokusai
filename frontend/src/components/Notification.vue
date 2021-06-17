@@ -33,7 +33,7 @@
         </div>
           <div v-if="dataArr.length > 0">
             
-            <div v-for="data in dataArr.slice().reverse().slice(0,4)" :key="data['id']">
+            <div v-for="data in dataArr" :key="data['id']">
               <div v-if="data['type'] == 0">
                 <a href="/chat">
                   <div
@@ -43,9 +43,8 @@
                     <div class="flex flex-shrink-0">
                       <img
                         class="h-16 w-16 rounded-full"
-                        :src="
-                          require('@/assets/img/profile/' + data['user_id'] + '.jpg')
-                        "
+                        :src="`https://cdn.hokusai.codes/profile/${data['user_id']}.jpg?${cacheStr}`"
+                        @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'"
                       />
                     </div>
                     <div class="ml-3 text-left">
@@ -64,9 +63,8 @@
                   <div class="flex flex-shrink-0">
                     <img
                       class="h-16 w-16 rounded-full"
-                      :src="
-                        require('@/assets/img/profile/' + data['user_id'] + '.jpg')
-                      "
+                      :src="`https://cdn.hokusai.codes/profile/${data['user_id']}.jpg?${cacheStr}`"
+                      @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'"
                     />
                   </div>
                   <div class="ml-3 text-left">
@@ -96,9 +94,8 @@
                   <div class="flex flex-shrink-0">
                     <img
                       class="h-16 w-16 rounded-full"
-                      :src="
-                        require('@/assets/img/profile/' + data['user_id'] + '.jpg')
-                      "
+                      :src="`https://cdn.hokusai.codes/profile/${data['user_id']}.jpg?${cacheStr}`"
+                      @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'"
                     />
                   </div>
                   <div class="ml-3 text-left text-gray-400">
@@ -142,6 +139,7 @@ export default {
       isActive: false,
       count: 0,
       dataArr: [],
+      cacheStr: Math.random().toString(36).substring(7)
     };
   },
   created() {
@@ -159,9 +157,9 @@ export default {
           this.count = this.count + 1
         }
         else if(data['type'] == 0 && this.dataArr[arrayIndex] == undefined){
-          console.log(data)
           this.count = this.count + 1
           this.dataArr.push(data) ;
+          this.dataArr = this.dataArr.slice(0,4).sort((a,b) => a['status'] - b['status']);
         }
         else if (data['type'] == 0 && this.dataArr[arrayIndex] != undefined){
           if(data['status'] == false)
@@ -177,20 +175,14 @@ export default {
   },
   mounted() {
     axios.get("/user/notifications").then((response) => {
-      this.dataArr = response["data"];
-      console.log(this.dataArr.slice().reverse().slice(0,4))
+      
+      this.dataArr = response["data"].slice(0,4).sort((a,b) => a['status'] - b['status']);
       this.dataArr.forEach(element => {
         if(element['status'] != true)
           this.count = this.count + 1
       });
     });
   },
-  computed: {
-    getProfilePic(id) {
-      return require("@/assets/img/profile/" + id + ".jpg");
-    },
-  },
-
   methods: {
     away: function () {
       this.isActive = false;

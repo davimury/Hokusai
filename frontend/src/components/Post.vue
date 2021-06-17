@@ -5,7 +5,7 @@
   >
     <div class="flex items-center px-4 py-3">
       <a class="flex items-center" :href="'/'+postData.username">
-      <img class="h-8 w-8 rounded-full" :src="require(`@/assets/img/profile/${postData.author_id}.jpg`)"  @error="$event.target.src = '@/src/assets/img/profile/default.jpg'" />
+      <img class="h-8 w-8 rounded-full" :src="`https://cdn.hokusai.codes/profile/${postData.author_id}.jpg?${cacheStr}`"  @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'" />
       <div class="ml-3">
         <span class="text-sm font-semibold antialiased block leading-tight">{{
           postData.username
@@ -35,7 +35,7 @@ chevron_left
           :key="index"
           class="m-auto float-right"
         >
-          <img :src="require(`@/assets/img/posts/${slide}`)"  @error="$event.target.src = '@/src/assets/img/posts/default.jpg'" class="object-contain mx-auto my-auto max-h-70vh"/>
+          <img :src="`https://cdn.hokusai.codes/posts/${slide}`"  @error="$event.target.src = 'https://cdn.hokusai.codes/posts/default.jpg'" class="object-contain mx-auto my-auto max-h-70vh"/>
         </slide>
       </carousel>
       <div
@@ -110,6 +110,7 @@ export default {
     vote: null,
     bookmarkType: "bookmark_border",
     currentPage: 0,
+    cacheStr: Math.random().toString(36).substring(7)
   }),
   mounted(){
     if(this.postData.like)
