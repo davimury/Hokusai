@@ -160,8 +160,8 @@
                   ref="croppieRef"
                   :enableExif="true"
                   :enableOrientation="true"
-                  :boundary="{ width: 300, height: 300 }"
-                  :viewport="{ width: 250, height: 250, type: 'circle' }"
+                  :boundary="{ width: 240, height: 240 }"
+                  :viewport="{ width: 200, height: 200, type: 'circle' }"
                 ></vue-croppie>
                 <div>
                   <label
