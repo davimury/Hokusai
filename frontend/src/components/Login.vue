@@ -232,10 +232,16 @@
               <small>Senha é obrigatoria</small>
             </div>
             <div
+              v-if="passErr"
+              class="text-red-700 text-left -mt-1.5"
+            >
+              <small>Senha incorreta</small>
+            </div>
+            <div
               @click="swapLoginRegister('sendLink')"
               class="text-right text-amber-400 hover:text-amber-100 font-medium"
             >
-              <a href="#">Esqueceu a senha?</a>
+              <a style="cursor: pointer;">Esqueceu a senha?</a>
             </div>
             <div class="pb-2 pt-4">
               <button
@@ -275,7 +281,7 @@
                 font-medium
               "
             >
-              <a href="#"
+              <a style="cursor: pointer;"
                 >Ainda não tem uma conta?
                 <span class="text-purple-500 hover:text-purple-600"
                   >Cadastre-se</span
@@ -460,7 +466,7 @@
                 font-medium
               "
             >
-              <a href="#"
+              <a style="cursor: pointer;"
                 >Já tem uma conta?
                 <span class="text-purple-500 hover:text-purple-600"
                   >Log In</span
@@ -550,7 +556,7 @@
                 font-medium
               "
             >
-              <a href="#">Criar Nova Conta</a>
+              <a style="cursor: pointer;">Criar Nova Conta</a>
             </div>
             <div
               v-on:click="swapLoginRegister('login')"
@@ -561,7 +567,7 @@
                 font-medium
               "
             >
-              <a href="#"
+              <a style="cursor: pointer;"
                 >Voltar Para
                 <span class="text-purple-500 hover:text-purple-600"
                   >Log In</span
@@ -569,118 +575,10 @@
               >
             </div>
           </div>
-          <div v-if="recoverPasswordDiv">
-            <form
-              @submit.prevent="recover"
-              class="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
-            >
-              <h1 class="text-2xl font-semibold m-4">Alterar senha</h1>
-              <div class="pb-2 pt-4 relative">
-                <span
-                  @click="swapVisibility"
-                  class="
-                    material-icons
-                    md-18
-                    text-gray-400
-                    cursor-pointer
-                    select-none
-                    absolute
-                    inset-y-0
-                    right-3
-                    mt-2
-                    flex
-                    items-center
-                  "
-                  >{{ passwordIcon }}</span
-                >
-                <input
-                  v-model.trim="passwordSignUp"
-                  @input="delayTouch($v.passwordSignUp)"
-                  :class="
-                    validateStyle(
-                      $v.passwordSignUp.$invalid,
-                      $v.passwordSignUp.$dirty
-                    )
-                  "
-                  class="
-                    block
-                    w-full
-                    p-2
-                    text-lg
-                    rounded-lg
-                    bg-black
-                    focus:ring-1 focus:ring-purple-500
-                  "
-                  :type="passwordType"
-                  placeholder="Nova Senha"
-                />
-              </div>
-              <div
-                v-if="$v.passwordSignUp.$invalid && $v.passwordSignUp.$dirty"
-                class="text-red-700 text-left -mt-1.5"
-              >
-                <small>Senha é obrigatoria</small>
-              </div>
-
-              <div
-                class="
-                  p-4
-                  text-center
-                  right-0
-                  left-0
-                  flex
-                  justify-center
-                  space-x-4
-                  mt-16
-                  lg:hidden
-                "
-              ></div>
-              <div class="pb-2 pt-4">
-                <button
-                  class="
-                    block
-                    w-full
-                    p-2
-                    text-lg
-                    rounded-lg
-                    bg-purple-500
-                    hover:bg-purple-600
-                    focus:outline-none
-                  "
-                >
-                  Mudar senha
-                </button>
-              </div>
-            </form>
-
-            <div
-              v-on:click="swapLoginRegister('register')"
-              class="
-                mt-3
-                text-center text-gray-400
-                hover:text-gray-100
-                font-medium
-              "
-            >
-              <a href="#">Criar Nova Conta</a>
-            </div>
-            <div
-              v-on:click="swapLoginRegister('login')"
-              class="
-                mt-3
-                text-center text-gray-400
-                hover:text-gray-100
-                font-medium
-              "
-            >
-              <a href="#"
-                >Voltar Para
-                <span class="text-purple-500 hover:text-purple-600"
-                  >Log In</span
-                ></a
-              >
-            </div>
-          </div>
+          
+          
+        </transition>
+        <transition>
           <div v-if="sentEmailDiv">
            <h1 class="mb-10">Email enviado com sucesso!</h1>
 
@@ -693,7 +591,7 @@
                 font-medium
               "
             >
-              <a href="#">Criar Nova Conta</a>
+              <a style="cursor: pointer;">Criar Nova Conta</a>
             </div>
             <div
               v-on:click="swapLoginRegister('login')"
@@ -704,13 +602,126 @@
                 font-medium
               "
             >
-              <a href="#"
-                >Voltar Para
+              <a style="cursor: pointer;">Voltar Para
                 <span class="text-purple-500 hover:text-purple-600"
                   >Log In</span
                 ></a
               >
             </div>
+          </div>
+        </transition>
+        <transition>
+          <div v-if="recoverPasswordDiv">
+              <form
+                @submit.prevent="recover"
+                class="sm:w-2/3 w-full px-4 lg:px-0 mx-auto"
+              >
+                <h1 class="text-2xl font-semibold m-4">Alterar senha</h1>
+                <div class="pb-2 pt-4 relative">
+                  <span
+                    @click="swapVisibility"
+                    class="
+                      material-icons
+                      md-18
+                      text-gray-400
+                      cursor-pointer
+                      select-none
+                      absolute
+                      inset-y-0
+                      right-3
+                      mt-2
+                      flex
+                      items-center
+                    "
+                    >{{ passwordIcon }}</span
+                  >
+                  <input
+                    v-model.trim="passwordSignUp"
+                    @input="delayTouch($v.passwordSignUp)"
+                    :class="
+                      validateStyle(
+                        $v.passwordSignUp.$invalid,
+                        $v.passwordSignUp.$dirty
+                      )
+                    "
+                    class="
+                      block
+                      w-full
+                      p-2
+                      text-lg
+                      rounded-lg
+                      bg-black
+                      focus:ring-1 focus:ring-purple-500
+                    "
+                    :type="passwordType"
+                    placeholder="Nova Senha"
+                  />
+                </div>
+                <div
+                  v-if="$v.passwordSignUp.$invalid && $v.passwordSignUp.$dirty"
+                  class="text-red-700 text-left -mt-1.5"
+                >
+                  <small>Senha é obrigatoria</small>
+                </div>
+
+                <div
+                  class="
+                    p-4
+                    text-center
+                    right-0
+                    left-0
+                    flex
+                    justify-center
+                    space-x-4
+                    mt-16
+                    lg:hidden
+                  "
+                ></div>
+                <div class="pb-2 pt-4">
+                  <button
+                    class="
+                      block
+                      w-full
+                      p-2
+                      text-lg
+                      rounded-lg
+                      bg-purple-500
+                      hover:bg-purple-600
+                      focus:outline-none
+                    "
+                  >
+                    Mudar senha
+                  </button>
+                </div>
+              </form>
+
+              <div
+                v-on:click="swapLoginRegister('register')"
+                class="
+                  mt-3
+                  text-center text-gray-400
+                  hover:text-gray-100
+                  font-medium
+                "
+              >
+                <a style="cursor: pointer;">Criar Nova Conta</a>
+              </div>
+              <div
+                v-on:click="swapLoginRegister('login')"
+                class="
+                  mt-3
+                  text-center text-gray-400
+                  hover:text-gray-100
+                  font-medium
+                "
+              >
+                <a style="cursor: pointer;"
+                  >Voltar Para
+                  <span class="text-purple-500 hover:text-purple-600"
+                    >Log In</span
+                  ></a
+                >
+              </div>
           </div>
         </transition>
       </div>
@@ -759,6 +770,7 @@ export default {
       passwordIcon: "visibility",
       passwordType: "password",
       forgotPasswordDiv: false,
+      passErr: false,
     };
   },
   mounted() {
@@ -798,7 +810,8 @@ export default {
           await this.setFirstLogin(true);
           this.$router.push("/");
         } catch (error) {
-          console.log(error);
+          this.loading = false
+          this.passErr = true
         }
       }
     },
@@ -815,14 +828,17 @@ export default {
             })
           );
           this.$router.push("/");
-        } catch (error) {}
+        } catch (error) {
+          this.loading = false
+          this.passErr = true
+        }
       }
     },
     recover: async function () {
       try {
         if (this.passwordSignUp.length >= 6) {
           await this.Recover(
-            JSON.stringify({ token: this.token, password: this.passwordSignUp })
+            JSON.stringify({ 'token': this.token, 'password': this.passwordSignUp })
           ).then(() => {
             this.$router.push("/login");
             this.loginDiv = true;
