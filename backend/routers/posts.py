@@ -1,13 +1,14 @@
 import base64
 import string
 import random
+from sqlalchemy import and_
+from operator import itemgetter
 from db.db_main import Session, POSTS, TAGS, LIKES, CONNECTIONS
 from datetime import datetime, timedelta
 from starlette.responses import JSONResponse, Response
 from fastapi import APIRouter, Depends
 from routers.auth import manager
 from models import Post
-from sqlalchemy import and_
 
 
 router = APIRouter()
@@ -84,7 +85,6 @@ def get_recommended_posts(query: int, user=Depends(manager)):
     if flag:
         try:
             posts_arr = []
-
             for post in posts:
                 like_obj = session.query(LIKES).filter_by(
                     post_id=post.post_id, user_id=user.user_id).first()
@@ -109,6 +109,7 @@ def get_recommended_posts(query: int, user=Depends(manager)):
                     'like': like,
                     'dislike': dislike,
                 }))
+
         except Exception as e:
             print(e)
             flag = False
@@ -172,6 +173,7 @@ def get_connections_posts(query: int, user=Depends(manager)):
 
     if flag:
         try:
+            posts_arr = sorted(posts_arr, key=lambda x: x.created_at, reverse=True)
             output = [posts_arr[i:i + 3] for i in range(0, len(posts_arr), 3)]
             return output[query]
         except:

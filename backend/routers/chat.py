@@ -5,12 +5,10 @@ import asyncio
 from datetime import datetime
 from typing import List, Dict
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from sqlalchemy.engine.base import Connection
-from sqlalchemy.util.langhelpers import counter
 from db.db_main import Session, NOTIFICATIONS, USERS, CONNECTIONS, MESSAGES
 
 router = APIRouter()
-#locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
+locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
 
 pusher_client = pusher.Pusher(
     app_id="1211691",
@@ -338,6 +336,7 @@ class UserManager:
                 else:
                     notification.content = {'count': messages_count}
                     notification.status = False
+                    notification.update_date()
                     session.merge(notification)
                     session.commit()
 

@@ -73,7 +73,7 @@
           </span>
         </button>
       </div>
-      <div class="mt-6">
+      <div>
         <div class="text-center">
           <h1 class="text-lg text-center font-semibold inline-block">
             {{ this.name }}
@@ -288,6 +288,7 @@
         v-for="post in posts"
         :key="post.post_id"
         class="bg-lightgray post-card cursor-pointer"
+        style="overflow: hidden;"
         @click="showPost(post)"
       >
         <img :src="thumbsData[post['post_id']]" class="media" />
@@ -359,6 +360,7 @@
               sm:max-w-lg
               sm:w-full
             "
+            style="width: 100%;"
             v-on-clickaway="awayModalPost"
           >
             <Post :postData="this.postData"></Post>

@@ -411,15 +411,10 @@ export default {
         .then((response) => {
           if (response["data"] != undefined) {
             this.conQuerys = this.conQuerys + 1;
-            this.followPosts = this.followPosts.concat(
-              response["data"].sort(function (a, b) {
-                if (a["created_at"] > b["created_at"]) return 1;
-                if (a["created_at"] < b["created_at"]) return -1;
-              })
-            );
+            this.followPosts = this.followPosts.concat(response["data"]);
             setTimeout(function () {
               $state.loaded();
-            }, 2000);
+            }, 1500);
           } else $state.complete();
         });
     },

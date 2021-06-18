@@ -110,7 +110,7 @@ async def send_email_token(formData: User):
         message = MessageSchema(
             subject="Hokusai - Recuperar senha",
             recipients=[formData.email],
-            body={'url': f'http://app.hokusai.codes/login?recover={encoded_jwt}'},
+            body={'url': f'https://app.hokusai.codes/login?recover={encoded_jwt}'},
             subtype="html"
         )
 

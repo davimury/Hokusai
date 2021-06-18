@@ -2,7 +2,15 @@
   <div class="h-screen" @mousemove="mouseMove">
     <Header></Header>
     <main class="h-content" >
-      <div class="w-full md:max-w-4xl mx-auto p-3">
+      <div v-if="loading" class="w-screen h-screen fixed flex align-middle z-50 bg-gray-900 bg-opacity-75">
+        <fingerprint-spinner
+          :animation-duration="1500"
+          :size="90"
+          color="#8B5CF6"
+          class="m-auto "
+        />
+      </div>
+      <div v-if="!loading" class="w-full md:max-w-4xl mx-auto p-3">
         <div class="block sm:hidden relative w-full mb-4">
           <SearchBar></SearchBar>
         </div>
@@ -24,6 +32,7 @@
               v-for="post in posts"
               :key="post.post_id"
               class="bg-lightgray post-card cursor-pointer"
+              style="overflow: hidden;"
               @click="showPost(post)"
             >
               <img
@@ -52,7 +61,7 @@
               <div
                 class="
                   flex
-                  items-end
+                  items-center
                   justify-center
                   min-h-screen
                   pt-4
@@ -90,6 +99,7 @@
                     sm:max-w-lg
                     sm:w-full
                   "
+                  style="width: 100%"
                   v-on-clickaway="awayModalPost"
                 >
                   <Post :postData="this.postData"></Post>
@@ -113,6 +123,7 @@ import Post from "./Post.vue";
 import SearchBar from "./SearchBar.vue";
 import axios from "axios";
 import * as htmlToImage from 'html-to-image';
+import { FingerprintSpinner } from "epic-spinners";
 
 export default {
   name: "SearchConnection",
@@ -121,7 +132,8 @@ export default {
     Footer,
     NotFoundGhost,
     Post,
-    SearchBar
+    SearchBar,
+    FingerprintSpinner
   },
   directives: {
     onClickaway: onClickaway,
@@ -138,7 +150,8 @@ export default {
       xAxis: 0,
       yAxis: 0,
       globalSkipCounter: 0,
-      globalSkipRate: 5
+      globalSkipRate: 5,
+      loading: true
     };
   },
   mounted: async function () {
@@ -148,6 +161,7 @@ export default {
         await this.generateThumbs(response["data"])
         this.posts = response['data']
       }
+      this.loading = false
     })
     
   },

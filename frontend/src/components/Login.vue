@@ -785,6 +785,7 @@ export default {
       this.$v.usernameSignUp.$touch();
       this.$v.passwordSignUp.$touch();
       if (!this.$v.nameSignUp.$invalid || !this.$v.usernameSignUp.$invalid || !this.$v.emailSignUp.$invalid || !this.$v.passwordSignUp.$invalid) {
+        this.loading = true
         try {
           await this.Register(
             JSON.stringify({
@@ -805,6 +806,7 @@ export default {
       this.$v.emailLogIn.$touch();
       this.$v.passwordLogIn.$touch();
       if (!this.$v.passwordLogIn.$invalid || !this.$v.emailLogIn.$invalid) {
+        this.loading = true
         try {
           await this.LogIn(
             JSON.stringify({
