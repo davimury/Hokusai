@@ -272,7 +272,9 @@ export default {
       dropzoneOptions: {
         url: "https://httpbin.org/post",
         thumbnailWidth: 140,
-        maxFilesize: 5,
+        maxFilesize: 2,
+        maxFiles: 5,
+        acceptedFiles: 'image/*',
         headers: { "My-Awesome-Header": "header value" },
         dictDefaultMessage:
           "<span class='material-icons text-purple-500 text-4xl'>cloud_upload</span>",
@@ -336,8 +338,8 @@ export default {
       if (file.status === "success") this.imageArray.push(file.dataURL);
     },
     publishImage: function (e) {
-      this.loading = true
       if (this.imageArray.length > 0) {
+        this.loading = true
         axios
           .post(
             "/post/new",
@@ -353,27 +355,32 @@ export default {
             setTimeout(function(){ 
               window.location = `/${vm.$store.getters.Username}?post=${data['data']['post_id']}`;
             }, 500);
+          }).catch((err) => {
+            console.log(err)
+            this.loading = false
           });
       }
     },
     publishText: function (e) {
-      this.loading = true
-      axios
-        .post(
-          "/post/new",
-          JSON.stringify({
-            body: this.editorData,
-            description: e.target.elements.description.value,
-            postType: this.postType,
-            tags: this.selectedTags,
-          })
-        )
-        .then((data) => {
-          var vm = this
-          setTimeout(function(){ 
-              window.location = `/${vm.$store.getters.Username}?post=${data['data']['post_id']}`;
-          }, 500);
-        });
+      if (this.editorData != ''){
+        this.loading = true
+        axios
+          .post(
+            "/post/new",
+            JSON.stringify({
+              body: this.editorData,
+              description: e.target.elements.description.value,
+              postType: this.postType,
+              tags: this.selectedTags,
+            })
+          )
+          .then((data) => {
+            var vm = this
+            setTimeout(function(){ 
+                window.location = `/${vm.$store.getters.Username}?post=${data['data']['post_id']}`;
+            }, 500);
+          });
+      }
     },
     addTag: async function (e) {
       await axios

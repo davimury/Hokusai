@@ -1,21 +1,22 @@
 <template>
+
   <div 
   class="h-screen"
   @mousemove="mouseMove"
   >
-    <Header></Header>
-    <main
-      class="flex justify-center mx-auto h-screen w-full md:max-w-4xl pb-96"
-      
-    >
-    <div v-if="loading" class="w-screen h-screen fixed flex align-middle z-50 bg-gray-900 bg-opacity-75">
+  <div v-if="loading" class="w-screen h-screen fixed flex align-middle z-50 bg-gray-900 bg-opacity-75">
       <fingerprint-spinner
         :animation-duration="1500"
         :size="90"
         color="#8B5CF6"
         class="m-auto "
       />
-    </div>
+  </div>
+    <Header></Header>
+    <main
+      class="flex justify-center mx-auto h-screen w-full md:max-w-4xl pb-96"
+      
+    >
       <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
@@ -191,6 +192,7 @@
                     type="file"
                     id="croppieProfile"
                     name="croppieProfile"
+                    accept="image/png, image/gif, image/jpeg"
                     @change="croppie"
                   />
                 </div>
@@ -292,7 +294,7 @@ export default {
       yAxis: 0,
       globalSkipCounter: 0,
       globalSkipRate: 5,
-      loading: false
+      loading: true
     };
   },
   computed: {
@@ -300,21 +302,14 @@ export default {
       return this.$store.getters.isFirstLogin;
     },
   },
+  mounted() {
+    this.loading = false
+  },
   methods: {
     ...mapActions(["setFirstLogin"]),
     changeFeedType: function (type) {
       this.feedType = type;
       this.infiniteId += 1;
-      console.log(this.infiniteId);
-      /* console.log(this.busyCon)
-      console.log(this.busyRec)
-      if (type == 1){
-        this.busyCon = false
-        this.busyRec = true
-      } else {
-        this.busyRec = false
-        this.busyCon = true
-      } */
     },
     select: async function (tag, e) {
       this.selectedTags.push({ tag_id: tag["tag_id"] });

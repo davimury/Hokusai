@@ -1,13 +1,15 @@
 <template >
-  <main class="h-screen" @mousemove="mouseMove" v-if="this.name">
+
+  <main class="h-screen" @mousemove="mouseMove">
     <div v-if="loading" class="w-screen h-screen fixed flex align-middle z-50 bg-gray-900 bg-opacity-75">
-      <fingerprint-spinner
-        :animation-duration="1500"
-        :size="90"
-        color="#8B5CF6"
-        class="m-auto "
-      />
-    </div>
+    <fingerprint-spinner
+      :animation-duration="1500"
+      :size="90"
+      color="#8B5CF6"
+      class="m-auto "
+    />
+  </div>
+  <div v-if="this.name">
     <Header></Header>
     <div
       class="
@@ -460,6 +462,7 @@
                   type="file"
                   id="croppieProfile"
                   name="croppieProfile"
+                  accept="image/png, image/gif, image/jpeg"
                   @change="croppieProfile"
                 />
               </div>
@@ -569,6 +572,7 @@
                   type="file"
                   id="croppieProfile"
                   name="croppieProfile"
+                  accept="image/png, image/gif, image/jpeg"
                   @change="croppieProfile"
                 />
               </div>
@@ -594,7 +598,6 @@
         </div>
       </div>
     </transition>
-
     <transition
       mode="out-in"
       enter-active-class="animate__animated animate__fadeIn"
@@ -662,6 +665,7 @@
       </div>
     </transition>
     <Footer></Footer>
+  </div>
   </main>
 </template>
 
@@ -698,22 +702,6 @@ export default {
   data() {
     return {
       cardsData: [],
-      dropzoneOptions: {
-        url: "https://httpbin.org/post",
-        thumbnailWidth: 140,
-        maxFilesize: 5,
-        headers: { "My-Awesome-Header": "header value" },
-        dictDefaultMessage:
-          "<span class='material-icons text-purple-500 text-4xl'>cloud_upload</span>",
-        addRemoveLinks: true,
-        dictFileTooBig:
-          "Arquivo muito grande. Tamanho máximo {{maxFilesize}}MB",
-        dictInvalidFileType: "Arquivo inválido",
-        dictRemoveFile: "<span class='material-icons'>close</span>",
-        dictMaxFilesExceeded:
-          "Número máximo de arquivos permitidos: {{maxFiles}}",
-        maxFiles: 10,
-      },
       posts: [],
       recomendedTags: [],
       isConnected: false,
@@ -747,7 +735,7 @@ export default {
       globalSkipCounter: 0,
       globalSkipRate: 5,
       cacheStr: Math.random().toString(36).substring(7),
-      loading: false,
+      loading: true,
     };
   },
   mounted: async function () {
@@ -768,6 +756,7 @@ export default {
           this.name = response["data"]["name"];
           this.user_id = response["data"]["user_id"];
           this.con_count = response["data"]["con_count"];
+          this.loading = false
         }
       });
 
