@@ -2,6 +2,14 @@
   <div>
     <Header></Header>
     <main class="w-full mt-4">
+      <div v-if="loading" class="w-screen h-screen fixed flex align-middle z-50 bg-gray-900 bg-opacity-75">
+      <fingerprint-spinner
+        :animation-duration="1500"
+        :size="90"
+        color="#8B5CF6"
+        class="m-auto "
+      />
+    </div>
       <div
         class="
           h-full
@@ -248,6 +256,8 @@ import ParagraphPlugin from "@ckeditor/ckeditor5-paragraph/src/paragraph";
 import HeadingPlugin from "@ckeditor/ckeditor5-heading/src/heading";
 import BlockQuotePlugin from "@ckeditor/ckeditor5-block-quote/src/blockquote";
 import vSelect from "vue-select";
+import { FingerprintSpinner } from "epic-spinners";
+
 export default {
   name: "CreatePostPage",
   components: {
@@ -255,6 +265,7 @@ export default {
     Footer,
     vSelect,
     vueDropzone: vue2Dropzone,
+    FingerprintSpinner
   },
   data: function () {
     return {
@@ -280,6 +291,7 @@ export default {
       imageArray: [],
       editor: ClassicEditor,
       editorData: "<p>Digite seu texto aqui.</p>",
+      loading: false,
       editorConfig: {
         plugins: [
           EssentialsPlugin,
@@ -324,6 +336,7 @@ export default {
       if (file.status === "success") this.imageArray.push(file.dataURL);
     },
     publishImage: function (e) {
+      this.loading = true
       if (this.imageArray.length > 0) {
         axios
           .post(
@@ -344,6 +357,7 @@ export default {
       }
     },
     publishText: function (e) {
+      this.loading = true
       axios
         .post(
           "/post/new",

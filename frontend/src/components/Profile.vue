@@ -1,5 +1,13 @@
 <template >
   <main class="h-screen" @mousemove="mouseMove" v-if="this.name">
+    <div v-if="loading" class="w-screen h-screen fixed flex align-middle z-50 bg-gray-900 bg-opacity-75">
+      <fingerprint-spinner
+        :animation-duration="1500"
+        :size="90"
+        color="#8B5CF6"
+        class="m-auto "
+      />
+    </div>
     <Header></Header>
     <div
       class="
@@ -73,12 +81,19 @@
         </div>
         <div class="flex justify-center text-gray-500">
           <p class="mx-1">
+            <span class="font-medium">{{ this.likes7day }}</span> likes (7 dias)
+          </p>
+          <p class="mx-1">
+            <span class="font-medium">{{ this.likesTotal }}</span> likes (Total)
+          </p>
+        </div>
+        <div class="flex justify-center text-gray-500">
+          <p class="mx-1">
             <span class="font-medium">{{ this.postsCounter }}</span> Posts
           </p>
           <p
             class="mx-1 cursor-pointer"
             v-on:click="modalConexoes = !modalConexoes; getProfileCards();"
-            
           >
             <span class="font-medium">{{ con_count }}</span> Conexões
           </p>
@@ -661,6 +676,8 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import * as htmlToImage from "html-to-image";
 import ProfileCard from "./ProfileCard.vue";
+import { FingerprintSpinner } from "epic-spinners";
+
 export default {
   name: "Profile",
   components: {
@@ -671,6 +688,7 @@ export default {
     vSelect,
     vueDropzone: vue2Dropzone,
     ProfileCard,
+    FingerprintSpinner
   },
   directives: {
     onClickaway: onClickaway,
@@ -708,6 +726,8 @@ export default {
       thumbsData: {},
       selectedTags: [],
       postsCounter: 0,
+      likes7day: 0,
+      likesTotal: 0,
       profilePic: "",
       modalPost: false,
       modalProfile: false,
@@ -724,7 +744,8 @@ export default {
       yAxis: 0,
       globalSkipCounter: 0,
       globalSkipRate: 5,
-      cacheStr: Math.random().toString(36).substring(7)
+      cacheStr: Math.random().toString(36).substring(7),
+      loading: false,
     };
   },
   mounted: async function () {
@@ -740,6 +761,8 @@ export default {
           this.posts = response["data"]["posts"];
           this.userTags = response["data"]["tags"];
           this.postsCounter = response["data"]["posts_count"];
+          this.likes7day = response["data"]["likes7day"];
+          this.likesTotal = response["data"]["all_likes"];
           this.name = response["data"]["name"];
           this.user_id = response["data"]["user_id"];
           this.con_count = response["data"]["con_count"];
@@ -910,6 +933,8 @@ export default {
         size: { width: 250, height: 250 },
         format: "jpeg",
       };
+
+      this.loading = true
       await this.$refs.croppieRef.result(options, (output) => {
         this.cropped = this.croppieImage = output;
       });
@@ -929,6 +954,8 @@ export default {
         size: { width: 896, height: 360 },
         format: "jpeg",
       };
+
+      this.loading = true
       await this.$refs.croppieRef.result(options, (output) => {
         this.cropped = this.croppieImage = output;
       });

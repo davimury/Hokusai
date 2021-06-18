@@ -32,7 +32,6 @@
           </button>
         </div>
           <div v-if="dataArr.length > 0">
-            
             <div v-for="data in dataArr" :key="data['id']">
               <div v-if="data['type'] == 0">
                 <a href="/chat">

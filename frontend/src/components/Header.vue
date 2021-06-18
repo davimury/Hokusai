@@ -69,14 +69,15 @@
               "
             >
               <ul class="text-left">
-                <li class="my-2 hover:text-gray-300 cursor-pointer">
-                  <a :href="`/${this.username}`" class="px-4 py-2"> Perfil </a>
-                </li>
+                <a :href="`/${this.username}`">
+                  <li class="my-2 hover:text-gray-300 cursor-pointer px-4">
+                    Perfil 
+                  </li>
+                </a>
                 <li
                   class="my-2 hover:text-gray-300 cursor-pointer"
-                  @click="logout"
                 >
-                  <a class="px-4 py-2"> Logout </a>
+                  <a class="px-4 py-2" @click="logout"> Logout </a>
                 </li>
               </ul>
             </div>

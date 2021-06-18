@@ -8,6 +8,14 @@
       class="flex justify-center mx-auto h-screen w-full md:max-w-4xl pb-96"
       
     >
+    <div v-if="loading" class="w-screen h-screen fixed flex align-middle z-50 bg-gray-900 bg-opacity-75">
+      <fingerprint-spinner
+        :animation-duration="1500"
+        :size="90"
+        color="#8B5CF6"
+        class="m-auto "
+      />
+    </div>
       <div class="w-full md:w-4/5 lg:w-3/5 h-screen p-3">
         <div class="w-full flex justify-center gap-5 bg-darkgray sticky top-0">
           <button
@@ -238,6 +246,7 @@ import Header from "./Header.vue";
 import Footer from "./Footer.vue";
 import { mapActions } from "vuex";
 import InfiniteLoading from "vue-infinite-loading";
+import { FingerprintSpinner } from "epic-spinners";
 
 export default {
   name: "Feed",
@@ -251,6 +260,7 @@ export default {
     TabContent,
     TrendingTags,
     InfiniteLoading,
+    FingerprintSpinner
   },
   directives: {
     onClickaway: onClickaway,
@@ -281,7 +291,8 @@ export default {
       xAxis: 0,
       yAxis: 0,
       globalSkipCounter: 0,
-      globalSkipRate: 5
+      globalSkipRate: 5,
+      loading: false
     };
   },
   computed: {
@@ -352,6 +363,7 @@ export default {
       });
     },
     onComplete: async function () {
+      this.loading = true
       await axios.post("/user/image", { base: this.croppieImage })
       await axios.post("/tags/add", this.selectedTags);
       await this.setFirstLogin(false)

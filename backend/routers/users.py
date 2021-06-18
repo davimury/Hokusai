@@ -1,5 +1,7 @@
 import base64
 import asyncio
+from datetime import datetime, timedelta
+from sqlalchemy.sql.expression import and_
 from fastapi import APIRouter, Depends, Response, Request
 from db.db_main import Session, USERS, POSTS, TAGS, LIKES, CONNECTIONS, NOTIFICATIONS
 from routers.auth import manager
@@ -111,8 +113,8 @@ async def get_user_info(username: str, user=Depends(manager)):
             tags = []
 
         connections_arr = [
-            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = user.user_id).all(),
-            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = user.user_id).all()
+            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = this_user.user_id).all(),
+            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = this_user.user_id).all()
         ]
         posts_arr = []
         tags_arr = []
@@ -158,6 +160,23 @@ async def get_user_info(username: str, user=Depends(manager)):
         finally:
             session.close()
 
+    try:
+        all_likes = 0
+        likes7days = 0
+
+        session = Session()
+
+        for post in this_user.posts:
+            all_likes = all_likes + session.query(LIKES).filter(LIKES.post_id == post.post_id).count()
+            likes7days = likes7days + session.query(LIKES).filter(and_(LIKES.post_id == post.post_id, LIKES.created_at > datetime.now() - timedelta(days=7))).count()
+
+    except Exception as e:
+        flag = False
+        print(e)
+
+    finally:
+        session.close()
+
     if flag:
         return {
             'user_id': this_user.user_id,
@@ -166,6 +185,8 @@ async def get_user_info(username: str, user=Depends(manager)):
             'posts_count': len(posts_arr),
             'con_count': len(connections_arr),
             'posts': posts_arr,
+            'likes7day': likes7days,
+            'all_likes': all_likes
         }
     else:
         Response(status_code=500)
@@ -206,6 +227,7 @@ async def get_users_info(username: str, user=Depends(manager)):
         return {
             'users_details': connections_details,
         }
+        
     else:
         Response(status_code=500)
 
