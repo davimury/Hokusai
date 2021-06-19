@@ -3,8 +3,10 @@ import string
 import random
 from sqlalchemy import and_
 from operator import itemgetter
+
+from sqlalchemy.orm import session
 from db.db_main import Session, POSTS, TAGS, LIKES, CONNECTIONS
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from starlette.responses import JSONResponse, Response
 from fastapi import APIRouter, Depends
 from routers.auth import manager
@@ -317,3 +319,25 @@ def dislike_post(post: Post, user=Depends(manager)):
 
     if flag:
         return like_count
+
+
+@router.get("/post/statistics")
+def statistics_post(): #user=Depends(manager)
+    try:
+        session = Session()
+        likes_7days = []
+        l7days = datetime.now() - timedelta(days=7)
+        posts_7days = session.query(POSTS).filter(and_(POSTS.created_at > l7days, POSTS.post_author == 1)).all()
+        for post in posts_7days:
+            for like in session.query(LIKES.created_at).filter_by(post_id=post.post_id,like_type=True).all():
+                if like[0]:
+                    likes_7days.append(like[0])
+
+        print(likes_7days) 
+        #posts_tag =
+    except:
+        pass
+
+    finally:
+        session.close()
+        

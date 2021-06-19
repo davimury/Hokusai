@@ -84,14 +84,6 @@
         </div>
         <div class="flex justify-center text-gray-500">
           <p class="mx-1">
-            <span class="font-medium">{{ this.likes7day }}</span> likes (7 dias)
-          </p>
-          <p class="mx-1">
-            <span class="font-medium">{{ this.likesTotal }}</span> likes (Total)
-          </p>
-        </div>
-        <div class="flex justify-center text-gray-500">
-          <p class="mx-1">
             <span class="font-medium">{{ this.postsCounter }}</span> Posts
           </p>
           <p
@@ -717,8 +709,6 @@ export default {
       thumbsData: {},
       selectedTags: [],
       postsCounter: 0,
-      likes7day: 0,
-      likesTotal: 0,
       profilePic: "",
       modalPost: false,
       modalProfile: false,
@@ -752,8 +742,6 @@ export default {
           this.posts = response["data"]["posts"];
           this.userTags = response["data"]["tags"];
           this.postsCounter = response["data"]["posts_count"];
-          this.likes7day = response["data"]["likes7day"];
-          this.likesTotal = response["data"]["all_likes"];
           this.name = response["data"]["name"];
           this.user_id = response["data"]["user_id"];
           this.con_count = response["data"]["con_count"];

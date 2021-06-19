@@ -160,23 +160,6 @@ async def get_user_info(username: str, user=Depends(manager)):
         finally:
             session.close()
 
-    try:
-        all_likes = 0
-        likes7days = 0
-
-        session = Session()
-
-        for post in this_user.posts:
-            all_likes = all_likes + session.query(LIKES).filter(LIKES.post_id == post.post_id).count()
-            likes7days = likes7days + session.query(LIKES).filter(and_(LIKES.post_id == post.post_id, LIKES.created_at > datetime.now() - timedelta(days=7))).count()
-
-    except Exception as e:
-        flag = False
-        print(e)
-
-    finally:
-        session.close()
-
     if flag:
         return {
             'user_id': this_user.user_id,
@@ -185,8 +168,6 @@ async def get_user_info(username: str, user=Depends(manager)):
             'posts_count': len(posts_arr),
             'con_count': len(connections_arr),
             'posts': posts_arr,
-            'likes7day': likes7days,
-            'all_likes': all_likes
         }
     else:
         Response(status_code=500)
