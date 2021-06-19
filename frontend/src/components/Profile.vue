@@ -55,7 +55,7 @@
           mx-auto
           h-24
           w-24
-          -my-12
+          -mt-12
           border-lightgray
           rounded-full
           overflow-hidden
@@ -64,10 +64,11 @@
       >
         <img class="object-cover w-full h-full" :src="`https://cdn.hokusai.codes/profile/${this.user_id}.jpg?${cacheStr}`" @error="$event.target.src = 'https://cdn.hokusai.codes/profile/default.jpg'"/>
       </div>
-      <div class="flex justify-center ml-11 mt-6 relative">
+      <div
+      v-if="this.$route.params.username == this.$store.getters.Username" 
+      class="flex justify-center ml-11 relative -mt-6">
         <button
           class="focus:outline-none text-center bg-lightgray rounded-full p-1"
-          v-if="this.$route.params.username == this.$store.getters.Username"
           v-on:click="modalProfile = !modalProfile"
         >
           <span class="material-icons text-purple-500 hover:text-purple-600">
@@ -810,15 +811,21 @@ export default {
             posts[i]["post_id"]
           ] = thumb;
         } else {
-          var div = document.createElement("div");
-          div.style.backgroundColor = "white";
-          div.innerHTML = posts[i]["body"].trim();
-
-          const img = await htmlToImage.toJpeg(div, {
-            width: 300,
-            height: 300,
-          });
-          this.thumbsData[posts[i]["post_id"]] = img;
+          var div = document.createElement('div');
+          div.style.color              = '#fff';
+          //div.style.fontSize         = '13px';
+          div.style.marginTop          = '-10px';
+          div.style.paddingBottom      = '5px';
+          div.style.paddingTop         = '10px';
+          div.style.paddingLeft        = '10px';
+          div.style.paddingRight       = '10px';
+          div.style.fontFamily         = 'Roboto, sans-serif';
+          div.style.backgroundColor    = '#1e1e1e';
+          div.style.overflow           = 'hidden';
+          div.innerHTML = posts[i]['body'];
+          
+          const img = await htmlToImage.toJpeg(div, {width: 300, height: 300})
+          this.thumbsData[posts[i]['post_id']] = img
         }
       }
     },

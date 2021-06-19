@@ -172,7 +172,15 @@ export default {
           this.thumbsData[posts[i]['post_id']] = `https://cdn.hokusai.codes/posts/${posts[i]['slides'][0]}`;
         } else {
           var div = document.createElement('div');
-          div.style.backgroundColor = 'white';
+          div.style.color              = '#fff';
+          div.style.width              = '300px';
+          div.style.height             = '300px';
+          div.style.padding            = '15px';
+          div.style.paddingBottom      = '55px';
+          div.style.marginTop          = '-15px';
+          div.style.position           = 'relative';
+          div.style.fontFamily         = 'Roboto, sans-serif';
+          div.style.backgroundColor    = '#1e1e1e';
           div.innerHTML = posts[i]['body'].trim();
           
           const img = await htmlToImage.toJpeg(div, {width: 300, height: 300})
