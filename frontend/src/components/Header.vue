@@ -74,6 +74,11 @@
                     Perfil 
                   </li>
                 </a>
+                <a :href="`/statistics`">
+                  <li class="my-2 hover:text-gray-300 cursor-pointer px-4">
+                    Estatísticas 
+                  </li>
+                </a>
                 <li
                   class="my-2 hover:text-gray-300 cursor-pointer"
                 >
