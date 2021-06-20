@@ -113,8 +113,8 @@ async def get_user_info(username: str, user=Depends(manager)):
             tags = []
 
         connections_arr = [
-            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = this_user.user_id).all(),
-            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = this_user.user_id).all()
+            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = this_user.user_id, con_status = True).all(),
+            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = this_user.user_id, con_status = True).all()
         ]
         posts_arr = []
         tags_arr = []
@@ -182,8 +182,8 @@ async def get_users_info(username: str, user=Depends(manager)):
 
         user_id = session.query(USERS.user_id).filter_by(username = username)
         connections_arr = [
-            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = user_id).all(),
-            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = user_id).all()
+            *session.query(CONNECTIONS.user_1_id).filter_by(user_2_id = user_id, con_status = True).all(),
+            *session.query(CONNECTIONS.user_2_id).filter_by(user_1_id = user_id, con_status = True).all()
         ]
 
     except Exception as e:
