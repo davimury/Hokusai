@@ -413,8 +413,6 @@ class ChatBroadcaster:
     async def register_connection(self, ws, client_id):
         self.connections.append({client_id: ws})
         self.online_users.append(client_id)
-        print(client_id)
-        print(self.connections)
         await self.broadcast_status(client_id, True)
 
     async def remove_connection(self, client_id):
@@ -547,7 +545,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
             await manager.request_handler(data)
 
     except WebSocketDisconnect:
-        print('Close')
         await broadcaster.remove_connection(client_id)
         del manager
         

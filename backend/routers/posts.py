@@ -2,10 +2,11 @@ import base64
 import string
 import random
 from sqlalchemy import and_
-from operator import itemgetter
+from fastapi.exceptions import HTTPException
 from db.db_main import Session, POSTS, TAGS, LIKES, CONNECTIONS
 from datetime import datetime, timedelta
 from starlette.responses import JSONResponse, Response
+from fastapi import APIRouter, Depends, File, UploadFile
 from fastapi import APIRouter, Depends, Request
 from routers.auth import manager
 from models import Post
@@ -187,40 +188,33 @@ def new_post(post: Post, user=Depends(manager)):
     try:
         flag = True
         session = Session()
-        
         tags = []
-
+    
         try:
-
+            print(post.description)
             for tag in post.tags:
                 tags.append(session.query(TAGS).filter_by(tag_id=tag.tag_id).first())
         except Exception as e:
             print(e)
         
         if post.postType == 0:
-            files = []
+            if post.slides:
+                new_post = POSTS(
+                    author=user,
+                    post_author=user.user_id,
+                    post_desc=post.description,
+                    post_img=post.slides,
+                    post_type=post.postType,
+                    created_at=datetime.now(),
+                    tags=tags,
+                    likes=0,
+                )
 
-            for image in post.slides:
-                filename = str(user.user_id) + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 5)).replace("/", "") + str(
-                    datetime.now().second * datetime.now().day) + ".jpg"
-                files.append(filename)
-
-                with open('../assets/posts/' + filename, "wb") as f:
-                    f.write(base64.b64decode(image[image.find(",")+1:]))
-
-            new_post = POSTS(
-                author=user,
-                post_author=user.user_id,
-                post_desc=post.description,
-                post_img=files,
-                post_type=post.postType,
-                created_at=datetime.now(),
-                tags=tags,
-                likes=0,
-            )
-
-            session.add(new_post)
-            session.commit()
+                session.add(new_post)
+                session.commit()
+            
+            else:
+                raise HTTPException(status_code=404)
 
         else:
             new_post = POSTS(
@@ -243,13 +237,36 @@ def new_post(post: Post, user=Depends(manager)):
         print(e)
         flag = False
         return Response(status_code=500)
-        #raise HTTPException(status_code=409, detail="email ou username já cadastrados!")
 
     finally:
         session.close()
 
     if flag:
         return JSONResponse(content={'post_id': new_post.post_id})
+
+
+@router.post("/post/new/image")
+async def new_image(file: UploadFile = File(...)):
+    """ Adiciona um novo post """
+    try:
+        flag = True
+        
+        filename = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 5)).replace("/", "") + str(
+                    datetime.now().second * datetime.now().day) + ".jpg"
+                    
+        file_location = f"../assets/posts/{filename}"
+        with open(file_location, "wb+") as file_object:
+            file_object.write(file.file.read())
+
+    except Exception as e:
+        print(e)
+        flag = False
+        return Response(status_code=500)
+
+    if flag:
+        print(filename)
+        return {"filename": filename}
+
 
 
 @router.post("/post/like")

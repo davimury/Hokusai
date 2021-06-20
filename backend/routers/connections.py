@@ -33,8 +33,6 @@ async def is_connected(username: str, user=Depends(manager)):
             if con[0] == this_user.user_id:
                 is_connected = True
                 con_status = con[1]
-        
-        print(con_status)
     except Exception as e:
         print(e)
         flag = False
