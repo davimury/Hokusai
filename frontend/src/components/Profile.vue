@@ -82,14 +82,14 @@
             {{ this.name }}
           </h1>
         </div>
-        <div class="flex justify-center text-gray-500">
+        <!-- <div class="flex justify-center text-gray-500">
           <p class="mx-1">
             <span class="font-medium">{{ this.likes7day }}</span> likes (7 dias)
           </p>
           <p class="mx-1">
             <span class="font-medium">{{ this.likesTotal }}</span> likes (Total)
           </p>
-        </div>
+        </div> -->
         <div class="flex justify-center text-gray-500">
           <p class="mx-1">
             <span class="font-medium">{{ this.postsCounter }}</span> Posts

@@ -6,7 +6,7 @@ from operator import itemgetter
 from db.db_main import Session, POSTS, TAGS, LIKES, CONNECTIONS
 from datetime import datetime, timedelta
 from starlette.responses import JSONResponse, Response
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from routers.auth import manager
 from models import Post
 
@@ -317,3 +317,28 @@ def dislike_post(post: Post, user=Depends(manager)):
 
     if flag:
         return like_count
+
+@router.get("/post/statistics")
+def statistics_get(request: Request, user=Depends(manager)):  
+    try:
+        session = Session()
+        upvotes_week_ago = []
+        downvotes_week_ago = []
+        week_ago = datetime.now() - timedelta(days=7)
+        posts = session.query(POSTS).filter(and_(POSTS.post_author == user.user_id)).all()
+        print(posts)
+        for post in posts:
+            for like in (session.query(LIKES.created_at).filter(and_(LIKES.post_id == post.post_id, LIKES.like_type == True, LIKES.created_at > week_ago)).all()):
+                if like[0]:
+                    upvotes_week_ago.append((like[0].weekday() + 1) % 7) #conta para primeiro dia da semana começar no domingo
+            for dislike in (session.query(LIKES.created_at).filter(and_(LIKES.post_id == post.post_id, LIKES.like_type == False, LIKES.created_at > week_ago)).all()):
+                if dislike[0]:
+                    downvotes_week_ago.append((dislike[0].weekday() + 1) % 7) #conta para primeiro dia da semana começar no domingo
+        
+        
+        return JSONResponse(content={'upvotes_week_ago':upvotes_week_ago, 'downvotes_week_ago':downvotes_week_ago})
+    except Exception as e:
+        print(e)
+
+    finally:
+        session.close() 
