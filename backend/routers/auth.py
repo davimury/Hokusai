@@ -77,6 +77,7 @@ async def auth_login(formData: User):
             data={"sub": formData.email}, expires=timedelta(hours=6))
         manager.set_cookie(response, access_token)
 
+        print(access_token)
     except HTTPException as e:
         raise e
 
@@ -91,7 +92,6 @@ async def send_email_token(formData: User):
     """
     flag = True
 
-    print(formData)
     try:
         conf = ConnectionConfig(
             MAIL_USERNAME = "app.hokusai@gmail.com",
@@ -125,7 +125,7 @@ async def send_email_token(formData: User):
         except Exception as e:
             print(e)
     else:
-        print('er')
+        pass
 
 
 @router.post("/recover_password/")
@@ -163,7 +163,6 @@ async def is_unique_username(request: Request):
     """ Check if username is unique """
     flag = True
     username = await request.json()
-    print(username["username"])
     try:
         session = Session()
         user = session.query(USERS.username).filter_by(username = username["username"]).first()
