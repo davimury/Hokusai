@@ -28,6 +28,7 @@
             <div class="box__description-container">
             <div class="box__description-title">Whoops!</div>
             <div class="box__description-text" v-if="location == '/not-found'">Página não encontrada!!</div>
+            <div class="box__description-text" v-else-if="connection != undefined">Nenhuma conexão encontrada!</div>
             <div class="box__description-text" v-else>Nenhum post foi encontrado!!</div>
             </div>
         </div>
@@ -37,7 +38,7 @@
 <script>
 export default {
     name: "NotFoundGhost",
-    props: ['xAxis', 'yAxis'],
+    props: ['xAxis', 'yAxis', 'connection'],
     
     data() {
         return {

@@ -580,18 +580,6 @@
         <transition>
           <div v-if="sentEmailDiv">
            <h1 class="mb-10">Email enviado com sucesso!</h1>
-
-            <div
-              v-on:click="swapLoginRegister('register')"
-              class="
-                mt-3
-                text-center text-gray-400
-                hover:text-gray-100
-                font-medium
-              "
-            >
-              <a style="cursor: pointer;">Criar Nova Conta</a>
-            </div>
             <div
               v-on:click="swapLoginRegister('login')"
               class="
@@ -693,18 +681,6 @@
                   </button>
                 </div>
               </form>
-
-              <div
-                v-on:click="swapLoginRegister('register')"
-                class="
-                  mt-3
-                  text-center text-gray-400
-                  hover:text-gray-100
-                  font-medium
-                "
-              >
-                <a style="cursor: pointer;">Criar Nova Conta</a>
-              </div>
               <div
                 v-on:click="swapLoginRegister('login')"
                 class="
@@ -835,7 +811,7 @@ export default {
     },
     recover: async function () {
       try {
-        if (this.passwordSignUp.length >= 6) {
+        if (this.passwordSignUp.length > 0) {
           await this.Recover(
             JSON.stringify({ 'token': this.token, 'password': this.passwordSignUp })
           ).then(() => {
@@ -870,6 +846,7 @@ export default {
         this.sentEmailDiv = false
         this.registerDiv = false;
         this.forgotPasswordDiv = false;
+        this.recoverPasswordDiv = false;
         setTimeout(() => {
           this.loginDiv = true;
         }, 501);

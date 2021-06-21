@@ -38,6 +38,7 @@
               <img
                 :src="thumbsData[post['post_id']]"
                 class="media"
+                style="transform: translate(-50%, -50%); left: 50%; max-width: 150%;"
               />
             </div>
           </div>

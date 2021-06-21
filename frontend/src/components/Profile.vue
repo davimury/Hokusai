@@ -286,7 +286,7 @@
         style="overflow: hidden;"
         @click="showPost(post)"
       >
-        <img :src="thumbsData[post['post_id']]" class="media" />
+        <img :src="thumbsData[post['post_id']]" class="media" style="transform: translate(-50%, -50%); left: 50%; max-width: 150%;"/>
       </div>
     </div>
     <div
@@ -638,6 +638,7 @@
               bg-lightgray
               rounded-lg
               p-4
+              pb-16
               w-full
               sm:w-3/4
             "
@@ -645,6 +646,7 @@
           >
             <h1 class="text-white font-semibold mb-4">Conexões</h1>
             <div
+              v-if="cardsData.length > 0"
               class="flex flex-wrap justify-center overflow-y-auto max-h-70vh"
             >
               <ProfileCard
@@ -652,6 +654,13 @@
                 :key="cardData.username"
                 :cardData="cardData"
               ></ProfileCard>
+            </div>
+            <div v-else >
+              <NotFoundGhost 
+                :xAxis="this.xAxis" 
+                :yAxis="this.yAxis"
+                :connection="true"
+                ></NotFoundGhost>
             </div>
           </div>
         </div>
