@@ -1,13 +1,12 @@
 <script>
-import {Bar} from "vue-chartjs";
+import { Bar } from "vue-chartjs";
 
 export default {
   name: "BarChart",
   extends: Bar,
-  props: ["data"],
+  props: ["chartdata", "labels", "label"],
 
   data: () => ({
-    
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -24,7 +23,19 @@ export default {
   }),
 
   mounted() {
-    this.renderChart(this.data, this.options);
+    this.renderChart(
+      {
+        labels: this.labels,
+        datasets: [
+          {
+            label: this.label,
+            data: this.chartdata,
+            backgroundColor: "#8B5CF6",
+          },
+        ],
+      },
+      this.options
+    );
   },
 };
 </script>

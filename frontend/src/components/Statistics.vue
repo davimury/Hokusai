@@ -4,8 +4,20 @@
     <div class="mx-auto w-full md:max-w-4xl bg-lightgray pb-6 rounded-lg">
       <h1 class="text-white font-bold text-xl mb-5 p-5">Estatísticas</h1>
       <div class="my-10">
-        <BarChart v-if="loadedUpchart" :data="dataUpvotes"></BarChart>
-        <BarChart v-if="loadedDownchart" :data="downchartdata"></BarChart>
+        <BarChart
+          v-if="loadedUpchart"
+          :chartdata="dataUpvotes"
+          :labels="labels"
+          :label="'Upvotes'"
+        ></BarChart>
+      </div>
+      <div class="my-10">
+        <BarChart
+          v-if="loadedDownchart"
+          :chartdata="dataDownvotes"
+          :labels="labels"
+          :label="'Downvotes'"
+        ></BarChart>
       </div>
     </div>
     <Footer></Footer>
@@ -43,42 +55,15 @@ export default {
     quintaDown: 0,
     sextaDown: 0,
     sabadoDown: 0,
-    upchartdata: {
-      labels: [
-        "Domingo",
-        "Segunda",
-        "Terça",
-        "Quarta",
-        "Quinta",
-        "Sexta",
-        "Sábado",
-      ],
-      datasets: [
-        {
-          label: "Upvotes",
-          data: [32, 59, 80, 81, 56, 55, 40],
-          backgroundColor: "#8B5CF6",
-        },
-      ],
-    },
-    downchartdata: {
-      labels: [
-        "Domingo",
-        "Segunda",
-        "Terça",
-        "Quarta",
-        "Quinta",
-        "Sexta",
-        "Sábado",
-      ],
-      datasets: [
-        {
-          label: "Downvotes",
-          data: [65, 59, 80, 81, 56, 55, 40],
-          backgroundColor: "#8B5CF6",
-        },
-      ],
-    },
+    labels: [
+      "Domingo",
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta",
+      "Sexta",
+      "Sábado",
+    ],
   }),
 
   async mounted() {
@@ -161,7 +146,7 @@ export default {
         this.sextaDown,
         this.sabadoDown,
       ];
-      
+
       this.loadedUpchart = true;
       this.loadedDownchart = true;
     });
