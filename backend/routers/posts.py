@@ -264,7 +264,6 @@ async def new_image(file: UploadFile = File(...)):
         return Response(status_code=500)
 
     if flag:
-        print(filename)
         return {"filename": filename}
 
 

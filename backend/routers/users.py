@@ -1,7 +1,5 @@
 import base64
 import asyncio
-from datetime import datetime, timedelta
-from sqlalchemy.sql.expression import and_
 from fastapi import APIRouter, Depends, Response, Request
 from db.db_main import Session, USERS, POSTS, TAGS, LIKES, CONNECTIONS, NOTIFICATIONS
 from routers.auth import manager
@@ -272,10 +270,4 @@ async def change_header(request: Request, user=Depends(manager)):
 
     if flag:
         await asyncio.sleep(1)
-        return Response(status_code=200)
-    else:
-        return Response(status_code=500)
-
-
-
 

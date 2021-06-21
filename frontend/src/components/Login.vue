@@ -235,13 +235,12 @@
               v-if="passErr"
               class="text-red-700 text-left -mt-1.5"
             >
-              <small>Senha incorreta</small>
+              <small>Não foi possivel encontrar seu e-mail ou senha</small>
             </div>
             <div
-              @click="swapLoginRegister('sendLink')"
               class="text-right text-amber-400 hover:text-amber-100 font-medium"
             >
-              <a style="cursor: pointer;">Esqueceu a senha?</a>
+              <a style="cursor: pointer;" @click="swapLoginRegister('sendLink')">Esqueceu a senha?</a>
             </div>
             <div class="pb-2 pt-4">
               <button
