@@ -1,4 +1,4 @@
-# TCC
+# Hokusai
 Rede social para artistas
 
 ## Intalar backend
