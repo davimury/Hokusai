@@ -15,7 +15,6 @@ a função de chat.
 ### SQLAlchemy
 ### PostGreSQL
 ### PWA
-## 🖼️ Imagens
 
 ## ⚙️Instalação
 ### Backend
