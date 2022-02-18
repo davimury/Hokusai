@@ -16,6 +16,14 @@ a função de chat.
 ### PostGreSQL
 ### PWA
 
+## 🖼️ Imagens
+![alt text](https://github.com/Mafra-Chris/Hokusai/blob/main/hokusai%20screenshots/Screenshot_1.png)
+![alt text](https://github.com/Mafra-Chris/Hokusai/blob/main/hokusai%20screenshots/Screenshot_2.png)
+![alt text](https://github.com/Mafra-Chris/Hokusai/blob/main/hokusai%20screenshots/Screenshot_3.png)
+![alt text](https://github.com/Mafra-Chris/Hokusai/blob/main/hokusai%20screenshots/Screenshot_6.png)
+![alt text](https://github.com/Mafra-Chris/Hokusai/blob/main/hokusai%20screenshots/Screenshot_4.png)
+![alt text](https://github.com/Mafra-Chris/Hokusai/blob/main/hokusai%20screenshots/Screenshot_5.png)
+
 ## ⚙️Instalação
 ### Backend
 ```
